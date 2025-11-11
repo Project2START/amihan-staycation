@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-normal: #24b4a7;
+  --color-secondary-normal: #0b5173;
+  --color-tertiary-normal: #279bc0;
+}
+
+@layer components {
+  .input-base {
+    @apply w-full border-2 border-secondary-normal/30 rounded-md px-[0.5rem] py-[0.75rem] focus:outline-none focus:ring-1 focus:ring-secondary-normal/50 transition;
+  }
+}
