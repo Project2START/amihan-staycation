@@ -1,5 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
+import ApolloClientProvider from "./(marketing)/components/ApolloClientProvider";
 
 const inter = Inter({
   display: "swap",
@@ -13,7 +15,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className}>
-      <body>{children}</body>
+      <body className="min-h-[100dvh] flex flex-col">
+        <ApolloClientProvider>
+          {children}
+          <Toaster
+            position="bottom-right"
+            containerStyle={{ bottom: "4.5rem" }}
+          />
+        </ApolloClientProvider>
+      </body>
     </html>
   );
 }
