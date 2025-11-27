@@ -10,4 +10,7 @@
   .input-base {
     @apply w-full border-2 border-secondary-normal/30 rounded-md px-[0.5rem] py-[0.75rem] focus:outline-none focus:ring-1 focus:ring-secondary-normal/50 transition;
   }
+  .hover-animation {
+    @apply transition duration-300 ease-in-out;
+  }
 }
