@@ -53,7 +53,7 @@ export default function SearchUnit() {
 
   return (
     <div className="text-xs md:flex md:justify-center">
-      <div className="border-2 border-primary-normal rounded-lg translate-y-[-40%] bg-white md:flex md:justify-between md:w-[80%] md:translate-y-[-50%] lg:w-[50%] ">
+      <div className="border-2 border-primary-normal rounded-lg bg-white md:flex md:justify-between md:w-[80%] lg:w-[50%] ">
         <div className="relative">
           <button
             onClick={() => handleSetCalendar(true)}

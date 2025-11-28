@@ -4,7 +4,7 @@ import { ReactTyped } from "react-typed";
 
 export default function HeroTag() {
   return (
-    <p className="text-xs/8 mt-[0.5rem] md:text-sm/10">
+    <p className="text-shadow-lg text-xs/8 mt-[0.5rem] md:text-sm/10">
       Relax and make memories with loved ones at{" "}
       <span className="font-bold text-primary-normal">Amihan Staycation</span> —{" "}
       <span className="md:hidden">your private escape for </span>
