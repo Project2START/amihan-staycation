@@ -10,7 +10,7 @@ export default function AlternativeSeparator({
   return (
     <div className="relative py-[1rem]">
       <div className={`${lineColor} h-[1px] bg-tertiary-normal/30`}></div>
-      <p className="font-bold text-xs text-gray-500 px-[0.5rem] bg-white absolute right-[50%] translate-x-[50%] translate-y-[-50%] top-[50%] z-10 bg-white]">
+      <p className="font-bold text-xs text-gray-500 px-[0.5rem] bg-white absolute right-[50%] translate-x-[50%] translate-y-[-50%] top-[50%] z-10 bg-white] md:text-sm">
         {content}
       </p>
     </div>

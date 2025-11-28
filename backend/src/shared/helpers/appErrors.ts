@@ -1,3 +1,17 @@
+/**
+ * Custom error classes for structured error handling in an application.
+ *
+ * `AppError` is the base class with a status code and an `isOperational` flag
+ * to distinguish expected errors from programming errors.
+ *
+ * Specialized errors extend `AppError`:
+ * - `BadRequestError` (400)
+ * - `ConflictError` (409)
+ * - `NotFoundError` (404)
+ *
+ * These classes help standardize error responses in APIs or middleware.
+ */
+
 export class AppError extends Error {
   statusCode: number;
   isOperational: boolean;

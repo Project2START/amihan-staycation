@@ -1,6 +1,19 @@
 import nodemailer from "nodemailer";
 import { AppError } from "./appErrors";
 
+/**
+ * Sends an email using the configured Nodemailer transporter. Supports HTML,
+ * plain text, and optional attachments. Throws a user-friendly AppError if the
+ * email fails to send.
+ *
+ * @param to - Recipient email address.
+ * @param subject - Email subject line.
+ * @param html - Optional HTML body content.
+ * @param text - Optional plain text body content.
+ * @param attachments - Optional list of email attachments.
+ * @returns The Nodemailer `info` object containing delivery details.
+ */
+
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT) || 587,
@@ -11,7 +24,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// This function sends an email with details based on received parameters
 export async function sendEmail({
   to,
   subject,
