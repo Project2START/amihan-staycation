@@ -1,6 +1,5 @@
 name: Run Jest Tests
 
-# Trigger workflow on pull requests to Development or Testing
 on:
   pull_request:
     branches:
@@ -13,20 +12,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js environment
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
+      # Frontend dependencies
+      - name: Install frontend dependencies
         run: npm install
+        working-directory: frontend
 
-      # Step 4: Run Jest tests
+      # Backend dependencies
+      - name: Install backend dependencies
+        run: npm install
+        working-directory: backend
+
+      # Run Jest tests (backend)
       - name: Run Jest
         run: npm test
+        working-directory: backend
