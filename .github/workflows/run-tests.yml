@@ -29,4 +29,4 @@ jobs:
 
       # Step 4: Run Jest tests
       - name: Run Jest
-        run: npm test   # Or "npx jest" if your script isn't named test
+        run: npm test
