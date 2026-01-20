@@ -1,4 +1,4 @@
-name: CI - Unit Tests
+name: CI - Unit Tets
 
 # Trigger workflow on PRs to development, testing, main
 on:
