@@ -1,0 +1,85 @@
+"use client";
+
+import { useRef, useState } from "react";
+import {
+  useFormContext,
+  UseFormGetValues,
+  UseFormSetValue,
+} from "react-hook-form";
+import { MdOutlineFileUpload } from "react-icons/md";
+import { NewUnitSchema, PHOTOS_MIN } from "../lib/newUnitSchema";
+import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
+import UnitPhotos from "./UnitPhotos";
+
+export default function AddUnitPhotos() {
+  const {
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useFormContext<NewUnitSchema>();
+
+  const [openUnitPhotos, setOpenUnitPhotos] = useState<boolean>(false);
+
+  const inputPhotosRef = useRef<HTMLInputElement>(null);
+
+  const handleOpenUnitPhotos = () => {
+    setOpenUnitPhotos(true);
+  };
+  const handleCloseUnitPhotos = () => {
+    setOpenUnitPhotos(false);
+  };
+
+  return (
+    <div className="flex flex-col ">
+      <span className="font-bold">Unit Photos</span>
+      <button
+        type="button"
+        onClick={() => {
+          if (getValues("photos").length === 0) {
+            inputPhotosRef.current?.click();
+          } else {
+            handleOpenUnitPhotos();
+          }
+        }}
+        className="border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] h-[5rem]"
+      >
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="flex items-center gap-x-2 opacity-50">
+            <span className="text-lg">
+              <MdOutlineFileUpload />
+            </span>
+            <span className="font-bold">Upload</span>
+          </div>
+        </div>
+      </button>
+      {errors.photos && (
+        <p className="text-red-900 text-[0.65rem]" id="unitPhotos-error">
+          {errors.photos.message}
+        </p>
+      )}
+      <input
+        ref={inputPhotosRef}
+        type="file"
+        multiple
+        hidden
+        accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+        onChange={(e) => {
+          if (!e.target.files) return;
+
+          const photoFiles = Array.from(e.target.files);
+
+          setValue("photos", photoFiles, { shouldValidate: true });
+          handleOpenUnitPhotos();
+        }}
+      />
+
+      <DialogBaseContent
+        onCloseDialog={handleCloseUnitPhotos}
+        enableClickOutside={false}
+        openDialog={openUnitPhotos}
+      >
+        <UnitPhotos onCloseDialog={handleCloseUnitPhotos} />
+      </DialogBaseContent>
+    </div>
+  );
+}
