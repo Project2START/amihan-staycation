@@ -51,6 +51,8 @@ export default function AddMorePhotos() {
           setValue("photos", [...currentUnitPhotos, ...filesWithId], {
             shouldValidate: true,
           });
+
+          e.target.value = "";
         }}
       />
     </div>
