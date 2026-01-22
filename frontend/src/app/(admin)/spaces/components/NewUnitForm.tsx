@@ -42,22 +42,13 @@ interface INewUnitProps {
 }
 
 export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
-  const methods =
-    // {
-    //   register,
-    //   handleSubmit,
-    //   formState: { errors },
-    //   setValue,
-    //   getValues,
-    //   control,
-    // }
-    useForm<NewUnitSchema>({
-      resolver: zodResolver(newUnitSchema),
-      defaultValues: {
-        attributes: unitDefaultAttributes,
-        photos: [],
-      },
-    });
+  const methods = useForm<NewUnitSchema>({
+    resolver: zodResolver(newUnitSchema),
+    defaultValues: {
+      attributes: unitDefaultAttributes,
+      photos: [],
+    },
+  });
 
   const {
     handleSubmit,
@@ -68,7 +59,7 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [openAddAttr, setOpenAddAttr] = useState<boolean>(false);
-// NEXT TASK: CLEANING UP IMAGES OBJECT URL CREATION
+  // NEXT TASK: CLEANING UP IMAGES OBJECT URL CREATION
   const onSubmit = async (data: NewUnitSchema) => {
     console.log(data);
   };

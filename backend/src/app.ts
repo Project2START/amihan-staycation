@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import userRoutes from "./modules/user/user.routes";
+import productRoutes from "./modules/product/product.routes";
 import registreeRoutes from "./modules/registree/registree.routes";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { expressMiddleware } from "@as-integrations/express4";
@@ -20,10 +21,11 @@ app.use(
     secret: process.env.SESSION_SECRET || "Strong_Secret_Key",
     resave: false,
     saveUninitialized: false,
-  })
+  }),
 );
 app.use("/api/registree", registreeRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/product", productRoutes);
 
 async function setUpGraphql() {
   const server = new ApolloServer({
