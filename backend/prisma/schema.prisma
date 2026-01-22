@@ -9,12 +9,12 @@ datasource db {
 }
 
 model Users {
-  id          String   @id(map: "users_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at  DateTime @default(now()) @db.Timestamptz(6)
   role        String   @default("user")
   first_name  String?
   last_name   String?
-  email       String   @unique(map: "users_email_key")
+  email       String   @unique
   password    String?
   nationality String   @default("Filipino")
   google_id   String?  @unique
@@ -24,18 +24,43 @@ model Users {
 }
 
 model Registrees {
-  first_name         String
-  last_name          String
-  password           String
-  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email              String
-  verificationCode   String
-  codeExpiry         DateTime
-  nextAllowedResend  DateTime
-  resendCount        Int      @default(0)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  first_name        String
+  last_name         String
+  password          String
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email             String
+  verificationCode  String
+  codeExpiry        DateTime
+  nextAllowedResend DateTime
+  resendCount       Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   @@map("registrees")
 }
 
+model Product {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String   @db.VarChar(100)
+  price      Float
+  maxPersons Int
+  about      String?  @db.VarChar(1000)
+  attributes Json?    // array of objects: { name, iconId, quantity }
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  photos     Photo[]
+
+  @@map("products")
+}
+
+model Photo {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  image_url  String
+  alt        String
+  order_index Int
+  productId   String   @db.Uuid
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@map("photos")
+}

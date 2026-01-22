@@ -23,31 +23,28 @@ export const newUnitSchema = z.object({
     .string()
     .min(
       NAME_MIN_LENGTH,
-      `Unit name must have at least ${NAME_MIN_LENGTH} characters`
+      `Unit name must have at least ${NAME_MIN_LENGTH} characters`,
     )
     .max(
       NAME_MAX_LENGTH,
-      `Unit name has exceeded ${NAME_MAX_LENGTH} characters`
+      `Unit name has exceeded ${NAME_MAX_LENGTH} characters`,
     ),
   price: z
     .number("Invalid unit price")
-    .positive("Unit price must be greater than 0"),
-  // .max(PRICE_MAX, "Unit price cannot exceed 1 million")
+    .positive("Unit price must be greater than 0")
+    .max(PRICE_MAX, "Unit price cannot exceed 1 million"),
   maxPersons: z
     .number("Invalid unit max persons")
-    .min(MAXPERSONS_MIN, `Unit must have at least ${MAXPERSONS_MIN} person`),
-  // .max(
-  //   MAXPERSONS_MAX,
-  //   `Unit capacity exceeded ${MAXPERSONS_MAX} max persons`
-  // )
+    .min(MAXPERSONS_MIN, `Unit must have at least ${MAXPERSONS_MIN} person`)
+    .max(
+      MAXPERSONS_MAX,
+      `Unit capacity exceeded ${MAXPERSONS_MAX} max persons`,
+    ),
   about: z
     .string()
     .max(ABOUT_MAX, `Unit description exceeded ${NAME_MAX_LENGTH} characters`)
     .optional(),
   attributes: z.array(attributeSchema).optional(),
-  // photos: z
-  //   .array(z.instanceof(File))
-  //   .min(3, `Unit must have at least ${PHOTOS_MIN} photos`),
   photos: z
     .array(z.instanceof(File))
     .min(PHOTOS_MIN, `Unit must have at least ${PHOTOS_MIN} photos`)
@@ -60,11 +57,11 @@ export const newUnitSchema = z.object({
             "image/jpg",
             "image/gif",
             "image/webp",
-          ].includes(file.type)
+          ].includes(file.type),
         ),
       {
         message: "All files must be images (png, jpg, jpeg, gif, webp)",
-      }
+      },
     ),
 });
 
