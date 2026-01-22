@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { IoMdAdd } from "react-icons/io";
 import { NewUnitSchema } from "../lib/newUnitSchema";
+import { v4 as uuid } from "uuid";
 
 export default function AddMorePhotos() {
   const { getValues, setValue } = useFormContext<NewUnitSchema>();
@@ -42,7 +43,12 @@ export default function AddMorePhotos() {
 
           const currentUnitPhotos = getValues("photos");
 
-          setValue("photos", [...currentUnitPhotos, ...newPhotoFiles], {
+          const filesWithId = newPhotoFiles.map((newPhotoFile) => ({
+            photo: newPhotoFile,
+            id: uuid(),
+          }));
+
+          setValue("photos", [...currentUnitPhotos, ...filesWithId], {
             shouldValidate: true,
           });
         }}

@@ -1,15 +1,13 @@
 "use client";
 
-import { useForm, useFieldArray, FormProvider } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { newUnitSchema, NewUnitSchema } from "../lib/newUnitSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import AddUnitAttributes from "./AddUnitAttributes";
 import { FiPlusCircle } from "react-icons/fi";
-import RenderIcon from "@/app/shared/ui/RenderIcon";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
-import { TiDelete } from "react-icons/ti";
 import AddUnitPhotos from "./AddUnitPhotos";
 import UnitAttributes from "./UnitAttributes";
 
@@ -56,10 +54,8 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
     formState: { errors },
   } = methods;
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [openAddAttr, setOpenAddAttr] = useState<boolean>(false);
-  // NEXT TASK: CLEANING UP IMAGES OBJECT URL CREATION
+
   const onSubmit = async (data: NewUnitSchema) => {
     console.log(data);
   };

@@ -1,15 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import {
-  useFormContext,
-  UseFormGetValues,
-  UseFormSetValue,
-} from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { MdOutlineFileUpload } from "react-icons/md";
-import { NewUnitSchema, PHOTOS_MIN } from "../lib/newUnitSchema";
+import { NewUnitSchema } from "../lib/newUnitSchema";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 import UnitPhotos from "./UnitPhotos";
+import { v4 as uuid } from "uuid";
 
 export default function AddUnitPhotos() {
   const {
@@ -68,7 +65,12 @@ export default function AddUnitPhotos() {
 
           const photoFiles = Array.from(e.target.files);
 
-          setValue("photos", photoFiles, { shouldValidate: true });
+          const filesWithId = photoFiles.map((photoFile) => ({
+            photo: photoFile,
+            id: uuid(),
+          }));
+
+          setValue("photos", filesWithId, { shouldValidate: true });
           handleOpenUnitPhotos();
         }}
       />

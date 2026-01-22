@@ -45,19 +45,42 @@ export const newUnitSchema = z.object({
     .max(ABOUT_MAX, `Unit description exceeded ${NAME_MAX_LENGTH} characters`)
     .optional(),
   attributes: z.array(attributeSchema).optional(),
+  // photos: z
+  //   .array(z.instanceof(File))
+  //   .min(PHOTOS_MIN, `Unit must have at least ${PHOTOS_MIN} photos`)
+  //   .refine(
+  //     (files) =>
+  //       files.every((file) =>
+  //         [
+  //           "image/png",
+  //           "image/jpeg",
+  //           "image/jpg",
+  //           "image/gif",
+  //           "image/webp",
+  //         ].includes(file.type),
+  //       ),
+  //     {
+  //       message: "All files must be images (png, jpg, jpeg, gif, webp)",
+  //     },
+  //   ),
   photos: z
-    .array(z.instanceof(File))
+    .array(
+      z.object({
+        id: z.string(),
+        photo: z.instanceof(File),
+      }),
+    )
     .min(PHOTOS_MIN, `Unit must have at least ${PHOTOS_MIN} photos`)
     .refine(
-      (files) =>
-        files.every((file) =>
+      (items) =>
+        items.every((item) =>
           [
             "image/png",
             "image/jpeg",
             "image/jpg",
             "image/gif",
             "image/webp",
-          ].includes(file.type),
+          ].includes(item.photo.type),
         ),
       {
         message: "All files must be images (png, jpg, jpeg, gif, webp)",

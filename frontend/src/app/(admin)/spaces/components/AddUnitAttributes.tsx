@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  type UseFormSetValue,
-  type UseFormGetValues,
-  type UseFormWatch,
-  type UseFormRegister,
-  useFormContext,
-} from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { NewUnitSchema } from "../lib/newUnitSchema";
 import React, { useState } from "react";
 import { attributeIcons } from "../constants/attributeIcons";
@@ -29,8 +23,8 @@ export default function AddUnitAttributes({ onClose }: UnitAttributeProps) {
   const currentAttributeIcons = attributeIcons.filter(
     (attributeIcon) =>
       !(getValues("attributes") || []).some(
-        (attribute) => attribute.iconId === attributeIcon.id
-      )
+        (attribute) => attribute.iconId === attributeIcon.id,
+      ),
   );
 
   const [newAttr, setNewAttr] = useState<IAddAttributeState>({
@@ -54,7 +48,7 @@ export default function AddUnitAttributes({ onClose }: UnitAttributeProps) {
 
   const handleAttributeChange = (
     attr: keyof IAddAttributeState,
-    e?: React.ChangeEvent<HTMLInputElement>
+    e?: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (e) {
       setNewAttr((newAttr) => ({ ...newAttr, [attr]: e.target.value }));

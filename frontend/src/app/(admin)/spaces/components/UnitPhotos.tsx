@@ -27,9 +27,9 @@ export default function UnitPhotos({ onCloseDialog }: IUnitPhotosProps) {
     }
 
     const mappedPhotos = photos.map((photo) => ({
-      photo,
-      id: photo.name,
-      src: URL.createObjectURL(photo),
+      ...photo,
+      photo: photo.photo,
+      src: URL.createObjectURL(photo.photo),
     }));
 
     setSources(mappedPhotos);
@@ -40,6 +40,7 @@ export default function UnitPhotos({ onCloseDialog }: IUnitPhotosProps) {
       });
     };
   }, [photos]);
+
 
   return (
     <div className="px-[1.5rem] pt-[2rem] pb-[1.5rem]">
@@ -53,31 +54,6 @@ export default function UnitPhotos({ onCloseDialog }: IUnitPhotosProps) {
       <UnitPhotosView sources={sources} />
 
       <AddMorePhotos />
-
-      {/* <div className="bg-[#efefef] rounded-lg">
-        <div className="full relative h-[9.5rem]">
-          {activeImage && (
-            <Image
-              src={activeImage}
-              fill
-              alt="hello"
-              className="object-cover object-center rounded-lg"
-            />
-          )}
-        </div>
-        <div className="w-full overflow-x-auto">
-          <UnitImagesDraggable
-            sources={sources}
-            onHandleActiveImage={(src) => setActiveImage(src)}
-            onSetSources={(movedArray) => {
-              setValue(
-                "photos",
-                movedArray.map((photo) => photo.photo)
-              );
-            }}
-          />
-        </div>
-      </div> */}
     </div>
   );
 }

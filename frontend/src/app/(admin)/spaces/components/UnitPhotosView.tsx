@@ -16,15 +16,21 @@ export default function UnitPhotosView({
   const { setValue } = useFormContext<NewUnitSchema>();
 
   useEffect(() => {
-    setActiveImage(sources.length !== 0 ? sources[0].src : "");
-  }, [sources]);
+    if (!activeImage && sources.length) {
+      setActiveImage(sources[0].id);
+    } else if (!sources.length) {
+      setActiveImage(null);
+    }
+  }, [sources, activeImage]);
+
+  const activeImgSrc = sources.find((source) => source.id === activeImage);
 
   return (
     <div className="bg-[#efefef] rounded-lg">
       <div className="full relative h-[9.5rem]">
-        {activeImage && (
+        {activeImgSrc && (
           <Image
-            src={activeImage}
+            src={activeImgSrc.src}
             fill
             alt="Amihan Staycation Active View Unit Image"
             className="object-cover object-center rounded-lg"
@@ -33,16 +39,13 @@ export default function UnitPhotosView({
       </div>
       <div className="w-full overflow-x-auto">
         <UnitImagesDraggable
-          //   sources={sources.map((source) => ({
-          //     src: source.src,
-          //     id: source.src,
-          //   }))}
+          activeImage={activeImage}
           sources={sources}
-          onHandleActiveImage={(src) => setActiveImage(src)}
+          onHandleActiveImage={(id) => setActiveImage(id)}
           onSetSources={(movedArray) => {
             setValue(
               "photos",
-              movedArray.map((photo) => photo.photo)
+              movedArray.map((photo) => ({ photo: photo.photo, id: photo.id })),
             );
           }}
         />
