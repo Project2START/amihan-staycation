@@ -71,6 +71,7 @@ export default function AddUnitPhotos() {
           }));
 
           setValue("photos", filesWithId, { shouldValidate: true });
+          e.target.value = "";
           handleOpenUnitPhotos();
         }}
       />
