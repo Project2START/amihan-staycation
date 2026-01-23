@@ -35,7 +35,9 @@ export default function UnitImagesDraggable({
 }: IImagesDraggable) {
   const [items, setItems] = useState<IImagesDraggable["sources"]>([]);
 
+  const parentContainerRef = useRef<null | HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const prevLengthRef = useRef(sources.length);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -76,48 +78,79 @@ export default function UnitImagesDraggable({
     onHandleActiveImage(id);
   }
 
+  const handleScrollParentCont = () => {
+    if (!parentContainerRef.current) return;
+
+    const container = parentContainerRef.current;
+
+    container.scrollTo({
+      left: container.scrollWidth - container.clientWidth,
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   useEffect(() => {
     setItems(sources);
   }, [sources]);
 
-  return (
-    <div
-      ref={containerRef}
-      className="w-max flex gap-x-3 overflow-x-hidden py-[0.75rem]"
-    >
-      <DndContext
-        onDragEnd={handleDragEnd}
-        collisionDetection={closestCenter}
-        sensors={sensors}
-        autoScroll={{
-          canScroll: (element) => element !== containerRef.current,
-        }}
-      >
-        <SortableContext
-          strategy={horizontalListSortingStrategy}
-          items={items.map((item) => ({ item, id: item.id }))}
-        >
-          {items.map((item) => {
-            const isActive = item.id === activeImage;
+  useEffect(() => {
+    if (!items.length) return;
 
-            return (
-              <SortableItem key={item.id} id={item.id}>
-                <button
-                  type="button"
-                  onClick={() => handeActiveImage(item.id)}
-                  className={
-                    isActive
-                      ? "outline-3 outline-primary-normal rounded-lg"
-                      : undefined
-                  }
-                >
-                  <UnitImage src={item.src} width={7} height={4} />
-                </button>
-              </SortableItem>
-            );
-          })}
-        </SortableContext>
-      </DndContext>
+    const prevLength = prevLengthRef.current;
+    const currLength = items.length;
+
+    if (currLength > prevLength && prevLength !== 0) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          handleScrollParentCont();
+        });
+      });
+    }
+
+    prevLengthRef.current = currLength;
+  }, [items.length]);
+
+  return (
+    <div className="w-full overflow-x-auto" ref={parentContainerRef}>
+      <div
+        ref={containerRef}
+        className="w-max flex gap-x-3 overflow-x-hidden py-[0.75rem]"
+      >
+        <DndContext
+          onDragEnd={handleDragEnd}
+          collisionDetection={closestCenter}
+          sensors={sensors}
+          autoScroll={{
+            canScroll: (element) => element !== containerRef.current,
+          }}
+        >
+          <SortableContext
+            strategy={horizontalListSortingStrategy}
+            items={items.map((item) => ({ item, id: item.id }))}
+          >
+            {items.map((item) => {
+              const isActive = item.id === activeImage;
+
+              return (
+                <SortableItem key={item.id} id={item.id}>
+                  <button
+                    type="button"
+                    onClick={() => handeActiveImage(item.id)}
+                    className={
+                      isActive
+                        ? "outline-3 outline-primary-normal rounded-lg"
+                        : undefined
+                    }
+                  >
+                    <UnitImage src={item.src} width={7} height={4} />
+                  </button>
+                </SortableItem>
+              );
+            })}
+          </SortableContext>
+        </DndContext>
+      </div>
     </div>
   );
 }

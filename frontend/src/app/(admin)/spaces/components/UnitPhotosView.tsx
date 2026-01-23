@@ -5,6 +5,7 @@ import UnitImagesDraggable from "./UnitImagesDraggable";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { NewUnitSchema } from "../lib/newUnitSchema";
+import PhotoViewActions from "./PhotoViewActions";
 
 export default function UnitPhotosView({
   sources,
@@ -27,29 +28,33 @@ export default function UnitPhotosView({
 
   return (
     <div className="bg-[#efefef] rounded-lg">
-      <div className="full relative h-[9.5rem]">
+      <div className="full relative h-[10.5rem]">
         {activeImgSrc && (
-          <Image
-            src={activeImgSrc.src}
-            fill
-            alt="Amihan Staycation Active View Unit Image"
-            className="object-cover object-center rounded-lg"
-          />
+          <>
+            <PhotoViewActions
+              photoId={activeImgSrc.id}
+              onNewActiveImage={(id) => setActiveImage(id)}
+            />
+            <Image
+              src={activeImgSrc.src}
+              fill
+              alt="Amihan Staycation Active View Unit Image"
+              className="object-cover object-center rounded-lg"
+            />
+          </>
         )}
       </div>
-      <div className="w-full overflow-x-auto">
-        <UnitImagesDraggable
-          activeImage={activeImage}
-          sources={sources}
-          onHandleActiveImage={(id) => setActiveImage(id)}
-          onSetSources={(movedArray) => {
-            setValue(
-              "photos",
-              movedArray.map((photo) => ({ photo: photo.photo, id: photo.id })),
-            );
-          }}
-        />
-      </div>
+      <UnitImagesDraggable
+        activeImage={activeImage}
+        sources={sources}
+        onHandleActiveImage={(id) => setActiveImage(id)}
+        onSetSources={(movedArray) => {
+          setValue(
+            "photos",
+            movedArray.map((photo) => ({ photo: photo.photo, id: photo.id })),
+          );
+        }}
+      />
     </div>
   );
 }

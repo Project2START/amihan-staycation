@@ -41,7 +41,6 @@ export default function UnitPhotos({ onCloseDialog }: IUnitPhotosProps) {
     };
   }, [photos]);
 
-
   return (
     <div className="px-[1.5rem] pt-[2rem] pb-[1.5rem]">
       <div className="relative mb-[1rem]">
