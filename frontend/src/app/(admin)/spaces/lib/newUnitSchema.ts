@@ -11,6 +11,7 @@ export const MAXPERSONS_MAX = 4;
 export const ABOUT_MAX = 1000;
 
 export const PHOTOS_MIN = 3;
+export const PHOTOS_MAX = 25;
 
 const attributeSchema = z.object({
   name: z.string(),
@@ -67,25 +68,27 @@ export const newUnitSchema = z.object({
     .array(
       z.object({
         id: z.string(),
-        photo: z.instanceof(File),
+        src: z.string(),
+        // photo: z.instanceof(File),
       }),
     )
     .min(PHOTOS_MIN, `Unit must have at least ${PHOTOS_MIN} photos`)
-    .refine(
-      (items) =>
-        items.every((item) =>
-          [
-            "image/png",
-            "image/jpeg",
-            "image/jpg",
-            "image/gif",
-            "image/webp",
-          ].includes(item.photo.type),
-        ),
-      {
-        message: "All files must be images (png, jpg, jpeg, gif, webp)",
-      },
-    ),
+    .max(PHOTOS_MAX, `Unit exceeded ${PHOTOS_MAX} max photos`),
+  // .refine(
+  //   (items) =>
+  //     items.every((item) =>
+  //       [
+  //         "image/png",
+  //         "image/jpeg",
+  //         "image/jpg",
+  //         "image/gif",
+  //         "image/webp",
+  //       ].includes(item.photo.type),
+  //     ),
+  //   {
+  //     message: "All files must be images (png, jpg, jpeg, gif, webp)",
+  //   },
+  // ),
 });
 
 export type NewUnitSchema = z.infer<typeof newUnitSchema>;

@@ -5,16 +5,21 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdOpenInFull } from "react-icons/md";
 import { useFormContext } from "react-hook-form";
 import { NewUnitSchema } from "../lib/newUnitSchema";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
+import PhotoFullView from "@/app/shared/components/PhotoFullView";
 
 export default function PhotoViewActions({
+  photoSrc,
   photoId,
   onNewActiveImage,
 }: {
+  photoSrc: string;
   photoId: string;
   onNewActiveImage: (id: string) => void;
 }) {
   const replaceInputRef = useRef<null | HTMLInputElement>(null);
+  const [fullView, setFullView] = useState(false);
 
   const { getValues, setValue } = useFormContext<NewUnitSchema>();
 
@@ -23,22 +28,24 @@ export default function PhotoViewActions({
 
     const newPhotos = photos.map((photo) => {
       if (photo.id === photoId) {
-        return { ...photo, photo: file };
+        return { ...photo, src: URL.createObjectURL(file) };
       }
       return photo;
     });
 
-    setValue("photos", newPhotos, {
-      shouldValidate: true,
-    });
+    setValue("photos", newPhotos);
+
+    URL.revokeObjectURL(photoSrc);
   };
 
   const handleDeletePhoto = () => {
     const photos = getValues("photos");
+
     const photoIndex = photos.findIndex((photo) => photo.id === photoId);
 
     const newPhotos = photos.filter((photo) => photo.id !== photoId);
-    setValue("photos", newPhotos, { shouldValidate: true });
+
+    setValue("photos", newPhotos);
 
     let newActiveId: string | null = null;
 
@@ -51,6 +58,8 @@ export default function PhotoViewActions({
     if (newActiveId) {
       onNewActiveImage(newActiveId);
     }
+
+    URL.revokeObjectURL(photoSrc);
   };
 
   return (
@@ -87,13 +96,23 @@ export default function PhotoViewActions({
               <RiDeleteBin6Line />
             </span>
           </button>
-          <button type="button">
+          <button type="button" onClick={() => setFullView(true)}>
             <span className="text-white text-base">
               <MdOpenInFull />
             </span>
           </button>
         </div>
       </div>
+      <DialogBaseContent
+        onCloseDialog={() => setFullView(false)}
+        openDialog={fullView}
+        enableClickOutside={false}
+      >
+        <PhotoFullView
+          photoSrc={photoSrc}
+          onCloseDialog={() => setFullView(false)}
+        />
+      </DialogBaseContent>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { NewUnitSchema } from "../lib/newUnitSchema";
@@ -9,15 +9,19 @@ import UnitPhotos from "./UnitPhotos";
 import { v4 as uuid } from "uuid";
 
 export default function AddUnitPhotos() {
+  const [openUnitPhotos, setOpenUnitPhotos] = useState<boolean>(false);
+
   const {
     getValues,
     setValue,
     formState: { errors },
+    watch,
   } = useFormContext<NewUnitSchema>();
 
-  const [openUnitPhotos, setOpenUnitPhotos] = useState<boolean>(false);
+  const photos = watch("photos") ?? [];
 
   const inputPhotosRef = useRef<HTMLInputElement>(null);
+  const photosRef = useRef(photos);
 
   const handleOpenUnitPhotos = () => {
     setOpenUnitPhotos(true);
@@ -25,6 +29,18 @@ export default function AddUnitPhotos() {
   const handleCloseUnitPhotos = () => {
     setOpenUnitPhotos(false);
   };
+
+  useEffect(() => {
+    photosRef.current = photos;
+  }, [photos]);
+
+  useEffect(() => {
+    return () => {
+      photosRef.current.forEach((photo) => {
+        URL.revokeObjectURL(photo.src);
+      });
+    };
+  }, []);
 
   return (
     <div className="flex flex-col ">
@@ -65,13 +81,15 @@ export default function AddUnitPhotos() {
 
           const photoFiles = Array.from(e.target.files);
 
-          const filesWithId = photoFiles.map((photoFile) => ({
-            photo: photoFile,
+          const photos = photoFiles.map((photoFile) => ({
+            src: URL.createObjectURL(photoFile),
             id: uuid(),
           }));
 
-          setValue("photos", filesWithId, { shouldValidate: true });
+          setValue("photos", photos);
+
           e.target.value = "";
+
           handleOpenUnitPhotos();
         }}
       />
