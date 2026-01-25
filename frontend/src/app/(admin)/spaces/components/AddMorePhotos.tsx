@@ -44,6 +44,7 @@ export default function AddMorePhotos() {
           const currentUnitPhotos = getValues("photos");
 
           const newPhotos = newPhotoFiles.map((newPhotoFile) => ({
+            file: newPhotoFile,
             src: URL.createObjectURL(newPhotoFile),
             id: uuid(),
           }));

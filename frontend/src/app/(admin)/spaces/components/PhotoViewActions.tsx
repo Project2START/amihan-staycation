@@ -21,14 +21,14 @@ export default function PhotoViewActions({
   const replaceInputRef = useRef<null | HTMLInputElement>(null);
   const [fullView, setFullView] = useState(false);
 
-  const { getValues, setValue } = useFormContext<NewUnitSchema>();
+  const { getValues, setValue, watch } = useFormContext<NewUnitSchema>();
 
   const handleUpdatePhoto = (file: File) => {
     const photos = getValues("photos");
 
     const newPhotos = photos.map((photo) => {
       if (photo.id === photoId) {
-        return { ...photo, src: URL.createObjectURL(file) };
+        return { ...photo, src: URL.createObjectURL(file), file };
       }
       return photo;
     });
@@ -62,9 +62,18 @@ export default function PhotoViewActions({
     URL.revokeObjectURL(photoSrc);
   };
 
+  const photos = watch("photos");
+
+  const photoIndex = photos.findIndex((photo) => photo.id === photoId);
+
   return (
     <div className="w-full h-[2rem] absolute top-0 left-0 z-10 bg-gradient-to-b from-[rgb(0,0,0)] to-[rgba(0,0,0, 0.75)]">
-      <div className="flex items-center justify-end h-full px-[0.5rem]">
+      <div className="flex items-center justify-between h-full px-[0.5rem]">
+        <div>
+          <span className="text-white">
+            {photoIndex + 1} / {photos.length}
+          </span>
+        </div>
         <div className="flex gap-x-3">
           <button
             type="button"
@@ -77,19 +86,6 @@ export default function PhotoViewActions({
             <span className="text-white text-base">
               <TbReplace />
             </span>
-            <input
-              ref={replaceInputRef}
-              type="file"
-              hidden
-              accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-
-                if (!file) return;
-
-                handleUpdatePhoto(file);
-              }}
-            />
           </button>
           <button type="button" onClick={handleDeletePhoto}>
             <span className="text-white text-base">
@@ -103,6 +99,19 @@ export default function PhotoViewActions({
           </button>
         </div>
       </div>
+      <input
+        ref={replaceInputRef}
+        type="file"
+        hidden
+        accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+
+          if (!file) return;
+
+          handleUpdatePhoto(file);
+        }}
+      />
       <DialogBaseContent
         onCloseDialog={() => setFullView(false)}
         openDialog={fullView}

@@ -43,52 +43,20 @@ export const newUnitSchema = z.object({
     ),
   about: z
     .string()
-    .max(ABOUT_MAX, `Unit description exceeded ${NAME_MAX_LENGTH} characters`)
+    .max(ABOUT_MAX, `Unit description exceeded ${ABOUT_MAX} characters`)
     .optional(),
   attributes: z.array(attributeSchema).optional(),
-  // photos: z
-  //   .array(z.instanceof(File))
-  //   .min(PHOTOS_MIN, `Unit must have at least ${PHOTOS_MIN} photos`)
-  //   .refine(
-  //     (files) =>
-  //       files.every((file) =>
-  //         [
-  //           "image/png",
-  //           "image/jpeg",
-  //           "image/jpg",
-  //           "image/gif",
-  //           "image/webp",
-  //         ].includes(file.type),
-  //       ),
-  //     {
-  //       message: "All files must be images (png, jpg, jpeg, gif, webp)",
-  //     },
-  //   ),
+
   photos: z
     .array(
       z.object({
+        file: z.instanceof(File),
         id: z.string(),
         src: z.string(),
-        // photo: z.instanceof(File),
       }),
     )
     .min(PHOTOS_MIN, `Unit must have at least ${PHOTOS_MIN} photos`)
     .max(PHOTOS_MAX, `Unit exceeded ${PHOTOS_MAX} max photos`),
-  // .refine(
-  //   (items) =>
-  //     items.every((item) =>
-  //       [
-  //         "image/png",
-  //         "image/jpeg",
-  //         "image/jpg",
-  //         "image/gif",
-  //         "image/webp",
-  //       ].includes(item.photo.type),
-  //     ),
-  //   {
-  //     message: "All files must be images (png, jpg, jpeg, gif, webp)",
-  //   },
-  // ),
 });
 
 export type NewUnitSchema = z.infer<typeof newUnitSchema>;

@@ -23,7 +23,11 @@ export default function UnitPhotos({ onCloseDialog }: IUnitPhotosProps) {
         </div>
         <h1 className="text-center text-xl font-bold">Unit Photos</h1>
         <p className="px-[0.25rem] py-[0.5rem] absolute top-[50%] translate-y-[-50%] right-0">
-          {photos.length} {photos.length === 1 ? "photo" : "photos"}
+          {photos.length > 0
+            ? photos.length === 1
+              ? `${photos.length} photo`
+              : `${photos.length} photos`
+            : "No photos"}
         </p>
       </div>
 

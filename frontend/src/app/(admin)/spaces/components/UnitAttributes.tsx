@@ -7,7 +7,7 @@ import RenderIcon from "@/app/shared/ui/RenderIcon";
 import { TiDelete } from "react-icons/ti";
 
 export default function UnitAttributes() {
-  const { control } = useFormContext<NewUnitSchema>();
+  const { control, watch } = useFormContext<NewUnitSchema>();
 
   const { fields, remove } = useFieldArray({
     name: "attributes",
@@ -46,37 +46,45 @@ export default function UnitAttributes() {
     prevLengthRef.current = currLength;
   }, [fields.length]);
 
+  const attributes = watch("attributes");
+
   return (
     <div
-      className="border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] overflow-auto"
+      className="border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] overflow-auto h-[7rem]"
       ref={attrContainerRef}
     >
-      <ul className="w-max h-[5rem] flex flex-col flex-wrap gap-3">
-        {fields.map(({ iconId, name, quantity }, index) => {
-          return (
-            <li key={iconId}>
-              <div className="relative">
-                <div className="border-1 border-secondary-normal/50 rounded-lg p-[0.5rem] flex items-center gap-x-1">
-                  <span className="text-base">
-                    <RenderIcon iconId={iconId} />
-                  </span>
-                  <span>{quantity > 0 ? quantity : null}</span>
-                  <span>{name}</span>
-                </div>
+      {attributes?.length === 0 ? (
+        <div className="h-full flex items-center justify-center">
+          <span className="opacity-50">Unit has no attributes.</span>
+        </div>
+      ) : (
+        <ul className="w-max h-[5rem] flex flex-col flex-wrap gap-3">
+          {fields.map(({ iconId, name, quantity }, index) => {
+            return (
+              <li key={iconId}>
+                <div className="relative">
+                  <div className="border-1 border-secondary-normal/50 rounded-lg p-[0.5rem] flex items-center gap-x-1">
+                    <span className="text-base">
+                      <RenderIcon iconId={iconId} />
+                    </span>
+                    <span>{quantity > 0 ? quantity : null}</span>
+                    <span>{name}</span>
+                  </div>
 
-                <button
-                  onClick={() => handleRemoveAttribute(index)}
-                  className="absolute right-0 top-0 translate-x-[50%] translate-y-[-50%]"
-                >
-                  <span className="text-xl">
-                    <TiDelete />
-                  </span>
-                </button>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+                  <button
+                    onClick={() => handleRemoveAttribute(index)}
+                    className="absolute right-0 top-0 translate-x-[50%] translate-y-[-50%]"
+                  >
+                    <span className="text-xl">
+                      <TiDelete />
+                    </span>
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

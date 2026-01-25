@@ -57,7 +57,32 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
   const [openAddAttr, setOpenAddAttr] = useState<boolean>(false);
 
   const onSubmit = async (data: NewUnitSchema) => {
-    console.log(data);
+    const photosWithIndex = data.photos.map((photo, index) => ({
+      ...photo,
+      order_index: index + 1,
+    }));
+
+    const finalData = { ...data, photos: photosWithIndex };
+
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value == null) return;
+
+      if (value instanceof FileList) {
+        Array.from(value).forEach((file) => {
+          formData.append(key, file);
+        });
+      } else if (value instanceof File) {
+        formData.append(key, value);
+      } else if (typeof value === "object") {
+        formData.append(key, JSON.stringify(value));
+      } else {
+        formData.append(key, String(value));
+      }
+    });
+
+    console.log(formData);
   };
 
   return (
@@ -114,6 +139,25 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                   id="unitMaxPersons-error"
                 >
                   {errors.maxPersons.message}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col mt-[1rem]">
+              <span className="font-bold">About</span>
+              <div className="mt-[0.5rem] h-[7rem]">
+                <textarea
+                  {...register("about")}
+                  id="unit-about"
+                  className="w-full h-full border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] input-base-focus"
+                  placeholder="Tell something about this unit..."
+                  aria-describedby={
+                    errors.about ? "unitAbout-error" : undefined
+                  }
+                ></textarea>
+              </div>
+              {errors.about && (
+                <p className="text-red-900 text-[0.65rem]" id="unitAbout-error">
+                  {errors.about.message}
                 </p>
               )}
             </div>

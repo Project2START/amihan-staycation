@@ -54,14 +54,20 @@ export default function AddUnitPhotos() {
             handleOpenUnitPhotos();
           }
         }}
-        className="border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] h-[5rem]"
+        className="border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] h-[7rem]"
       >
         <div className="w-full h-full flex items-center justify-center">
           <div className="flex items-center gap-x-2 opacity-50">
             <span className="text-lg">
               <MdOutlineFileUpload />
             </span>
-            <span className="font-bold">Upload</span>
+            <span className="font-bold">
+              {photos.length > 0
+                ? photos.length === 1
+                  ? `${photos.length} photo`
+                  : `${photos.length} photos`
+                : "Upload"}
+            </span>
           </div>
         </div>
       </button>
@@ -82,6 +88,7 @@ export default function AddUnitPhotos() {
           const photoFiles = Array.from(e.target.files);
 
           const photos = photoFiles.map((photoFile) => ({
+            file: photoFile,
             src: URL.createObjectURL(photoFile),
             id: uuid(),
           }));
