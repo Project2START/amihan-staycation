@@ -1,14 +1,14 @@
+import z from "zod";
 import {
+  NAME_MIN_LENGTH,
   ABOUT_MAX,
   MAXPERSONS_MAX,
   MAXPERSONS_MIN,
   NAME_MAX_LENGTH,
-  NAME_MIN_LENGTH,
   PHOTOS_MAX,
   PHOTOS_MIN,
   PRICE_MAX,
-} from "@/app/shared/constants/productFormValidation";
-import z from "zod";
+} from "../../../shared/constants/productFormValidation";
 
 const attributeSchema = z.object({
   name: z.string(),
@@ -16,7 +16,7 @@ const attributeSchema = z.object({
   quantity: z.number(),
 });
 
-export const newUnitSchema = z.object({
+export const productSchema = z.object({
   name: z
     .string()
     .min(
@@ -56,4 +56,4 @@ export const newUnitSchema = z.object({
     .max(PHOTOS_MAX, `Unit exceeded ${PHOTOS_MAX} max photos`),
 });
 
-export type NewUnitSchema = z.infer<typeof newUnitSchema>;
+export type ProductDTO = z.infer<typeof productSchema>;

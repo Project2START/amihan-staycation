@@ -17,7 +17,9 @@ export function errorHandler(error: unknown) {
     if (!error.response) {
       message = error.message;
     } else {
-      message = error.response.data.message || "";
+      message =
+        error.response.data.message ||
+        "Something went wrong. Please try again later.";
     }
     status = error.status;
   } else {

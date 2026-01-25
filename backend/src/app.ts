@@ -23,6 +23,7 @@ app.use(
     saveUninitialized: false,
   }),
 );
+
 app.use("/api/registree", registreeRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/product", productRoutes);

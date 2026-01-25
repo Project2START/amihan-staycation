@@ -10,6 +10,9 @@ import { FiPlusCircle } from "react-icons/fi";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 import AddUnitPhotos from "./AddUnitPhotos";
 import UnitAttributes from "./UnitAttributes";
+import axios from "axios";
+import { HOST } from "@/app/shared/constants/config";
+import { errorHandler } from "@/app/shared/lib/errorHandler";
 
 export const unitDefaultAttributes = [
   { name: "Beds", iconId: "beds-1", quantity: 2 },
@@ -40,6 +43,9 @@ interface INewUnitProps {
 }
 
 export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
+  const [openAddAttr, setOpenAddAttr] = useState<boolean>(false);
+  const [formError, setFormError] = useState<null | string>(null);
+
   const methods = useForm<NewUnitSchema>({
     resolver: zodResolver(newUnitSchema),
     defaultValues: {
@@ -54,8 +60,6 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
     formState: { errors },
   } = methods;
 
-  const [openAddAttr, setOpenAddAttr] = useState<boolean>(false);
-
   const onSubmit = async (data: NewUnitSchema) => {
     const photosWithIndex = data.photos.map((photo, index) => ({
       ...photo,
@@ -66,23 +70,48 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
 
     const formData = new FormData();
 
-    Object.entries(data).forEach(([key, value]) => {
-      if (value == null) return;
+    Object.entries(finalData).forEach(([key, value]) => {
+      formData.append(key, JSON.stringify(value));
+      // if (typeof value === "object") {
+      //   if (key === "photos") {
+      //   }
+      // }
+      //   const withFile = value.filter((obj) => obj.hasOwnProperty("file"));
+      //   const withoutFile = value.filter((obj) => !obj.hasOwnProperty("file"));
 
-      if (value instanceof FileList) {
-        Array.from(value).forEach((file) => {
-          formData.append(key, file);
-        });
-      } else if (value instanceof File) {
-        formData.append(key, value);
-      } else if (typeof value === "object") {
-        formData.append(key, JSON.stringify(value));
-      } else {
-        formData.append(key, String(value));
-      }
+      //   if (withFile) {
+      //     value[0].file;
+      //   }
+      // } else {
+      //   formData.append(key, String(value));
+      // }
+      // console.log(typeof value === "object");
+      // if (value instanceof FileList) {
+      //   Array.from(value).forEach((file) => {
+      //     formData.append(key, file);
+      //   });
+      // } else if (value instanceof File) {
+      //   formData.append(key, value);
+      // } else if (typeof value === "object") {
+      //   if (value[0]) formData.append(key, JSON.stringify(value));
+      // } else {
+      //   formData.append(key, String(value));
+      // }
     });
 
-    console.log(formData);
+    finalData["photos"].map((photo) => {
+      formData.append("photo_files", photo.file);
+    });
+
+    try {
+      await axios.post(`${HOST}/api/product/create`, formData, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      setFormError(errorHandler(error).message);
+    }
+
+    console.log(finalData);
   };
 
   return (
@@ -182,22 +211,25 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
             <div className="mt-[1rem]">
               <AddUnitPhotos />
             </div>
-            <div className="mt-[1.5rem] flex items-center justify-center gap-x-7.5">
-              <div>
-                <PrimaryButton
-                  variant="text"
-                  style={{ backgroundColor: "none" }}
-                  onClick={onCloseDialog}
-                >
-                  <span className="text-xs normal-case text-secondary-normal">
-                    Cancel
-                  </span>
-                </PrimaryButton>
-              </div>
-              <div>
-                <PrimaryButton type="submit">
-                  <span className="text-xs px-[2.5rem] font-bold">Save</span>
-                </PrimaryButton>
+            <div className="mt-[1.5rem]">
+              {formError && <p>{formError}</p>}
+              <div className="flex items-center justify-center gap-x-7.5">
+                <div>
+                  <PrimaryButton
+                    variant="text"
+                    style={{ backgroundColor: "none" }}
+                    onClick={onCloseDialog}
+                  >
+                    <span className="text-xs normal-case text-secondary-normal">
+                      Cancel
+                    </span>
+                  </PrimaryButton>
+                </div>
+                <div>
+                  <PrimaryButton type="submit">
+                    <span className="text-xs px-[2.5rem] font-bold">Save</span>
+                  </PrimaryButton>
+                </div>
               </div>
             </div>
           </form>
