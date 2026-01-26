@@ -7,7 +7,6 @@ import {
   NAME_MAX_LENGTH,
   PRICE_MAX,
   PHOTOS_MIN,
-  ATTR_QUANTITY_MIN,
   ATTR_QUANTITY_MAX,
   ATTR_ID_MAX,
   ATTR_ID_MIN,
@@ -36,16 +35,15 @@ export const newUnitAttributeSchema = z.object({
       ATTR_ID_MAX,
       `Unit attribute id has exceeded ${ATTR_ID_MAX} characters`,
     ),
-  quantity: z
-    .number()
-    .min(
-      ATTR_QUANTITY_MIN,
-      `Unit attribute quantity must at least ${ATTR_QUANTITY_MIN}`,
-    )
-    .max(
-      ATTR_QUANTITY_MAX,
-      `Unit attribute quantity has exceeded ${ATTR_QUANTITY_MAX}`,
-    ),
+  quantity: z.preprocess(
+    (val) => (typeof val === "string" ? Number(val) : val),
+    z
+      .number()
+      .max(
+        ATTR_QUANTITY_MAX,
+        `Unit attribute quantity has exceeded ${ATTR_QUANTITY_MAX}`,
+      ),
+  ),
 });
 
 // const attributeSchema = z.object({
@@ -65,28 +63,58 @@ export const productSchema = z.object({
       NAME_MAX_LENGTH,
       `Unit name has exceeded ${NAME_MAX_LENGTH} characters`,
     ),
-  price: z
-    .number("Invalid unit price")
-    .positive("Unit price must be greater than 0")
-    .max(PRICE_MAX, "Unit price cannot exceed 1 million"),
-  maxPersons: z
-    .number("Invalid unit max persons")
-    .min(MAXPERSONS_MIN, `Unit must have at least ${MAXPERSONS_MIN} person`)
-    .max(
-      MAXPERSONS_MAX,
-      `Unit capacity exceeded ${MAXPERSONS_MAX} max persons`,
-    ),
+  price: z.preprocess(
+    (val) => (typeof val === "string" ? Number(val) : val),
+    z
+      .number()
+      .positive("Unit price must be greater than 0")
+      .max(PRICE_MAX, "Unit price cannot exceed 1 million"),
+  ),
+  maxPersons: z.preprocess(
+    (val) => (typeof val === "string" ? Number(val) : val),
+    z
+      .number()
+      .min(MAXPERSONS_MIN, `Unit must have at least ${MAXPERSONS_MIN} person`)
+      .max(
+        MAXPERSONS_MAX,
+        `Unit capacity exceeded ${MAXPERSONS_MAX} max persons`,
+      ),
+  ),
   about: z
     .string()
     .max(ABOUT_MAX, `Unit description exceeded ${ABOUT_MAX} characters`)
     .optional(),
+
   attributes: z
-    .array(newUnitAttributeSchema)
-    .max(100, `Unit attributes exceeded 100`)
+    .preprocess(
+      (val) => {
+        // Parse JSON if it's a string (from multipart form)
+        if (typeof val === "string") {
+          try {
+            return JSON.parse(val);
+          } catch {
+            return val; // let Zod catch invalid type
+          }
+        }
+        return val;
+      },
+      z.array(newUnitAttributeSchema).max(100, `Unit attributes exceeded 100`),
+    )
     .optional(),
-  files: z
-    .array(z.any())
-    .min(1, `Unit must have at least ${PHOTOS_MIN} photos`),
+  photos: z.preprocess(
+    (val) => {
+      // if you ever send the order index as JSON string array
+      if (typeof val === "string") {
+        try {
+          return JSON.parse(val);
+        } catch {
+          return val;
+        }
+      }
+      return val;
+    },
+    z.array(z.any()).min(1, `Unit must have at least ${PHOTOS_MIN} photos`),
+  ),
 });
 
 export type ProductDTO = z.infer<typeof productSchema>;

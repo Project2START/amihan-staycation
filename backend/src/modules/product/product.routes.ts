@@ -2,6 +2,8 @@ import { Router } from "express";
 import { asyncHandler } from "../../shared/helpers/asyncHandler";
 import { productController } from "./controllers/product.controller";
 import multer from "multer";
+import { validateSchema } from "../../middleware/validateSchema";
+import { productSchema } from "./schemas/product.schema";
 
 const router = Router();
 
@@ -26,6 +28,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.post(
   "/create",
   upload.array("photo_files"),
+  validateSchema(productSchema),
   asyncHandler(productController.createProduct),
 );
 

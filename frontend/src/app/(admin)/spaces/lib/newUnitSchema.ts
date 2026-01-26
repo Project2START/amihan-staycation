@@ -5,7 +5,6 @@ import {
   ATTR_NAME_MAX,
   ATTR_NAME_MIN,
   ATTR_QUANTITY_MAX,
-  ATTR_QUANTITY_MIN,
   MAXPERSONS_MAX,
   MAXPERSONS_MIN,
   NAME_MAX_LENGTH,
@@ -39,10 +38,6 @@ export const newUnitAttributeSchema = z.object({
     ),
   quantity: z
     .number()
-    .min(
-      ATTR_QUANTITY_MIN,
-      `Unit attribute quantity must at least ${ATTR_QUANTITY_MIN}`,
-    )
     .max(
       ATTR_QUANTITY_MAX,
       `Unit attribute quantity has exceeded ${ATTR_QUANTITY_MAX}`,

@@ -70,15 +70,13 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
 
     const formData = new FormData();
 
+    finalData["photos"].map((photo) => {
+      formData.append("photo_files", photo.file);
+      // formData.append("photo_orders", JSON.stringify(photo.order_index));
+    });
+
     Object.entries(finalData).forEach(([key, value]) => {
-      if (key === "photos") {
-        finalData["photos"].map((photo) => {
-          formData.append("photo_files", photo.file);
-          formData.append("photo_orders", JSON.stringify(photo.order_index));
-        });
-      } else {
-        formData.append(key, JSON.stringify(value));
-      }
+      formData.append(key, JSON.stringify(value));
     });
 
     try {
