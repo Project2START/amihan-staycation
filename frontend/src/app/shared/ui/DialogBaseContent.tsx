@@ -5,10 +5,12 @@ import ClickOutside from "./ClickOutside";
 
 export default function DialogBaseContent({
   openDialog,
+  scrollVertically = true,
   children,
   onCloseDialog,
   enableClickOutside = true,
 }: {
+  scrollVertically?: boolean;
   enableClickOutside?: boolean;
   openDialog: boolean;
   onCloseDialog: () => void;
@@ -24,7 +26,14 @@ export default function DialogBaseContent({
             exit={{ opacity: 0 }}
             className="w-[100vw] h-[100vh] fixed top-0 left-0 bg-black/50 flex justify-center items-center z-999"
           >
-            <div className="rounded-lg bg-white w-[85%] h-auto max-h-[80%] overflow-y-auto">
+            <div
+              className="rounded-lg bg-white w-[85%] h-auto max-h-[80%]"
+              style={
+                scrollVertically
+                  ? { overflowY: "auto" }
+                  : { overflowY: "hidden" }
+              }
+            >
               {enableClickOutside ? (
                 <ClickOutside onClickOutside={onCloseDialog}>
                   {children}

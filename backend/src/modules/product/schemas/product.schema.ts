@@ -6,7 +6,6 @@ import {
   MAXPERSONS_MIN,
   NAME_MAX_LENGTH,
   PRICE_MAX,
-  PHOTOS_MIN,
   ATTR_QUANTITY_MAX,
   ATTR_ID_MAX,
   ATTR_ID_MIN,
@@ -45,12 +44,6 @@ export const newUnitAttributeSchema = z.object({
       ),
   ),
 });
-
-// const attributeSchema = z.object({
-//   name: z.string(),
-//   iconId: z.string(),
-//   quantity: z.number(),
-// });
 
 export const productSchema = z.object({
   name: z
@@ -101,20 +94,22 @@ export const productSchema = z.object({
       z.array(newUnitAttributeSchema).max(100, `Unit attributes exceeded 100`),
     )
     .optional(),
-  photos: z.preprocess(
-    (val) => {
-      // if you ever send the order index as JSON string array
-      if (typeof val === "string") {
-        try {
-          return JSON.parse(val);
-        } catch {
-          return val;
-        }
-      }
-      return val;
-    },
-    z.array(z.any()).min(1, `Unit must have at least ${PHOTOS_MIN} photos`),
-  ),
+  // photos: z.preprocess(
+  //   (val) => {
+  //     // if you ever send the order index as JSON string array
+  //     if (typeof val === "string") {
+  //       try {
+  //         return JSON.parse(val);
+  //       } catch {
+  //         return val;
+  //       }
+  //     }
+  //     return val;
+  //   },
+  //   z
+  //     .array(z.any())
+  //     .min(PHOTOS_MIN, `Unit must have at least ${PHOTOS_MIN} photos`),
+  // ),
 });
 
 export type ProductDTO = z.infer<typeof productSchema>;

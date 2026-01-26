@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 export class ProductController {
   createProduct(req: Request, res: Response) {
     console.log(req.body);
+    console.log(req.body.name);
     console.log(req.files);
   }
 }

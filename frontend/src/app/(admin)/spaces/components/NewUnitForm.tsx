@@ -61,21 +61,30 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
   } = methods;
 
   const onSubmit = async (data: NewUnitSchema) => {
-    const photosWithIndex = data.photos.map((photo, index) => ({
-      ...photo,
-      order_index: index + 1,
-    }));
+    // const photosWithIndex = data.photos.map((photo, index) => ({
+    //   ...photo,
+    //   order_index: index + 1,
+    // }));
 
-    const finalData = { ...data, photos: photosWithIndex };
+    // const finalData = { ...data, photos: photosWithIndex };
 
     const formData = new FormData();
 
-    finalData["photos"].map((photo) => {
-      formData.append("photo_files", photo.file);
-      // formData.append("photo_orders", JSON.stringify(photo.order_index));
-    });
+    Object.entries(data).forEach(([key, value]) => {
+      if (typeof value === "string") {
+        formData.append(key, value);
+        return;
+      }
 
-    Object.entries(finalData).forEach(([key, value]) => {
+      if (key === "photos") {
+        data["photos"].forEach((photo) => {
+          formData.append("photo_files", photo.file);
+          // formData.append("photo_orders", JSON.stringify(photo.order_index));
+        });
+
+        return;
+      }
+
       formData.append(key, JSON.stringify(value));
     });
 
@@ -87,15 +96,15 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
       setFormError(errorHandler(error).message);
     }
 
-    console.log(finalData);
+    console.log(data);
   };
 
   return (
-    <div className="relative text-secondary-normal text-xs px-[1.5rem] pt-[2rem] pb-[1.5rem]">
+    <div className="relative text-secondary-normal text-xs px-[1.5rem] py-[2rem]">
       <h1 className="text-center text-xl font-bold">Add New Unit</h1>
-      <div className="mt-[1.5rem]">
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit)}>
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="mt-[1rem] h-[23rem] overflow-y-auto px-[0.25rem]">
             <div className="flex flex-col">
               <span className="font-bold">Name</span>
               <input
@@ -187,30 +196,34 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
             <div className="mt-[1rem]">
               <AddUnitPhotos />
             </div>
-            <div className="mt-[1.5rem]">
-              {formError && <p>{formError}</p>}
-              <div className="flex items-center justify-center gap-x-7.5">
-                <div>
-                  <PrimaryButton
-                    variant="text"
-                    style={{ backgroundColor: "none" }}
-                    onClick={onCloseDialog}
-                  >
-                    <span className="text-xs normal-case text-secondary-normal">
-                      Cancel
-                    </span>
-                  </PrimaryButton>
-                </div>
-                <div>
-                  <PrimaryButton type="submit">
-                    <span className="text-xs px-[2.5rem] font-bold">Save</span>
-                  </PrimaryButton>
-                </div>
+          </div>
+          <div className="mt-[1rem]">
+            {formError && (
+              <p className="text-center text-[0.65rem] pb-[0.5rem] text-red-900">
+                {formError}
+              </p>
+            )}
+            <div className="flex items-center justify-center gap-x-7.5">
+              <div>
+                <PrimaryButton
+                  variant="text"
+                  style={{ backgroundColor: "none" }}
+                  onClick={onCloseDialog}
+                >
+                  <span className="text-xs normal-case text-secondary-normal">
+                    Cancel
+                  </span>
+                </PrimaryButton>
+              </div>
+              <div>
+                <PrimaryButton type="submit">
+                  <span className="text-xs px-[2.5rem] font-bold">Save</span>
+                </PrimaryButton>
               </div>
             </div>
-          </form>
-        </FormProvider>
-      </div>
+          </div>
+        </form>
+      </FormProvider>
     </div>
   );
 }

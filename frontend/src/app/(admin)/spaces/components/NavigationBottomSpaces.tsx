@@ -51,6 +51,7 @@ export default function NavigationBottomSpaces() {
               onCloseDialog={() => setAddNew(false)}
               openDialog={addNew}
               enableClickOutside={false}
+              scrollVertically={false}
             >
               <NewUnitForm onCloseDialog={() => setAddNew(false)} />
             </DialogBaseContent>
