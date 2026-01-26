@@ -1,15 +1,15 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { NewUnitSchema } from "../lib/newUnitSchema";
-import React, { useState } from "react";
+import { newUnitAttributeSchema, NewUnitSchema } from "../lib/newUnitSchema";
+import { useState } from "react";
 import { attributeIcons } from "../constants/attributeIcons";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import RenderIcon from "@/app/shared/ui/RenderIcon";
 
 interface IAddAttributeState {
   name: string;
-  quantity: string;
+  quantity: number;
   iconId: string;
 }
 
@@ -20,6 +20,11 @@ type UnitAttributeProps = {
 export default function AddUnitAttributes({ onClose }: UnitAttributeProps) {
   const { getValues, setValue } = useFormContext<NewUnitSchema>();
 
+  const [errors, setErrors] = useState<{
+    name: string | null;
+    quantity: string | null;
+  }>({ name: null, quantity: null });
+
   const currentAttributeIcons = attributeIcons.filter(
     (attributeIcon) =>
       !(getValues("attributes") || []).some(
@@ -29,18 +34,60 @@ export default function AddUnitAttributes({ onClose }: UnitAttributeProps) {
 
   const [newAttr, setNewAttr] = useState<IAddAttributeState>({
     name: "New attribute",
-    quantity: "1",
+    quantity: 1,
     iconId: currentAttributeIcons[0].id,
   });
 
   const onSubmit = () => {
+    const name_schema = newUnitAttributeSchema.shape.name.safeParse(
+      newAttr.name,
+    );
+    const quantity_schema = newUnitAttributeSchema.shape.quantity.safeParse(
+      newAttr.quantity,
+    );
+    const iconId_schema = newUnitAttributeSchema.shape.iconId.safeParse(
+      newAttr.iconId,
+    );
+
+    if (!name_schema.success && !quantity_schema.success) {
+      setErrors((errors) => ({
+        ...errors,
+        name: name_schema.error.issues[0].message,
+        quantity: quantity_schema.error.issues[0].message,
+      }));
+      return;
+    }
+
+    if (!name_schema.success) {
+      setErrors((errors) => ({
+        ...errors,
+        name: name_schema.error.issues[0].message,
+        quantity: "",
+      }));
+      return;
+    }
+
+    if (!quantity_schema.success) {
+      setErrors((errors) => ({
+        ...errors,
+        quantity: quantity_schema.error.issues[0].message,
+        name: "",
+      }));
+      return;
+    }
+
+    if (!iconId_schema.success) {
+      return;
+    }
+
     const currentAttributes = getValues("attributes") || [];
+
     setValue("attributes", [
       ...currentAttributes,
       {
         ...newAttr,
         name: newAttr.name === "" ? "New attribute" : newAttr.name,
-        quantity: newAttr.quantity === "" ? 0 : Number(newAttr.quantity),
+        quantity: newAttr.quantity === 0 ? 0 : Number(newAttr.quantity),
       },
     ]);
     onClose();
@@ -48,11 +95,9 @@ export default function AddUnitAttributes({ onClose }: UnitAttributeProps) {
 
   const handleAttributeChange = (
     attr: keyof IAddAttributeState,
-    e?: React.ChangeEvent<HTMLInputElement>,
+    e?: string | number,
   ) => {
-    if (e) {
-      setNewAttr((newAttr) => ({ ...newAttr, [attr]: e.target.value }));
-    }
+    setNewAttr((newAttr) => ({ ...newAttr, [attr]: e }));
   };
 
   return (
@@ -66,11 +111,22 @@ export default function AddUnitAttributes({ onClose }: UnitAttributeProps) {
             placeholder="New attribute"
             value={newAttr.name}
             onChange={(e) => {
-              handleAttributeChange("name", e);
+              handleAttributeChange("name", e.target.value);
             }}
+            aria-describedby={
+              errors.name ? "unitAttributeName-error" : undefined
+            }
             onFocus={(e) => e.target.select()}
             className="mt-[0.5rem] border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
           />
+          {errors.name && (
+            <p
+              className="text-red-900 text-[0.65rem]"
+              id="unitAttributeName-error"
+            >
+              {errors.name}
+            </p>
+          )}
         </div>
         <div className="flex flex-col mt-[1rem]">
           <span className="font-bold">Quantity</span>
@@ -80,14 +136,25 @@ export default function AddUnitAttributes({ onClose }: UnitAttributeProps) {
             pattern="[0-9]*"
             placeholder="0"
             value={newAttr.quantity}
+            aria-describedby={
+              errors.quantity ? "unitAttributeQuantity-error" : undefined
+            }
             onChange={(e) => {
               if (/^\d*$/.test(e.target.value)) {
-                handleAttributeChange("quantity", e);
+                handleAttributeChange("quantity", Number(e.target.value));
               }
             }}
             onFocus={(e) => e.target.select()}
             className="mt-[0.5rem] border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
           />
+          {errors.quantity && (
+            <p
+              className="text-red-900 text-[0.65rem]"
+              id="unitAttributeQuantity-error"
+            >
+              {errors.quantity}
+            </p>
+          )}
         </div>
         <div className="flex flex-col mt-[1rem]">
           <span className="font-bold">Icon</span>
@@ -126,6 +193,7 @@ export default function AddUnitAttributes({ onClose }: UnitAttributeProps) {
             </ul>
           </div>
         </div>
+
         <div className="mt-[1.5rem] flex items-center justify-center gap-x-7.5">
           <div>
             <PrimaryButton

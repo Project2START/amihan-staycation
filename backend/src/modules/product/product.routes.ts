@@ -5,8 +5,23 @@ import multer from "multer";
 
 const router = Router();
 
-const upload = multer({ storage: multer.memoryStorage() });
 // POST
+
+// const upload = multer({
+//   storage: multer.memoryStorage(), // keeps files in memory
+//   fileFilter(req, file, cb) {
+//     if (!["image/jpeg", "image/png"].includes(file.mimetype)) {
+//       return cb(new Error("Invalid file type")); // rejects invalid mimetypes
+//     }
+//     cb(null, true); // accepts valid files
+//   },
+//   limits: {
+//     fileSize: 5 * 1024 * 1024, // 5MB per file
+//     files: PHOTOS_MAX, // max files
+//   },
+// });
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post(
   "/create",

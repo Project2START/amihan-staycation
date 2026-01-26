@@ -71,36 +71,14 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
     const formData = new FormData();
 
     Object.entries(finalData).forEach(([key, value]) => {
-      formData.append(key, JSON.stringify(value));
-      // if (typeof value === "object") {
-      //   if (key === "photos") {
-      //   }
-      // }
-      //   const withFile = value.filter((obj) => obj.hasOwnProperty("file"));
-      //   const withoutFile = value.filter((obj) => !obj.hasOwnProperty("file"));
-
-      //   if (withFile) {
-      //     value[0].file;
-      //   }
-      // } else {
-      //   formData.append(key, String(value));
-      // }
-      // console.log(typeof value === "object");
-      // if (value instanceof FileList) {
-      //   Array.from(value).forEach((file) => {
-      //     formData.append(key, file);
-      //   });
-      // } else if (value instanceof File) {
-      //   formData.append(key, value);
-      // } else if (typeof value === "object") {
-      //   if (value[0]) formData.append(key, JSON.stringify(value));
-      // } else {
-      //   formData.append(key, String(value));
-      // }
-    });
-
-    finalData["photos"].map((photo) => {
-      formData.append("photo_files", photo.file);
+      if (key === "photos") {
+        finalData["photos"].map((photo) => {
+          formData.append("photo_files", photo.file);
+          formData.append("photo_orders", JSON.stringify(photo.order_index));
+        });
+      } else {
+        formData.append(key, JSON.stringify(value));
+      }
     });
 
     try {

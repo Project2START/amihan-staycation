@@ -1,5 +1,11 @@
 import {
   ABOUT_MAX,
+  ATTR_ID_MAX,
+  ATTR_ID_MIN,
+  ATTR_NAME_MAX,
+  ATTR_NAME_MIN,
+  ATTR_QUANTITY_MAX,
+  ATTR_QUANTITY_MIN,
   MAXPERSONS_MAX,
   MAXPERSONS_MIN,
   NAME_MAX_LENGTH,
@@ -10,10 +16,37 @@ import {
 } from "@/app/shared/constants/productFormValidation";
 import z from "zod";
 
-const attributeSchema = z.object({
-  name: z.string(),
-  iconId: z.string(),
-  quantity: z.number(),
+export const newUnitAttributeSchema = z.object({
+  name: z
+    .string()
+    .min(
+      ATTR_NAME_MIN,
+      `Unit attribute name must have at least ${ATTR_NAME_MIN} characters`,
+    )
+    .max(
+      ATTR_NAME_MAX,
+      `Unit attribute name has exceeded ${ATTR_NAME_MAX} characters`,
+    ),
+  iconId: z
+    .string()
+    .min(
+      ATTR_ID_MIN,
+      `Unit attribute id must have at least ${ATTR_ID_MIN} characters`,
+    )
+    .max(
+      ATTR_ID_MAX,
+      `Unit attribute id has exceeded ${ATTR_ID_MAX} characters`,
+    ),
+  quantity: z
+    .number()
+    .min(
+      ATTR_QUANTITY_MIN,
+      `Unit attribute quantity must at least ${ATTR_QUANTITY_MIN}`,
+    )
+    .max(
+      ATTR_QUANTITY_MAX,
+      `Unit attribute quantity has exceeded ${ATTR_QUANTITY_MAX}`,
+    ),
 });
 
 export const newUnitSchema = z.object({
@@ -42,7 +75,7 @@ export const newUnitSchema = z.object({
     .string()
     .max(ABOUT_MAX, `Unit description exceeded ${ABOUT_MAX} characters`)
     .optional(),
-  attributes: z.array(attributeSchema).optional(),
+  attributes: z.array(newUnitAttributeSchema).optional(),
 
   photos: z
     .array(
@@ -57,3 +90,4 @@ export const newUnitSchema = z.object({
 });
 
 export type NewUnitSchema = z.infer<typeof newUnitSchema>;
+export type NewUnitAttributeSchema = z.infer<typeof newUnitAttributeSchema>;
