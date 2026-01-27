@@ -36,7 +36,7 @@ export default function SignInForm() {
     try {
       await signIn(data);
       setError("");
-      router.push("/dashboard");
+      router.push("/browse-units");
     } catch (error) {
       setError(errorHandler(error).message);
     } finally {

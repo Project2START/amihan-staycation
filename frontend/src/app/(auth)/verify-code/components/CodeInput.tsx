@@ -26,10 +26,10 @@ export default function CodeInput({ id }: { id?: string }) {
           id,
           verificationCode: otp,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setErrorLabel("");
-      router.push("/dashboard");
+      router.push("/browse-units");
     } catch (error) {
       const errorResult = errorHandler(error);
 
