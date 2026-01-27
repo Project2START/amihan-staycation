@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
-import verifyRegistree from "./middlewareModules/verifyRegistree";
-import verifyAdmin from "./middlewareModules/verifyAdmin";
+import verifyRegistree from "./proxyModules/verifyRegistree";
+import verifyAdmin from "./proxyModules/verifyAdmin";
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const currentPath = req.nextUrl.pathname;
 
   if (currentPath === "/verify-code") {
