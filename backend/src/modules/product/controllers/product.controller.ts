@@ -8,6 +8,13 @@ interface RequestWithFiles extends Request {
 export class ProductController {
   async createProduct(req: RequestWithFiles, res: Response) {
     const product = await productService.create(req.body, req.files);
+
+    const { createdAt, updatedAt, ...rest } = product;
+    res.status(201).json({
+      message: "Product successfully created",
+      product: rest,
+    });
+
     // console.log(req.body);
     // console.log(req.body.name);
     // console.log(req.files);
