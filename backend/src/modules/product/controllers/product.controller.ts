@@ -1,10 +1,16 @@
 import { Request, Response } from "express";
+import { productService } from "../services/product.service";
+
+interface RequestWithFiles extends Request {
+  files?: any;
+}
 
 export class ProductController {
-  createProduct(req: Request, res: Response) {
-    console.log(req.body);
-    console.log(req.body.name);
-    console.log(req.files);
+  async createProduct(req: RequestWithFiles, res: Response) {
+    const product = await productService.create(req.body, req.files);
+    // console.log(req.body);
+    // console.log(req.body.name);
+    // console.log(req.files);
   }
 }
 

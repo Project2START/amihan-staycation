@@ -61,13 +61,6 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
   } = methods;
 
   const onSubmit = async (data: NewUnitSchema) => {
-    // const photosWithIndex = data.photos.map((photo, index) => ({
-    //   ...photo,
-    //   order_index: index + 1,
-    // }));
-
-    // const finalData = { ...data, photos: photosWithIndex };
-
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {
@@ -79,7 +72,6 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
       if (key === "photos") {
         data["photos"].forEach((photo) => {
           formData.append("photo_files", photo.file);
-          // formData.append("photo_orders", JSON.stringify(photo.order_index));
         });
 
         return;
