@@ -1,17 +1,18 @@
 "use client";
 
-import { useForm, useFieldArray, FormProvider } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { newUnitSchema, NewUnitSchema } from "../lib/newUnitSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import AddUnitAttributes from "./AddUnitAttributes";
 import { FiPlusCircle } from "react-icons/fi";
-import RenderIcon from "@/app/shared/ui/RenderIcon";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
-import { TiDelete } from "react-icons/ti";
 import AddUnitPhotos from "./AddUnitPhotos";
 import UnitAttributes from "./UnitAttributes";
+import axios from "axios";
+import { HOST } from "@/app/shared/constants/config";
+import { errorHandler } from "@/app/shared/lib/errorHandler";
 
 export const unitDefaultAttributes = [
   { name: "Beds", iconId: "beds-1", quantity: 2 },
@@ -42,6 +43,9 @@ interface INewUnitProps {
 }
 
 export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
+  const [openAddAttr, setOpenAddAttr] = useState<boolean>(false);
+  const [formError, setFormError] = useState<null | string>(null);
+
   const methods = useForm<NewUnitSchema>({
     resolver: zodResolver(newUnitSchema),
     defaultValues: {
@@ -56,20 +60,43 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
     formState: { errors },
   } = methods;
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [openAddAttr, setOpenAddAttr] = useState<boolean>(false);
-  // NEXT TASK: CLEANING UP IMAGES OBJECT URL CREATION
   const onSubmit = async (data: NewUnitSchema) => {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (typeof value === "string") {
+        formData.append(key, value);
+        return;
+      }
+
+      if (key === "photos") {
+        data["photos"].forEach((photo) => {
+          formData.append("photo_files", photo.file);
+        });
+
+        return;
+      }
+
+      formData.append(key, JSON.stringify(value));
+    });
+
+    try {
+      await axios.post(`${HOST}/api/product/create`, formData, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      setFormError(errorHandler(error).message);
+    }
+
     console.log(data);
   };
 
   return (
-    <div className="relative text-secondary-normal text-xs px-[1.5rem] pt-[2rem] pb-[1.5rem]">
+    <div className="relative text-secondary-normal text-xs px-[1.5rem] py-[2rem]">
       <h1 className="text-center text-xl font-bold">Add New Unit</h1>
-      <div className="mt-[1.5rem]">
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit)}>
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="mt-[1rem] h-[23rem] overflow-y-auto px-[0.25rem]">
             <div className="flex flex-col">
               <span className="font-bold">Name</span>
               <input
@@ -121,6 +148,25 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                 </p>
               )}
             </div>
+            <div className="flex flex-col mt-[1rem]">
+              <span className="font-bold">About</span>
+              <div className="mt-[0.5rem] h-[7rem]">
+                <textarea
+                  {...register("about")}
+                  id="unit-about"
+                  className="w-full h-full border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] input-base-focus"
+                  placeholder="Tell something about this unit..."
+                  aria-describedby={
+                    errors.about ? "unitAbout-error" : undefined
+                  }
+                ></textarea>
+              </div>
+              {errors.about && (
+                <p className="text-red-900 text-[0.65rem]" id="unitAbout-error">
+                  {errors.about.message}
+                </p>
+              )}
+            </div>
             <div className="mt-[1.5rem]">
               <div className="flex items-center justify-between py-[-0.5rem]">
                 <span className="font-bold">Attributes</span>
@@ -142,7 +188,14 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
             <div className="mt-[1rem]">
               <AddUnitPhotos />
             </div>
-            <div className="mt-[1.5rem] flex items-center justify-center gap-x-7.5">
+          </div>
+          <div className="mt-[1rem]">
+            {formError && (
+              <p className="text-center text-[0.65rem] pb-[0.5rem] text-red-900">
+                {formError}
+              </p>
+            )}
+            <div className="flex items-center justify-center gap-x-7.5">
               <div>
                 <PrimaryButton
                   variant="text"
@@ -160,9 +213,9 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                 </PrimaryButton>
               </div>
             </div>
-          </form>
-        </FormProvider>
-      </div>
+          </div>
+        </form>
+      </FormProvider>
     </div>
   );
 }

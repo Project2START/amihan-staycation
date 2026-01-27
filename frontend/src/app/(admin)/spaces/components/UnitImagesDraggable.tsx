@@ -22,20 +22,22 @@ import UnitImage from "../../../shared/components/UnitImage";
 
 interface IImagesDraggable {
   sources: { id: string; src: string }[];
+  activeImage?: string | null;
   onHandleActiveImage: (id: string) => void;
   onSetSources: (movedArray: any[]) => void;
 }
 
 export default function UnitImagesDraggable({
   sources,
+  activeImage,
   onHandleActiveImage,
   onSetSources,
 }: IImagesDraggable) {
   const [items, setItems] = useState<IImagesDraggable["sources"]>([]);
 
-  const [activeImage, setActiveImage] = useState("");
-
+  const parentContainerRef = useRef<null | HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const prevLengthRef = useRef(sources.length);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -51,7 +53,7 @@ export default function UnitImagesDraggable({
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   function handleDragEnd(event: DragEndEvent) {
@@ -72,17 +74,45 @@ export default function UnitImagesDraggable({
     }
   }
 
-  function handeActiveImage(id: string, src: string) {
-    setActiveImage(id);
-    onHandleActiveImage(src);
+  function handeActiveImage(id: string) {
+    onHandleActiveImage(id);
   }
+
+  const handleScrollParentCont = () => {
+    if (!parentContainerRef.current) return;
+
+    const container = parentContainerRef.current;
+
+    container.scrollTo({
+      left: container.scrollWidth - container.clientWidth,
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   useEffect(() => {
     setItems(sources);
-    setActiveImage(sources.length !== 0 ? sources[0].id : "");
   }, [sources]);
 
+  useEffect(() => {
+    if (!items.length) return;
+
+    const prevLength = prevLengthRef.current;
+    const currLength = items.length;
+
+    if (currLength > prevLength && prevLength !== 0) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          handleScrollParentCont();
+        });
+      });
+    }
+
+    prevLengthRef.current = currLength;
+  }, [items.length]);
+
   return (
+    <div className="w-full overflow-x-auto" ref={parentContainerRef}>
       <div
         ref={containerRef}
         className="w-max flex gap-x-3 overflow-x-hidden py-[0.75rem]"
@@ -106,7 +136,7 @@ export default function UnitImagesDraggable({
                 <SortableItem key={item.id} id={item.id}>
                   <button
                     type="button"
-                    onClick={() => handeActiveImage(item.id, item.src)}
+                    onClick={() => handeActiveImage(item.id)}
                     className={
                       isActive
                         ? "outline-3 outline-primary-normal rounded-lg"
@@ -121,5 +151,6 @@ export default function UnitImagesDraggable({
           </SortableContext>
         </DndContext>
       </div>
+    </div>
   );
 }
