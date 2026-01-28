@@ -8,25 +8,19 @@ import { jwtVerify } from "jose";
 //   exp?: number;
 // }
 
-export default async function verifyAdmin(req: NextRequest) {
+export default async function verifyGuest(req: NextRequest) {
   const auth_token = req.cookies.get("auth_token")?.value;
   const notForYouPage = new URL("/not-found", req.url);
-
-  if (!auth_token) {
-    return NextResponse.rewrite(notForYouPage);
-  }
-
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+
   try {
-    const { payload } = await jwtVerify(auth_token, secret);
+    const { payload } = await jwtVerify(auth_token || "", secret);
 
     const role = payload.user_role;
 
-    if (role === "admin") {
-      return NextResponse.next();
-    } else {
-      return NextResponse.rewrite(notForYouPage);
-    }
+    if (role !== "admin") return NextResponse.next();
+
+    return NextResponse.rewrite(notForYouPage);
   } catch (err) {
     return NextResponse.rewrite(notForYouPage);
   }

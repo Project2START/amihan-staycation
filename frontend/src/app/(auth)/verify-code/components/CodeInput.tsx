@@ -21,7 +21,7 @@ export default function CodeInput({ id }: { id?: string }) {
     setLoading(true);
     try {
       await axios.post(
-        `${HOST}/api/user/sign-up`,
+        `${HOST}/api/users/sign-up`,
         {
           id,
           verificationCode: otp,

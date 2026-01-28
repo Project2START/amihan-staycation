@@ -24,7 +24,7 @@ export default function ResendVerifyCode({ id }: { id?: string }) {
     {
       variables: { id },
       skip: !id,
-    }
+    },
   );
 
   const nextAllowedResend = data?.registree.nextAllowedResend;
@@ -34,8 +34,8 @@ export default function ResendVerifyCode({ id }: { id?: string }) {
     setResendLoading(true);
     try {
       const res = await axios.post<{ nextAllowedResend: string }>(
-        `${HOST}/api/registree/resend-v-code`,
-        { id }
+        `${HOST}/api/registrees/resend-v-code`,
+        { id },
       );
       const nextAllowedResend = res.data.nextAllowedResend;
       const remainingSeconds = getRemainingSeconds(nextAllowedResend);

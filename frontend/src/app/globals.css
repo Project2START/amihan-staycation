@@ -6,6 +6,7 @@
   --color-tertiary-normal: #279bc0;
   --color-success-normal: #64be73;
   --color-reject-normal: #a9463f;
+  --color-yellow-normal: #e2d118;
 }
 
 @layer components {

@@ -95,6 +95,19 @@ export class ProductRepository {
     }
   }
 
+  async findPhotoThumbnail(
+    productId: string,
+    order_index: number,
+  ): Promise<Photo | null> {
+    try {
+      return await prisma.photo.findFirst({
+        where: { productId, order_index },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch photos. Please try again");
+    }
+  }
+
   async deletePhoto(id: string): Promise<Photo> {
     try {
       return await prisma.photo.delete({ where: { id } });

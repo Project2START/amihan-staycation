@@ -143,7 +143,7 @@ export default function UnitImagesDraggable({
                         : undefined
                     }
                   >
-                    <UnitImage src={item.src} width={7} height={4} />
+                    <UnitImage src={item.src} style="w-[7rem] h-[4rem]" />
                   </button>
                 </SortableItem>
               );

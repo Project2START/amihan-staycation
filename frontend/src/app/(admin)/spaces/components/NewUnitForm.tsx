@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
 import Alert from "@mui/material/Alert";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
+import revalidatePathSpaces from "../_actions/revalidatePathSpaces";
 
 export const unitDefaultAttributes = [
   { name: "Beds", iconId: "beds-1", quantity: 2 },
@@ -66,6 +67,7 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
   } = methods;
 
   const onSubmit = async (data: NewUnitSchema) => {
+    setFormError(null);
     setLoading(true);
 
     const formData = new FormData();
@@ -87,20 +89,20 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
     });
 
     try {
-      const result = await axios.post(`${HOST}/api/product/create`, formData, {
+      const result = await axios.post(`${HOST}/api/products`, formData, {
         withCredentials: true,
       });
 
       CustomToast.show("Unit successfully created", {
         indicator: "success",
       });
-
       onCloseDialog();
+
+      await revalidatePathSpaces();
     } catch (error) {
       setFormError(errorHandler(error).message);
     } finally {
       setLoading(false);
-      setFormError(null);
     }
   };
 

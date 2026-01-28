@@ -5,10 +5,10 @@ import multer from "multer";
 import { validateSchema } from "../../middleware/validateSchema";
 import { productSchema } from "./schemas/product.schema";
 import { PHOTOS_MAX } from "../../shared/constants/productFormValidation";
+import { requireAuth } from "../../middleware/requireAuth";
+import { checkRole } from "../../middleware/checkRole";
 
 const router = Router();
-
-// POST
 
 const upload = multer({
   storage: multer.memoryStorage(), // keeps files in memory
@@ -24,13 +24,15 @@ const upload = multer({
   },
 });
 
-// const upload = multer({ storage: multer.memoryStorage() });
-
 router.post(
-  "/create",
+  "/",
+  requireAuth,
+  checkRole(["admin"]),
   upload.array("photo_files"),
   validateSchema(productSchema),
   asyncHandler(productController.createProduct),
 );
+
+router.get("/", asyncHandler(productController.getProducts));
 
 export default router;

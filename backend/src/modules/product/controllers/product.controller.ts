@@ -14,10 +14,15 @@ export class ProductController {
       message: "Product successfully created",
       product: rest,
     });
+  }
 
-    // console.log(req.body);
-    // console.log(req.body.name);
-    // console.log(req.files);
+  async getProducts(_: RequestWithFiles, res: Response) {
+    const products = await productService.getAll();
+
+    res.status(200).json({
+      message: "Products successfully fetched",
+      products,
+    });
   }
 }
 
