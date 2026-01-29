@@ -34,5 +34,6 @@ router.post(
 );
 
 router.get("/", asyncHandler(productController.getProducts));
+router.get("/:id", asyncHandler(productController.getProduct));
 
 export default router;

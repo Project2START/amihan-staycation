@@ -1,10 +1,7 @@
 import { supabase } from "../../../shared/lib/supabase";
 import { productRepository } from "../repositories/product.repository";
 import { ProductDTO } from "../schemas/product.schema";
-import {
-  BadRequestError,
-  NotFoundError,
-} from "../../../shared/helpers/appErrors";
+import { BadRequestError } from "../../../shared/helpers/appErrors";
 
 export class ProductService {
   async create(newProduct: ProductDTO, photos: Express.Multer.File[]) {
@@ -78,21 +75,22 @@ export class ProductService {
 
     return product;
   }
+  async get(id: string) {
+    const product = await productRepository.findById(id);
+
+    if (!product) return product;
+
+    const { createdAt, updatedAt, ...rest } = product;
+
+    return rest;
+  }
   async getAll() {
     const products = await productRepository.findAll();
 
-    return await Promise.all(
-      products.map(async (product) => {
-        const thumbnail = await productRepository.findPhotoThumbnail(
-          product.id,
-          1,
-        );
-
-        const { createdAt, updatedAt, ...rest } = product;
-
-        return { thumbnail, ...rest };
-      }),
-    );
+    return products.map((product) => {
+      const { createdAt, updatedAt, ...rest } = product;
+      return rest;
+    });
   }
 }
 

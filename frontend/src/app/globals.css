@@ -32,6 +32,9 @@
 }
 
 @layer base {
+  h1 {
+    @apply text-xl font-bold; /* adjust size as needed */
+  }
   h2 {
     @apply text-lg font-bold; /* adjust size as needed */
   }

@@ -3,46 +3,53 @@
 import Link from "next/link";
 import UnitImage from "./UnitImage";
 import { FaStar } from "react-icons/fa";
+import ImageBroken from "./ImageBroken";
+import { formatMoney } from "../lib/formatMoney";
 
-export interface IProductUnit {
+export interface IProductAttribute {
+  name: string;
+  iconId: string;
+  quantity: number;
+}
+
+export interface IProductPhoto {
+  image_url: string;
+  alt: string;
+  id: string;
+}
+
+export interface IProductItemProps {
   id: string;
   name: string;
   price: number;
-  maxPersons: number;
   about: string;
-  thumbnail: {
-    image_url: string;
-    alt: string;
-    productId: string;
-  };
+  photos: IProductPhoto[];
 }
 
-export interface IProductUnitProps {
-  id: string | number;
-  imgSrc: string;
-  imgAlt: string;
-  about: string;
-  price: number;
-  maxPersons: number;
-  name: string;
-  rate?: number;
-}
-
-export default function ProductUnit({
+export default function ProductItem({
   name,
-  id,
-  imgSrc,
-  imgAlt,
-  about,
   price,
-  rate,
-}: IProductUnitProps) {
+  about,
+  id,
+  photos,
+}: IProductItemProps) {
   return (
     <div className="w-[100%] overflow-hidden">
       <div className="py-[1rem] px-[0.5rem] flex border-2 border-secondary-normal/20 rounded-lg">
         <div>
           <div>
-            <UnitImage src={imgSrc} alt={imgAlt} style="w-[9rem] h-[6rem]" />
+            {photos[0] ? (
+              <UnitImage
+                src={photos[0].image_url}
+                alt={photos[0].alt}
+                style="w-[9rem] h-[6rem]"
+              />
+            ) : (
+              <ImageBroken
+                style="w-[9rem] h-[6rem] bg-gray-200"
+                iconStyle="text-2xl opacity-50"
+              />
+            )}
           </div>
         </div>
         <div className="mx-[0.5rem] min-w-0">
@@ -64,17 +71,20 @@ export default function ProductUnit({
         </div>
         <div className="flex flex-col justify-between grow-1 place-items-end text-xs">
           <div className="flex items-center gap-x-1">
-            <span className="text-secondary-normal">{rate}4.5</span>
+            <span className="text-secondary-normal">4.5</span>
             <span className="text-yellow-normal text-sm">
               <FaStar />
             </span>
           </div>
           <span className="font-bold text-sm text-secondary-normal text-nowrap">
-            PHP {price}.00
+            {formatMoney(price, {
+              decimals: 2,
+              symbol: "₱",
+            })}
           </span>
           <div>
             <Link
-              href={"/sign-up"}
+              href={`/spaces/${id}`}
               className="primary-button-link px-[0.75rem] py-[0.5rem]"
             >
               <span className="text-xs text-nowrap">View Details</span>

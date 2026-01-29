@@ -22,7 +22,7 @@ export default async function verifyAdmin(req: NextRequest) {
 
     const role = payload.user_role;
 
-    if (role === "admin") {
+    if (role === "user") {
       return NextResponse.next();
     } else {
       return NextResponse.rewrite(notForYouPage);

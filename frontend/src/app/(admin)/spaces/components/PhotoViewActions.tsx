@@ -115,7 +115,7 @@ export default function PhotoViewActions({
       <DialogBaseContent
         onCloseDialog={() => setFullView(false)}
         openDialog={fullView}
-        enableClickOutside={false}
+        enableClickOutside={true}
       >
         <PhotoFullView
           photoSrc={photoSrc}

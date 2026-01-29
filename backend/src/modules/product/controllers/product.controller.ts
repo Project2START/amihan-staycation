@@ -15,6 +15,16 @@ export class ProductController {
       product: rest,
     });
   }
+  async getProduct(req: Request, res: Response) {
+    const { id } = req.params;
+
+    const product = await productService.get(id);
+
+    res.status(200).json({
+      message: "Product successfully fetched",
+      product,
+    });
+  }
 
   async getProducts(_: RequestWithFiles, res: Response) {
     const products = await productService.getAll();
