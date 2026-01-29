@@ -5,8 +5,10 @@ import {
 } from "@/app/shared/components/ProductItem";
 import ProductHeader from "./ProductHeader";
 import ProductPhotosView from "./ProductPhotosView";
+import ProductDetails from "./ProductDetails";
+import ProductFooter from "./ProductFooter";
 
-interface Product extends IProductItemProps {
+export interface Product extends IProductItemProps {
   maxPersons: number;
   attributes: IProductAttribute[];
 }
@@ -25,12 +27,26 @@ export default async function Product({ spaceId }: { spaceId: string }) {
 
   console.log(product);
   return (
-    <div className="text-secondary-normal px-[1rem]">
-      <div>
-        <ProductHeader name={product.name} id={product.id} />
+    <div className="text-secondary-normal">
+      <div className="px-[1rem]">
+        <div>
+          <ProductHeader name={product.name} id={product.id} />
+        </div>
+        <div>
+          <ProductPhotosView photos={product.photos} />
+        </div>
+        <div>
+          <ProductDetails
+            about={product.about}
+            attributes={product.attributes}
+            maxPersons={product.maxPersons}
+            price={product.price}
+          />
+        </div>
       </div>
+
       <div>
-        <ProductPhotosView photos={product.photos} />
+        <ProductFooter />
       </div>
     </div>
   );

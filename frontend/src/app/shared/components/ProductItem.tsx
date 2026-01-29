@@ -1,10 +1,8 @@
-"use client";
-
 import Link from "next/link";
 import UnitImage from "./UnitImage";
-import { FaStar } from "react-icons/fa";
 import ImageBroken from "./ImageBroken";
 import { formatMoney } from "../lib/formatMoney";
+import Rating from "./Rating";
 
 export interface IProductAttribute {
   name: string;
@@ -70,12 +68,7 @@ export default function ProductItem({
           </p>
         </div>
         <div className="flex flex-col justify-between grow-1 place-items-end text-xs">
-          <div className="flex items-center gap-x-1">
-            <span className="text-secondary-normal">4.5</span>
-            <span className="text-yellow-normal text-sm">
-              <FaStar />
-            </span>
-          </div>
+          <Rating value={4.5} />
           <span className="font-bold text-sm text-secondary-normal text-nowrap">
             {formatMoney(price, {
               decimals: 2,
