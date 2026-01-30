@@ -36,4 +36,6 @@ router.post(
 router.get("/", asyncHandler(productController.getProducts));
 router.get("/:id", asyncHandler(productController.getProduct));
 
+router.delete("/:id", asyncHandler(productController.deleteProduct));
+
 export default router;

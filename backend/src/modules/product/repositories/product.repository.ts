@@ -4,6 +4,7 @@ import {
   ConflictError,
   NotFoundError,
 } from "../../../shared/helpers/appErrors";
+import { supabase } from "../../../shared/lib/supabase";
 
 type ProductWithPhotos = Prisma.ProductGetPayload<{
   include: {
@@ -59,6 +60,16 @@ export class ProductRepository {
 
   async delete(id: string): Promise<Product> {
     try {
+      const photos = await prisma.photo.findMany({ where: { productId: id } });
+
+      for (const photo of photos) {
+        const path = photo.image_url.replace(
+          `${process.env.SUPABASE_URL}/storage/v1/object/public/images/`,
+          "",
+        );
+        await supabase.storage.from("images").remove([path]);
+      }
+
       return await prisma.product.delete({ where: { id } });
     } catch (error: any) {
       if (error.code === "P2025") {

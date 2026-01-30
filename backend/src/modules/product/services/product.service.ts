@@ -92,6 +92,9 @@ export class ProductService {
       return rest;
     });
   }
+  async delete(id: string) {
+    await productRepository.delete(id);
+  }
 }
 
 export const productService = new ProductService();

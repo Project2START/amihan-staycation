@@ -29,7 +29,9 @@ export default function ProductDetails({
       <div>
         <h2 className="mb-[1rem]">About this unit</h2>
 
-        <ClampedParagraph text={about} />
+        <div className="leading-7">
+          <ClampedParagraph text={about} />
+        </div>
       </div>
       <div>
         <h3 className="mb-[2rem]">Everything You’ll Enjoy Here</h3>

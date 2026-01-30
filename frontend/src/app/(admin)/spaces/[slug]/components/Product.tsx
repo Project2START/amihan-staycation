@@ -7,6 +7,7 @@ import ProductHeader from "./ProductHeader";
 import ProductPhotosView from "./ProductPhotosView";
 import ProductDetails from "./ProductDetails";
 import ProductFooter from "./ProductFooter";
+import { notFound } from "next/navigation";
 
 export interface Product extends IProductItemProps {
   maxPersons: number;
@@ -25,12 +26,16 @@ export default async function Product({ spaceId }: { spaceId: string }) {
 
   const product = parsedProduct.product;
 
-  console.log(product);
+  if (!product) {
+    notFound();
+  }
+
+  console.log(parsedProduct);
   return (
     <div className="text-secondary-normal">
       <div className="px-[1rem]">
         <div>
-          <ProductHeader name={product.name} id={product.id} />
+          <ProductHeader product={product} />
         </div>
         <div>
           <ProductPhotosView photos={product.photos} />
