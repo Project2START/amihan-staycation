@@ -1,11 +1,16 @@
 import { supabase } from "../../../shared/lib/supabase";
 import { productRepository } from "../repositories/product.repository";
 import { ProductDTO } from "../schemas/product.schema";
-import { Express } from "express";
+import { BadRequestError } from "../../../shared/helpers/appErrors";
 
 export class ProductService {
   async create(newProduct: ProductDTO, photos: Express.Multer.File[]) {
     const { name, maxPersons, price, about, attributes } = newProduct;
+
+    // Validate photos array
+    if (!photos || photos.length === 0) {
+      throw new BadRequestError("At least one product photo is required");
+    }
 
     const product = await productRepository.create({
       name,
@@ -16,41 +21,76 @@ export class ProductService {
     });
 
     const uploadedFiles: {
-      path: string;
       url: string;
       order: number;
     }[] = [];
 
-    for (let i = 0; i < photos.length; i++) {
-      const file = photos[i];
+    try {
+      for (let i = 0; i < photos.length; i++) {
+        const file = photos[i];
 
-      const ext = file.originalname.split(".").pop();
-      const fileName = `${crypto.randomUUID()}.${ext}`;
-      const filePath = `products/${fileName}`;
+        if (!file.buffer) {
+          throw new BadRequestError("Invalid file buffer");
+        }
 
-      const { error } = await supabase.storage
-        .from("images")
-        .upload(filePath, file.buffer, {
-          contentType: file.mimetype,
+        const ext = file.originalname.split(".").pop();
+        const fileName = `${crypto.randomUUID()}.${ext}`;
+        const filePath = `products/${fileName}`;
+
+        const { error } = await supabase.storage
+          .from("images")
+          .upload(filePath, file.buffer, {
+            contentType: file.mimetype,
+          });
+
+        if (error) throw new Error(error.message);
+
+        const { data } = supabase.storage.from("images").getPublicUrl(filePath);
+
+        if (!data?.publicUrl) {
+          throw new BadRequestError("Failed to generate public URL");
+        }
+
+        uploadedFiles.push({
+          url: data.publicUrl,
+          order: i + 1,
         });
-
-      if (error) throw error;
-
-      const { data } = supabase.storage.from("images").getPublicUrl(filePath);
-
-      uploadedFiles.push({
-        path: filePath, // store in DB
-        url: data.publicUrl, // send to frontend
-        order: i + 1,
-      });
+      }
+    } catch (error) {
+      // Delete the created product if uploads fail
+      await productRepository.delete(product.id);
+      throw error;
     }
 
-    await productRepository.createMultiplePhotos({
-      alt: "Amihan Staycation Unit Photo",
-    });
-    console.log(uploadedFiles);
+    await productRepository.createMultiplePhotos(
+      uploadedFiles.map((uploadedFile) => {
+        return {
+          alt: `Amihan Staycation ${name} Unit Photo `,
+          image_url: uploadedFile.url,
+          order_index: uploadedFile.order,
+          product: { connect: { id: product.id } },
+        };
+      }),
+    );
 
-    // console.log(newProduct, photos);
+    return product;
+  }
+  async get(id: string) {
+    const product = await productRepository.findById(id);
+
+    if (!product) return product;
+
+    const { createdAt, updatedAt, ...rest } = product;
+
+    return rest;
+  }
+  async getAll() {
+    const products = await productRepository.findAll();
+
+    return products.map((product) => {
+      const { createdAt, updatedAt, ...rest } = product;
+      return rest;
+    });
   }
 }
 

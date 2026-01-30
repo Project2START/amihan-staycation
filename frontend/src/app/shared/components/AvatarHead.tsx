@@ -27,7 +27,7 @@ export default function AvatarHead() {
             initial={{ opacity: 0, translateY: "-5%" }}
             animate={{ opacity: 1, translateY: "0%" }}
             exit={{ opacity: 0, translateY: "-5%" }}
-            className="w-[12.5rem] h-max-content bg-white rounded-lg shadow-lg/30 text-xs absolute top-[110%] left-0"
+            className="w-[12.5rem] h-max-content bg-white rounded-lg shadow-lg/30 text-xs absolute top-[110%] left-0 z-99"
           >
             <ClickOutside onClickOutside={() => setAvatarMenu(false)}>
               <div className="p-[1rem]">

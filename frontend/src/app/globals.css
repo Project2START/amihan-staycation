@@ -4,6 +4,9 @@
   --color-primary-normal: #24b4a7;
   --color-secondary-normal: #0b5173;
   --color-tertiary-normal: #279bc0;
+  --color-success-normal: #64be73;
+  --color-reject-normal: #a9463f;
+  --color-yellow-normal: #e2d118;
 }
 
 @layer components {
@@ -29,6 +32,9 @@
 }
 
 @layer base {
+  h1 {
+    @apply text-xl font-bold; /* adjust size as needed */
+  }
   h2 {
     @apply text-lg font-bold; /* adjust size as needed */
   }

@@ -5,6 +5,12 @@ import {
   NotFoundError,
 } from "../../../shared/helpers/appErrors";
 
+type ProductWithPhotos = Prisma.ProductGetPayload<{
+  include: {
+    photos: true;
+  };
+}>;
+
 const prisma = new PrismaClient();
 
 export class ProductRepository {
@@ -19,17 +25,22 @@ export class ProductRepository {
     }
   }
 
-  async findById(id: string): Promise<Product | null> {
+  async findById(id: string): Promise<ProductWithPhotos | null> {
     try {
-      return await prisma.product.findUnique({ where: { id } });
+      return await prisma.product.findUnique({
+        where: { id },
+        include: { photos: { orderBy: { order_index: "asc" } } },
+      });
     } catch (error) {
       throw new AppError("Could not fetch product. Please try again");
     }
   }
 
-  async findAll(): Promise<Product[]> {
+  async findAll(): Promise<ProductWithPhotos[]> {
     try {
-      return await prisma.product.findMany();
+      return await prisma.product.findMany({
+        include: { photos: { orderBy: { order_index: "asc" } } },
+      });
     } catch (error) {
       throw new AppError("Could not fetch products. Please try again");
     }
@@ -84,14 +95,6 @@ export class ProductRepository {
         throw new NotFoundError("Product not found");
       }
       throw new AppError("Could not create photos. Please try again");
-    }
-  }
-
-  async findPhotosByProductId(productId: string): Promise<Photo[]> {
-    try {
-      return await prisma.photo.findMany({ where: { productId } });
-    } catch (error) {
-      throw new AppError("Could not fetch photos. Please try again");
     }
   }
 

@@ -8,6 +8,7 @@ import { expressMiddleware } from "@as-integrations/express4";
 import { ApolloServer } from "@apollo/server";
 import { typeDefs } from "./graphql/typeDefs";
 import { resolvers } from "./graphql/resolvers";
+import cookieParser from "cookie-parser";
 
 import session from "express-session";
 
@@ -15,6 +16,8 @@ const app = express();
 
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.use(
   session({
@@ -24,9 +27,9 @@ app.use(
   }),
 );
 
-app.use("/api/registree", registreeRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/product", productRoutes);
+app.use("/api/registrees", registreeRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
 
 async function setUpGraphql() {
   const server = new ApolloServer({

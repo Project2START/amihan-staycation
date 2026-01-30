@@ -42,7 +42,7 @@ describe("SignInForm Component", () => {
       await userEvent.click(submitButton);
 
       expect(
-        await screen.findByText(/password is required/i)
+        await screen.findByText(/password is required/i),
       ).toBeInTheDocument();
     });
 
@@ -60,7 +60,7 @@ describe("SignInForm Component", () => {
       await userEvent.click(submitButton);
       const errorRegex = new RegExp(
         `Password cannot exceed ${PASSWORD_MAX_LENGTH} characters`,
-        "i"
+        "i",
       );
       const error = await screen.findByText(errorRegex);
 
@@ -72,7 +72,7 @@ describe("SignInForm Component", () => {
       await userEvent.click(submitButton);
       const errorRegex = new RegExp(
         `Password must be at least ${PASSWORD_MIN_LENGTH} characters`,
-        "i"
+        "i",
       );
       const error = await screen.findByText(errorRegex);
 
@@ -120,7 +120,7 @@ describe("SignInForm Component", () => {
       await userEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(pushMock).toHaveBeenCalledWith("/dashboard");
+        expect(pushMock).toHaveBeenCalledWith("/browse-units");
       });
     });
     it("shows error when sign in fails due to invalid credentials", async () => {
@@ -141,7 +141,7 @@ describe("SignInForm Component", () => {
       });
 
       expect(
-        await screen.findByText(/invalid credentials/i)
+        await screen.findByText(/invalid credentials/i),
       ).toBeInTheDocument();
     });
     it("shows error when sign in fails due to network error", async () => {
@@ -177,8 +177,8 @@ describe("SignInForm Component", () => {
 
       expect(
         await screen.findByText(
-          /something went wrong. please try again later./i
-        )
+          /something went wrong. please try again later./i,
+        ),
       ).toBeInTheDocument();
     });
   });

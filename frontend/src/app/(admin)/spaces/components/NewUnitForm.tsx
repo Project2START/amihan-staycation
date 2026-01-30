@@ -13,6 +13,11 @@ import UnitAttributes from "./UnitAttributes";
 import axios from "axios";
 import { HOST } from "@/app/shared/constants/config";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
+import toast from "react-hot-toast";
+import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
+import Alert from "@mui/material/Alert";
+import { CustomToast } from "@/app/shared/ui/CustomToast";
+import revalidatePathSpaces from "../_actions/revalidatePathSpaces";
 
 export const unitDefaultAttributes = [
   { name: "Beds", iconId: "beds-1", quantity: 2 },
@@ -45,6 +50,7 @@ interface INewUnitProps {
 export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
   const [openAddAttr, setOpenAddAttr] = useState<boolean>(false);
   const [formError, setFormError] = useState<null | string>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const methods = useForm<NewUnitSchema>({
     resolver: zodResolver(newUnitSchema),
@@ -61,6 +67,9 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
   } = methods;
 
   const onSubmit = async (data: NewUnitSchema) => {
+    setFormError(null);
+    setLoading(true);
+
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {
@@ -73,7 +82,6 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
         data["photos"].forEach((photo) => {
           formData.append("photo_files", photo.file);
         });
-
         return;
       }
 
@@ -81,14 +89,21 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
     });
 
     try {
-      await axios.post(`${HOST}/api/product/create`, formData, {
+      const result = await axios.post(`${HOST}/api/products`, formData, {
         withCredentials: true,
       });
+
+      CustomToast.show("Unit successfully created", {
+        indicator: "success",
+      });
+      onCloseDialog();
+
+      await revalidatePathSpaces();
     } catch (error) {
       setFormError(errorHandler(error).message);
+    } finally {
+      setLoading(false);
     }
-
-    console.log(data);
   };
 
   return (
@@ -96,7 +111,7 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
       <h1 className="text-center text-xl font-bold">Add New Unit</h1>
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mt-[1rem] h-[23rem] overflow-y-auto px-[0.25rem]">
+          <div className="mt-[1rem] h-[23rem] overflow-y-auto px-[0.25rem] pb-[1rem]">
             <div className="flex flex-col">
               <span className="font-bold">Name</span>
               <input
@@ -208,9 +223,11 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                 </PrimaryButton>
               </div>
               <div>
-                <PrimaryButton type="submit">
-                  <span className="text-xs px-[2.5rem] font-bold">Save</span>
-                </PrimaryButton>
+                <LoadingOverlay loading={loading}>
+                  <PrimaryButton type="submit" disabled={loading}>
+                    <span className="text-xs px-[2.5rem] font-bold">Save</span>
+                  </PrimaryButton>
+                </LoadingOverlay>
               </div>
             </div>
           </div>
