@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import HeaderAdmin from "@/app/(admin)/components/HeaderAdmin";
-import NavigationBottomAdmin from "@/app/(admin)/spaces/components/NavigationBottomSpaces";
+import NavigationBottomAdmin from "@/app/(admin)/components/NavigationBottomSpaces";
 import BookingFiltersNav, { type BookingCounts } from "./components/BookingFiltersNav";
 import { BookingStatus } from "./constants/bookingFilters";
 

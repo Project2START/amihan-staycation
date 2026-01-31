@@ -1,5 +1,5 @@
 import HeaderAdmin from "@/app/(admin)/components/HeaderAdmin";
-import NavigationBottomAdmin from "@/app/(admin)/spaces/components/NavigationBottomSpaces";
+import NavigationBottomAdmin from "@/app/(admin)/components/NavigationBottomSpaces";
 
 export default function page() {
   return (
