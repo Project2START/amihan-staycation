@@ -19,3 +19,5 @@ export const ATTR_QUANTITY_MIN = 1;
 export const ATTR_QUANTITY_MAX = 100;
 export const ATTR_ID_MIN = 1;
 export const ATTR_ID_MAX = 100;
+
+export const UUID_MAX = 36;

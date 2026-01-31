@@ -63,10 +63,8 @@ export class ProductRepository {
       const photos = await prisma.photo.findMany({ where: { productId: id } });
 
       for (const photo of photos) {
-        const path = photo.image_url.replace(
-          `${process.env.SUPABASE_URL}/storage/v1/object/public/images/`,
-          "",
-        );
+        const path = getSupabaseImagesPath(photo.image_url);
+
         await supabase.storage.from("images").remove([path]);
       }
 
@@ -91,6 +89,25 @@ export class ProductRepository {
     }
   }
 
+  async findPhoto(id: string): Promise<Photo | null> {
+    try {
+      return await prisma.photo.findUnique({
+        where: { id },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch photo. Please try again");
+    }
+  }
+  async updatePhoto(id: string, data: Prisma.PhotoUpdateInput): Promise<Photo> {
+    try {
+      return await prisma.photo.update({ where: { id }, data });
+    } catch (error: any) {
+      if (error.code === "P2025") {
+        throw new NotFoundError("Photo not found");
+      }
+      throw new AppError("Could not update photo. Please try again");
+    }
+  }
   async createMultiplePhotos(
     data: Prisma.PhotoCreateInput[],
   ): Promise<Photo[]> {

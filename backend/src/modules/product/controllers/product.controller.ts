@@ -34,6 +34,15 @@ export class ProductController {
       products,
     });
   }
+  async updateProduct(req: RequestWithFiles, res: Response) {
+    await productService.update(req.body, req.files);
+
+    console.log(req.body, req.files);
+
+    res.status(200).json({
+      message: "Product successfully updated",
+    });
+  }
   async deleteProduct(req: Request, res: Response) {
     const { id } = req.params;
 

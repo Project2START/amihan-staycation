@@ -10,6 +10,7 @@ export default function ProductDetails({
   attributes,
   maxPersons,
 }: Pick<Product, "about" | "attributes" | "maxPersons" | "price">) {
+  console.log(about, attributes);
   return (
     <div className="text-xs grid gap-y-7 my-[1rem]">
       <div className="flex items-start justify-between">
@@ -27,14 +28,24 @@ export default function ProductDetails({
         </div>
       </div>
       <div>
-        <h2 className="mb-[1rem]">About this unit</h2>
+        <h2
+          className="mb-[1rem]"
+          style={{ display: about === "" ? "none" : "block" }}
+        >
+          About this unit
+        </h2>
 
         <div className="leading-7">
           <ClampedParagraph text={about} />
         </div>
       </div>
       <div>
-        <h3 className="mb-[2rem]">Everything You’ll Enjoy Here</h3>
+        <h3
+          className="mb-[2rem]"
+          style={{ display: attributes.length === 0 ? "none" : "block" }}
+        >
+          Everything You’ll Enjoy Here
+        </h3>
         <ul className="flex flex-wrap gap-3">
           {attributes.map((attribute) => {
             return (

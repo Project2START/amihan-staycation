@@ -11,6 +11,7 @@ import {
   ATTR_ID_MIN,
   ATTR_NAME_MAX,
   ATTR_NAME_MIN,
+  UUID_MAX,
 } from "../../../shared/constants/productFormValidation";
 
 export const newUnitAttributeSchema = z.object({
@@ -112,4 +113,39 @@ export const productSchema = z.object({
   // ),
 });
 
+export const productWithPhotosSchema = productSchema.extend({
+  product_id: z
+    .string()
+    .max(UUID_MAX, `ID must be at most ${UUID_MAX} characters`),
+
+  photo_ids: z.preprocess(
+    (val) => {
+      if (typeof val === "string") {
+        try {
+          return JSON.parse(val);
+        } catch {
+          return val; // let Zod catch invalid type
+        }
+      }
+    },
+    z.array(
+      z
+        .string()
+        .max(UUID_MAX, `Each photo id must be at most ${UUID_MAX} characters`),
+    ),
+  ),
+  photo_slots: z.preprocess(
+    (val) => {
+      if (typeof val === "string") {
+        try {
+          return JSON.parse(val);
+        } catch {
+          return val; // let Zod catch invalid type
+        }
+      }
+    },
+    z.array(z.enum(["file", "empty"])),
+  ),
+});
 export type ProductDTO = z.infer<typeof productSchema>;
+export type ProductWithPhotosDTO = z.infer<typeof productWithPhotosSchema>;

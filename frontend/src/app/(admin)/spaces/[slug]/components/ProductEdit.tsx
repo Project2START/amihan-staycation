@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import NewUnitForm from "../../components/NewUnitFormTwo";
 import { Product } from "./Product";
 import { urlsToFiles } from "@/app/shared/lib/urlToFiles";
 import { NewUnitSchema } from "../../lib/newUnitSchema";
+import EditUnitForm from "../../components/EditUnitForm";
+import { CircularProgress } from "@mui/material";
 
 export default function ProductEdit({
   product,
@@ -14,16 +15,11 @@ export default function ProductEdit({
   onCloseDialog: () => void;
 }) {
   const [newProduct, setNewProduct] = useState<NewUnitSchema | null>(null);
+  const [loading, setLoading] = useState(false);
   const { photos, id } = product;
 
-  //   const handleProductTransform = async () => {
-  //     const photoUrls = photos.map(photo => (photo.image_url));
-  //     const photoFiles = await urlsToFiles(photoUrls);
-
-  //     return photoFiles;
-  //   }
-
   useEffect(() => {
+    setLoading(true);
     const handlePhotosTransform = async () => {
       const photoUrls = photos.map((photo) => photo.image_url);
       const photoFiles = await urlsToFiles(photoUrls);
@@ -35,6 +31,7 @@ export default function ProductEdit({
       }));
 
       setNewProduct({ ...product, photos: newPhotos });
+      setLoading(false);
     };
 
     handlePhotosTransform();
@@ -43,10 +40,16 @@ export default function ProductEdit({
   return (
     <div>
       {newProduct && (
-        <NewUnitForm
+        <EditUnitForm
+          productId={id}
           onCloseDialog={onCloseDialog}
           edit={{ editMode: true, dataFillers: newProduct }}
         />
+      )}
+      {loading && (
+        <div className="h-[50vh] flex items-center justify-center">
+          <CircularProgress />
+        </div>
       )}
     </div>
   );

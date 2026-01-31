@@ -3,7 +3,10 @@ import { asyncHandler } from "../../shared/helpers/asyncHandler";
 import { productController } from "./controllers/product.controller";
 import multer from "multer";
 import { validateSchema } from "../../middleware/validateSchema";
-import { productSchema } from "./schemas/product.schema";
+import {
+  productSchema,
+  productWithPhotosSchema,
+} from "./schemas/product.schema";
 import { PHOTOS_MAX } from "../../shared/constants/productFormValidation";
 import { requireAuth } from "../../middleware/requireAuth";
 import { checkRole } from "../../middleware/checkRole";
@@ -35,6 +38,15 @@ router.post(
 
 router.get("/", asyncHandler(productController.getProducts));
 router.get("/:id", asyncHandler(productController.getProduct));
+
+router.put(
+  "/",
+  requireAuth,
+  checkRole(["admin"]),
+  upload.array("photo_files"),
+  validateSchema(productWithPhotosSchema),
+  asyncHandler(productController.updateProduct),
+);
 
 router.delete("/:id", asyncHandler(productController.deleteProduct));
 
