@@ -16,22 +16,31 @@ export default function ProductPhotosView({
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [fullView, setFullView] = useState(false);
 
+  const activeImgSrc = photos.find((photo) => photo.id === activeImage);
+
+  const photoIndex = photos.findIndex((photo) => photo.id === activeImage);
+
   useEffect(() => {
     if (!activeImage && photos.length) {
       setActiveImage(photos[0].id);
     } else if (!photos.length) {
       setActiveImage(null);
+    } else if (!activeImgSrc) {
+      setActiveImage(photos[0].id);
     }
-  }, [photos, activeImage]);
-
-  const activeImgSrc = photos.find((photo) => photo.id === activeImage);
+  }, [photos, activeImage, activeImgSrc]);
 
   return (
     <div className="bg-[#efefef] rounded-lg">
       <div className="w-full relative h-[13.5rem]">
         {activeImgSrc && (
           <>
-            <div className="w-full h-[2rem] absolute top-0 left-0 z-10 bg-gradient-to-b from-[rgb(0,0,0)] to-[rgba(0,0,0, 0.75)]">
+            <div className="px-[0.25rem] py-[0.75rem] flex justify-between items-center w-full h-[2rem] absolute top-0 left-0 z-10 bg-gradient-to-b from-[rgb(0,0,0)] to-[rgba(0,0,0, 0.75)]">
+              <div className="ml-[0.5rem]">
+                <span className="text-white text-xs">
+                  {photoIndex + 1} / {photos.length}
+                </span>
+              </div>
               <div className="px-[0.5rem] flex justify-end items-center h-full">
                 <button type="button" onClick={() => setFullView(true)}>
                   <span className="text-white text-base">
@@ -39,6 +48,7 @@ export default function ProductPhotosView({
                   </span>
                 </button>
               </div>
+
               <DialogBaseContent
                 onCloseDialog={() => setFullView(false)}
                 openDialog={fullView}

@@ -12,6 +12,7 @@ import {
   ATTR_NAME_MAX,
   ATTR_NAME_MIN,
   UUID_MAX,
+  PHOTOS_MAX,
 } from "../../../shared/constants/productFormValidation";
 
 export const newUnitAttributeSchema = z.object({
@@ -87,7 +88,7 @@ export const productSchema = z.object({
           try {
             return JSON.parse(val);
           } catch {
-            return val; // let Zod catch invalid type
+            return val;
           }
         }
         return val;
@@ -124,7 +125,7 @@ export const productWithPhotosSchema = productSchema.extend({
         try {
           return JSON.parse(val);
         } catch {
-          return val; // let Zod catch invalid type
+          return val;
         }
       }
     },
@@ -140,11 +141,33 @@ export const productWithPhotosSchema = productSchema.extend({
         try {
           return JSON.parse(val);
         } catch {
-          return val; // let Zod catch invalid type
+          return val;
         }
       }
     },
     z.array(z.enum(["file", "empty"])),
+  ),
+  deleted_photos: z.preprocess(
+    (val) => {
+      console.log(val);
+      if (typeof val === "string") {
+        try {
+          return JSON.parse(val);
+        } catch {
+          return val;
+        }
+      }
+    },
+    z
+      .array(
+        z
+          .string()
+          .max(
+            UUID_MAX,
+            `Each photo id must be at most ${UUID_MAX} characters`,
+          ),
+      )
+      .max(PHOTOS_MAX, `Photo IDs exceeds ${PHOTOS_MAX} max`),
   ),
 });
 export type ProductDTO = z.infer<typeof productSchema>;

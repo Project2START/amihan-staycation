@@ -3,6 +3,7 @@ import { productRepository } from "../repositories/product.repository";
 import { ProductDTO, ProductWithPhotosDTO } from "../schemas/product.schema";
 import { BadRequestError } from "../../../shared/helpers/appErrors";
 import { generateFilePath } from "../helpers/generateFilePath";
+import { getSupabaseImagesPath } from "../helpers/getSupabaseImagesPath";
 
 export class ProductService {
   async create(newProduct: ProductDTO, photos: Express.Multer.File[]) {
@@ -174,6 +175,20 @@ export class ProductService {
       await productRepository.updatePhoto(photo.id, {
         order_index: ordered_photo.order_index,
       });
+    });
+
+    products.deleted_photos.forEach(async (deleted_photo_id) => {
+      const photoExists = await productRepository.findPhoto(deleted_photo_id);
+
+      if (photoExists) {
+        const photo = await productRepository.deletePhoto(deleted_photo_id);
+
+        const deleted_photo_url = photo.image_url;
+
+        const filePath = getSupabaseImagesPath(deleted_photo_url);
+
+        await supabase.storage.from("images").remove([filePath]);
+      }
     });
 
     await productRepository.update(product_id, {

@@ -5,6 +5,7 @@ import {
   NotFoundError,
 } from "../../../shared/helpers/appErrors";
 import { supabase } from "../../../shared/lib/supabase";
+import { getSupabaseImagesPath } from "../helpers/getSupabaseImagesPath";
 
 type ProductWithPhotos = Prisma.ProductGetPayload<{
   include: {

@@ -3,7 +3,8 @@
  * @param {string} imageUrl - The full URL of the image.
  * @returns {string} - The relative path of the image in storage.
  */
-function getSupabaseImagesPath(imageUrl: string) {
+export function getSupabaseImagesPath(imageUrl: string) {
+  console.log(imageUrl);
   const baseUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/`;
   return imageUrl.replace(baseUrl, "");
 }

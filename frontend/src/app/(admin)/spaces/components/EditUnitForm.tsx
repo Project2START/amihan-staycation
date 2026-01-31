@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm, FormProvider } from "react-hook-form";
-import { newUnitSchema, NewUnitSchema } from "../lib/newUnitSchema";
+import { NewUnitSchema } from "../lib/newUnitSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
@@ -15,9 +15,9 @@ import { HOST } from "@/app/shared/constants/config";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
-import revalidatePathSpaces from "../_actions/revalidatePathSpaces";
 import { useParams } from "next/navigation";
 import revalidatePathSpacesSlug from "../_actions/revalidatePathSpacesSlug";
+import { editUnitSchema, EditUnitSchema } from "../lib/editUnitSchema";
 
 export const unitDefaultAttributes = [
   { name: "Beds", iconId: "beds-1", quantity: 2 },
@@ -60,8 +60,8 @@ export default function EditUnitForm({
 
   console.log(edit);
 
-  const methods = useForm<NewUnitSchema>({
-    resolver: zodResolver(newUnitSchema),
+  const methods = useForm<EditUnitSchema>({
+    resolver: zodResolver(editUnitSchema),
     defaultValues: {
       attributes: unitDefaultAttributes,
       photos: [],
@@ -77,13 +77,15 @@ export default function EditUnitForm({
 
   const params = useParams<{ slug: string }>();
 
-  const onSubmit = async (data: NewUnitSchema) => {
+  console.log(errors);
+  const onSubmit = async (data: EditUnitSchema) => {
     setFormError(null);
     setLoading(true);
 
     const formData = new FormData();
 
     formData.append("product_id", productId);
+    formData.append("deleted_photos", JSON.stringify(data.deletedPhotos));
 
     console.log(data);
     Object.entries(data).forEach(([key, value]) => {
@@ -141,7 +143,7 @@ export default function EditUnitForm({
 
   useEffect(() => {
     if (!edit) return;
-    reset({ ...edit.dataFillers });
+    reset({ ...edit.dataFillers, deletedPhotos: [] });
   }, []);
   return (
     <div className="relative text-secondary-normal text-xs px-[1.5rem] py-[2rem]">
@@ -253,6 +255,7 @@ export default function EditUnitForm({
                   variant="text"
                   style={{ backgroundColor: "none" }}
                   onClick={onCloseDialog}
+                  disabled={loading}
                 >
                   <span className="text-xs normal-case text-secondary-normal">
                     Cancel

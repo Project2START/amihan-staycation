@@ -216,6 +216,7 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                   variant="text"
                   style={{ backgroundColor: "none" }}
                   onClick={onCloseDialog}
+                  disabled={loading}
                 >
                   <span className="text-xs normal-case text-secondary-normal">
                     Cancel
