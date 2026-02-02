@@ -48,6 +48,11 @@ router.put(
   asyncHandler(productController.updateProduct),
 );
 
-router.delete("/:id", asyncHandler(productController.deleteProduct));
+router.delete(
+  "/:id",
+  requireAuth,
+  checkRole(["admin"]),
+  asyncHandler(productController.deleteProduct),
+);
 
 export default router;

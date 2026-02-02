@@ -10,7 +10,6 @@ export default function ProductDetails({
   attributes,
   maxPersons,
 }: Pick<Product, "about" | "attributes" | "maxPersons" | "price">) {
-  console.log(about, attributes);
   return (
     <div className="text-xs grid gap-y-7 my-[1rem]">
       <div className="flex items-start justify-between">

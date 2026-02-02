@@ -30,7 +30,6 @@ export default async function Product({ spaceId }: { spaceId: string }) {
     notFound();
   }
 
-  console.log(parsedProduct);
   return (
     <div className="text-secondary-normal">
       <div className="px-[1rem]">

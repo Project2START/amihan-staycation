@@ -31,14 +31,6 @@ export class ProductService {
       for (let i = 0; i < photos.length; i++) {
         const file = photos[i];
 
-        // if (!file.buffer) {
-        //   throw new BadRequestError("Invalid file buffer");
-        // }
-
-        // const ext = file.originalname.split(".").pop();
-        // const fileName = `${crypto.randomUUID()}.${ext}`;
-        // const filePath = `products/${fileName}`;
-
         const filePath = generateFilePath(file, "products");
 
         const { error } = await supabase.storage
@@ -177,19 +169,21 @@ export class ProductService {
       });
     });
 
-    products.deleted_photos.forEach(async (deleted_photo_id) => {
-      const photoExists = await productRepository.findPhoto(deleted_photo_id);
+    if (products.deleted_photos.length !== 0) {
+      products.deleted_photos.forEach(async (deleted_photo_id) => {
+        const photoExists = await productRepository.findPhoto(deleted_photo_id);
 
-      if (photoExists) {
-        const photo = await productRepository.deletePhoto(deleted_photo_id);
+        if (photoExists) {
+          const photo = await productRepository.deletePhoto(deleted_photo_id);
 
-        const deleted_photo_url = photo.image_url;
+          const deleted_photo_url = photo.image_url;
 
-        const filePath = getSupabaseImagesPath(deleted_photo_url);
+          const filePath = getSupabaseImagesPath(deleted_photo_url);
 
-        await supabase.storage.from("images").remove([filePath]);
-      }
-    });
+          await supabase.storage.from("images").remove([filePath]);
+        }
+      });
+    }
 
     await productRepository.update(product_id, {
       about,

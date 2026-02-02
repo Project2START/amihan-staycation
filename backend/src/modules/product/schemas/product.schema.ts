@@ -149,7 +149,6 @@ export const productWithPhotosSchema = productSchema.extend({
   ),
   deleted_photos: z.preprocess(
     (val) => {
-      console.log(val);
       if (typeof val === "string") {
         try {
           return JSON.parse(val);

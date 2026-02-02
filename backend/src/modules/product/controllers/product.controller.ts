@@ -37,8 +37,6 @@ export class ProductController {
   async updateProduct(req: RequestWithFiles, res: Response) {
     await productService.update(req.body, req.files);
 
-    console.log(req.body, req.files);
-
     res.status(200).json({
       message: "Product successfully updated",
     });

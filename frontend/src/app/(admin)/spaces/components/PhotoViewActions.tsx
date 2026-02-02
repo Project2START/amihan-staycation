@@ -9,6 +9,7 @@ import { useRef, useState } from "react";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 import PhotoFullView from "@/app/shared/components/PhotoFullView";
 import { EditUnitSchema } from "../lib/editUnitSchema";
+import { v4 as uuid } from "uuid";
 
 export default function PhotoViewActions({
   photoSrc,
@@ -27,10 +28,17 @@ export default function PhotoViewActions({
 
   const handleUpdatePhoto = (file: File) => {
     const photos = getValues("photos");
-
+    const deletedPhotos = editUnitForm.getValues("deletedPhotos");
     const newPhotos = photos.map((photo) => {
       if (photo.id === photoId) {
-        return { ...photo, src: URL.createObjectURL(file), file };
+        const newPhoto = {
+          ...photo,
+          src: URL.createObjectURL(file),
+          id: uuid(),
+          file,
+        };
+        onNewActiveImage(newPhoto.id);
+        return newPhoto;
       }
       return photo;
     });
@@ -38,6 +46,12 @@ export default function PhotoViewActions({
     setValue("photos", newPhotos);
 
     URL.revokeObjectURL(photoSrc);
+
+    if (deletedPhotos) {
+      editUnitForm.setValue("deletedPhotos", [...deletedPhotos, photoId]);
+    } else {
+      editUnitForm.setValue("deletedPhotos", [photoId]);
+    }
   };
 
   const handleDeletePhoto = () => {
@@ -63,7 +77,7 @@ export default function PhotoViewActions({
     }
 
     URL.revokeObjectURL(photoSrc);
-    console.log(deletedPhotos);
+
     if (deletedPhotos) {
       editUnitForm.setValue("deletedPhotos", [...deletedPhotos, photoId]);
     } else {

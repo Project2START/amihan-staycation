@@ -58,8 +58,6 @@ export default function EditUnitForm({
   const [formError, setFormError] = useState<null | string>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  console.log(edit);
-
   const methods = useForm<EditUnitSchema>({
     resolver: zodResolver(editUnitSchema),
     defaultValues: {
@@ -77,7 +75,6 @@ export default function EditUnitForm({
 
   const params = useParams<{ slug: string }>();
 
-  console.log(errors);
   const onSubmit = async (data: EditUnitSchema) => {
     setFormError(null);
     setLoading(true);
@@ -87,7 +84,6 @@ export default function EditUnitForm({
     formData.append("product_id", productId);
     formData.append("deleted_photos", JSON.stringify(data.deletedPhotos));
 
-    console.log(data);
     Object.entries(data).forEach(([key, value]) => {
       if (typeof value === "string") {
         formData.append(key, value);
