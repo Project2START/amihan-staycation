@@ -108,6 +108,7 @@ export default function SearchUnit() {
             </AnimatePresence>
           </div>
         </div>
+        
         <div className="relative md:basis-3/5">
           <button
             disabled={occupancy}

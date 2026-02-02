@@ -1,11 +1,11 @@
 import HeaderAdmin from "@/app/(admin)/components/HeaderAdmin";
 import NavigationBottomAdmin from "@/app/(admin)/components/NavigationBottomSpaces";
 
-export default function SpacesPage() {
+export default function page() {
   return (
     <div className="flex flex-col">
       <HeaderAdmin />
-      <ProductList />
+      <div></div>
       <NavigationBottomAdmin />
     </div>
   );
