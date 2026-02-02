@@ -4,6 +4,8 @@ import {
   ConflictError,
   NotFoundError,
 } from "../../../shared/helpers/appErrors";
+import { supabase } from "../../../shared/lib/supabase";
+import { getSupabaseImagesPath } from "../helpers/getSupabaseImagesPath";
 
 type ProductWithPhotos = Prisma.ProductGetPayload<{
   include: {
@@ -59,6 +61,14 @@ export class ProductRepository {
 
   async delete(id: string): Promise<Product> {
     try {
+      const photos = await prisma.photo.findMany({ where: { productId: id } });
+
+      for (const photo of photos) {
+        const path = getSupabaseImagesPath(photo.image_url);
+
+        await supabase.storage.from("images").remove([path]);
+      }
+
       return await prisma.product.delete({ where: { id } });
     } catch (error: any) {
       if (error.code === "P2025") {
@@ -80,6 +90,25 @@ export class ProductRepository {
     }
   }
 
+  async findPhoto(id: string): Promise<Photo | null> {
+    try {
+      return await prisma.photo.findUnique({
+        where: { id },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch photo. Please try again");
+    }
+  }
+  async updatePhoto(id: string, data: Prisma.PhotoUpdateInput): Promise<Photo> {
+    try {
+      return await prisma.photo.update({ where: { id }, data });
+    } catch (error: any) {
+      if (error.code === "P2025") {
+        throw new NotFoundError("Photo not found");
+      }
+      throw new AppError("Could not update photo. Please try again");
+    }
+  }
   async createMultiplePhotos(
     data: Prisma.PhotoCreateInput[],
   ): Promise<Photo[]> {

@@ -26,7 +26,7 @@ export default async function ProductList() {
           </p>
         </div>
         <div className="mt-[3rem] mb-[4rem] mx-[1rem] grid gap-y-5">
-          {parsedProducts.products ? (
+          {parsedProducts.products && parsedProducts.products.length !== 0 ? (
             parsedProducts.products.map((product) => {
               const { id, about, name, price, photos } = product;
 
@@ -42,8 +42,8 @@ export default async function ProductList() {
               );
             })
           ) : (
-            <p className="opacity-30 font-bold horver_center">
-              The list is not available.
+            <p className="opacity-30 font-bold horver_center text-nowrap mt-[2rem]">
+              Staycations are not currently available.
             </p>
           )}
         </div>

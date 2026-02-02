@@ -1,9 +1,9 @@
 "use client";
 
 import { useForm, FormProvider } from "react-hook-form";
-import { newUnitSchema, NewUnitSchema } from "../lib/newUnitSchema";
+import { NewUnitSchema } from "../lib/newUnitSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import AddUnitAttributes from "./AddUnitAttributes";
 import { FiPlusCircle } from "react-icons/fi";
@@ -15,7 +15,9 @@ import { HOST } from "@/app/shared/constants/config";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
-import revalidatePathSpaces from "../_actions/revalidatePathSpaces";
+import { useParams } from "next/navigation";
+import revalidatePathSpacesSlug from "../_actions/revalidatePathSpacesSlug";
+import { editUnitSchema, EditUnitSchema } from "../lib/editUnitSchema";
 
 export const unitDefaultAttributes = [
   { name: "Beds", iconId: "beds-1", quantity: 2 },
@@ -41,17 +43,23 @@ export const unitDefaultAttributes = [
   },
 ];
 
-interface INewUnitProps {
+interface IEditUnitProps {
   onCloseDialog: () => void;
+  edit: { editMode: boolean; dataFillers: NewUnitSchema };
+  productId: string;
 }
 
-export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
+export default function EditUnitForm({
+  onCloseDialog,
+  edit,
+  productId,
+}: IEditUnitProps) {
   const [openAddAttr, setOpenAddAttr] = useState<boolean>(false);
   const [formError, setFormError] = useState<null | string>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const methods = useForm<NewUnitSchema>({
-    resolver: zodResolver(newUnitSchema),
+  const methods = useForm<EditUnitSchema>({
+    resolver: zodResolver(editUnitSchema),
     defaultValues: {
       attributes: unitDefaultAttributes,
       photos: [],
@@ -63,14 +71,18 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
     register,
     formState: { errors },
     reset,
-    getValues,
   } = methods;
 
-  const onSubmit = async (data: NewUnitSchema) => {
+  const params = useParams<{ slug: string }>();
+
+  const onSubmit = async (data: EditUnitSchema) => {
     setFormError(null);
     setLoading(true);
 
     const formData = new FormData();
+
+    formData.append("product_id", productId);
+    formData.append("deleted_photos", JSON.stringify(data.deletedPhotos));
 
     Object.entries(data).forEach(([key, value]) => {
       if (typeof value === "string") {
@@ -79,9 +91,26 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
       }
 
       if (key === "photos") {
+        type PhotoSlot = "file" | "empty";
+
+        let photo_slots: PhotoSlot[] = [];
+        let photo_ids: string[] = [];
+
         data["photos"].forEach((photo) => {
-          formData.append("photo_files", photo.file);
+          const photoExists = edit.dataFillers.photos.some(
+            (p) => p.id === photo.id,
+          );
+
+          if (!photoExists) {
+            formData.append("photo_files", photo.file);
+            photo_slots.push("file");
+          } else {
+            photo_slots.push("empty");
+          }
+          photo_ids.push(photo.id);
         });
+        formData.append("photo_slots", JSON.stringify(photo_slots));
+        formData.append("photo_ids", JSON.stringify(photo_ids));
         return;
       }
 
@@ -89,16 +118,18 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
     });
 
     try {
-      await axios.post(`${HOST}/api/products`, formData, {
+      await axios.put(`${HOST}/api/products`, formData, {
         withCredentials: true,
       });
 
-      CustomToast.show("Unit successfully created", {
+      CustomToast.show("Unit successfully edited", {
         indicator: "success",
       });
       onCloseDialog();
 
-      await revalidatePathSpaces();
+      setTimeout(async () => {
+        await revalidatePathSpacesSlug(params.slug);
+      }, 1000);
     } catch (error) {
       setFormError(errorHandler(error).message);
     } finally {
@@ -106,9 +137,13 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
     }
   };
 
+  useEffect(() => {
+    if (!edit) return;
+    reset({ ...edit.dataFillers, deletedPhotos: [] });
+  }, []);
   return (
     <div className="relative text-secondary-normal text-xs px-[1.5rem] py-[2rem]">
-      <h1 className="text-center text-xl font-bold">Add New Unit</h1>
+      <h1 className="text-center text-xl font-bold">Edit Unit</h1>
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mt-[1rem] h-[23rem] overflow-y-auto px-[0.25rem] pb-[1rem]">

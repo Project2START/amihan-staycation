@@ -26,6 +26,9 @@
   .vertical_center {
     @apply absolute top-[50%] translate-y-[-50%];
   }
+  .horizontal_center {
+    @apply absolute left-[50%] translate-x-[-50%];
+  }
   .horver_center {
     @apply absolute top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%];
   }

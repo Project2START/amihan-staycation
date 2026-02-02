@@ -3,7 +3,7 @@
 import { useForm, FormProvider } from "react-hook-form";
 import { newUnitSchema, NewUnitSchema } from "../lib/newUnitSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import AddUnitAttributes from "./AddUnitAttributes";
 import { FiPlusCircle } from "react-icons/fi";
@@ -43,12 +43,15 @@ export const unitDefaultAttributes = [
 
 interface INewUnitProps {
   onCloseDialog: () => void;
+  edit?: { editMode: boolean; dataFillers: NewUnitSchema };
 }
 
-export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
+export default function NewUnitForm({ onCloseDialog, edit }: INewUnitProps) {
   const [openAddAttr, setOpenAddAttr] = useState<boolean>(false);
   const [formError, setFormError] = useState<null | string>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  console.log(edit);
 
   const methods = useForm<NewUnitSchema>({
     resolver: zodResolver(newUnitSchema),
@@ -106,6 +109,10 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
     }
   };
 
+  useEffect(() => {
+    if (!edit) return;
+    reset({ ...edit.dataFillers });
+  }, []);
   return (
     <div className="relative text-secondary-normal text-xs px-[1.5rem] py-[2rem]">
       <h1 className="text-center text-xl font-bold">Add New Unit</h1>
@@ -216,7 +223,6 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                   variant="text"
                   style={{ backgroundColor: "none" }}
                   onClick={onCloseDialog}
-                  disabled={loading}
                 >
                   <span className="text-xs normal-case text-secondary-normal">
                     Cancel

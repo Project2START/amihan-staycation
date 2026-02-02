@@ -16,7 +16,7 @@ import { NextRequest, NextResponse } from "next/server";
 export default async function verifyRegistree(req: NextRequest) {
   const registree_id = req.cookies.get("registree_id")?.value;
   try {
-    await axios.post(`${HOST}/api/registree/verify`, {
+    await axios.post(`${HOST}/api/registrees/verify`, {
       id: registree_id,
     });
 

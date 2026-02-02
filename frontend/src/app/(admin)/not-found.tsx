@@ -1,8 +1,8 @@
 "use client";
+
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import FooterMain from "./shared/components/FooterMain";
-import HeaderAuth from "./shared/components/HeaderAuth";
+import HeaderAuth from "../shared/components/HeaderAuth";
 
 export default function NotFound() {
   const router = useRouter();
@@ -31,9 +31,6 @@ export default function NotFound() {
             Home
           </Link>
         </div>
-      </div>
-      <div>
-        <FooterMain />
       </div>
     </div>
   );

@@ -1,7 +1,9 @@
 import { supabase } from "../../../shared/lib/supabase";
 import { productRepository } from "../repositories/product.repository";
-import { ProductDTO } from "../schemas/product.schema";
+import { ProductDTO, ProductWithPhotosDTO } from "../schemas/product.schema";
 import { BadRequestError } from "../../../shared/helpers/appErrors";
+import { generateFilePath } from "../helpers/generateFilePath";
+import { getSupabaseImagesPath } from "../helpers/getSupabaseImagesPath";
 
 export class ProductService {
   async create(newProduct: ProductDTO, photos: Express.Multer.File[]) {
@@ -29,13 +31,7 @@ export class ProductService {
       for (let i = 0; i < photos.length; i++) {
         const file = photos[i];
 
-        if (!file.buffer) {
-          throw new BadRequestError("Invalid file buffer");
-        }
-
-        const ext = file.originalname.split(".").pop();
-        const fileName = `${crypto.randomUUID()}.${ext}`;
-        const filePath = `products/${fileName}`;
+        const filePath = generateFilePath(file, "products");
 
         const { error } = await supabase.storage
           .from("images")
@@ -65,7 +61,7 @@ export class ProductService {
     await productRepository.createMultiplePhotos(
       uploadedFiles.map((uploadedFile) => {
         return {
-          alt: `Amihan Staycation ${name} Unit Photo `,
+          alt: `Amihan Staycation ${name} Unit Photo`,
           image_url: uploadedFile.url,
           order_index: uploadedFile.order,
           product: { connect: { id: product.id } },
@@ -91,6 +87,116 @@ export class ProductService {
       const { createdAt, updatedAt, ...rest } = product;
       return rest;
     });
+  }
+  async update(products: ProductWithPhotosDTO, photos: Express.Multer.File[]) {
+    const {
+      maxPersons,
+      name,
+      photo_ids,
+      photo_slots,
+      price,
+      product_id,
+      about,
+      attributes,
+    } = products;
+
+    let ordered_photos: {
+      id: string;
+      order_index: number;
+      file: Express.Multer.File | null;
+    }[] = [];
+    let photo_index = 0;
+
+    photo_slots.map((photo_slot, index) => {
+      if (photo_slot === "file") {
+        ordered_photos.push({
+          id: photo_ids[index],
+          file: photos[photo_index],
+          order_index: index + 1,
+        });
+        photo_index++;
+      } else {
+        ordered_photos.push({
+          id: photo_ids[index],
+          file: null,
+          order_index: index + 1,
+        });
+      }
+    });
+
+    ordered_photos.forEach(async (ordered_photo) => {
+      if (ordered_photo.file) {
+        const file = ordered_photo.file;
+        const filePath = generateFilePath(file, "products");
+
+        const { error } = await supabase.storage
+          .from("images")
+          .upload(filePath, file.buffer, {
+            contentType: file.mimetype,
+          });
+
+        if (error) throw new Error(error.message);
+
+        const { data } = supabase.storage.from("images").getPublicUrl(filePath);
+
+        if (!data?.publicUrl) {
+          throw new BadRequestError("Failed to generate public URL");
+        }
+
+        try {
+          await productRepository.createPhoto({
+            alt: `Amihan Staycation ${name} Unit Photo`,
+            image_url: data.publicUrl,
+            order_index: ordered_photo.order_index,
+            product: { connect: { id: product_id } },
+          });
+        } catch (error) {
+          const path = getSupabaseImagesPath(data.publicUrl);
+          await supabase.storage.from("images").remove([path]);
+
+          throw error;
+        }
+      }
+
+      const photo = await productRepository.findPhoto(ordered_photo.id);
+
+      if (!photo) return;
+
+      if (photo.order_index === ordered_photo.order_index) return;
+
+      await productRepository.updatePhoto(photo.id, {
+        order_index: ordered_photo.order_index,
+      });
+    });
+
+    if (products.deleted_photos.length !== 0) {
+      products.deleted_photos.forEach(async (deleted_photo_id) => {
+        const photoExists = await productRepository.findPhoto(deleted_photo_id);
+
+        if (photoExists) {
+          const photo = await productRepository.deletePhoto(deleted_photo_id);
+
+          const deleted_photo_url = photo.image_url;
+
+          const filePath = getSupabaseImagesPath(deleted_photo_url);
+
+          await supabase.storage.from("images").remove([filePath]);
+        }
+      });
+    }
+
+    await productRepository.update(product_id, {
+      about,
+      attributes,
+      maxPersons,
+      name,
+      price,
+    });
+
+    return;
+  }
+  async delete(id: string) {
+    await productRepository.delete(id);
   }
 }
 

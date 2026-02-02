@@ -15,7 +15,7 @@ export default function ClampedParagraph({ text }: { text: string }) {
 
   return (
     <div>
-      <p ref={pRef} className="line-clamp-7 text-justify">
+      <p ref={pRef} className="line-clamp-7">
         {text}
       </p>
 

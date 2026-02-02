@@ -9,7 +9,7 @@ export default function GoogleSignOption() {
   const router = useRouter();
 
   const handleNavigateOAuth = async () => {
-    router.push(`${HOST}/api/user/google`);
+    router.push(`${HOST}/api/users/google`);
   };
   return (
     <div className="flex justify-center">

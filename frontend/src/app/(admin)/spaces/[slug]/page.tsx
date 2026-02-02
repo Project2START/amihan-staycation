@@ -1,7 +1,7 @@
 import HeaderAdmin from "../../components/HeaderAdmin";
-import Space from "./components/Product";
+import Product from "./components/Product";
 
-export default async function BlogPostPage({
+export default async function SpaceSlugPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -11,7 +11,7 @@ export default async function BlogPostPage({
   return (
     <div className="flex flex-col">
       <HeaderAdmin />
-      <Space spaceId={slug} />
+      <Product spaceId={slug} />
     </div>
   );
 }
