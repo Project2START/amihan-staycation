@@ -62,8 +62,6 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
     handleSubmit,
     register,
     formState: { errors },
-    reset,
-    getValues,
   } = methods;
 
   const onSubmit = async (data: NewUnitSchema) => {
@@ -135,6 +133,7 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                 placeholder="0.00"
                 step="any"
                 aria-describedby={errors.name ? "unitPrice-error" : undefined}
+                onWheel={(e) => e.currentTarget.blur()}
                 className="mt-[0.5rem] border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
               />
               {errors.price && (
@@ -152,6 +151,7 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                 aria-describedby={
                   errors.name ? "unitMaxPersons-error" : undefined
                 }
+                onWheel={(e) => e.currentTarget.blur()}
                 className="mt-[0.5rem] border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
               />
               {errors.maxPersons && (
