@@ -3,6 +3,8 @@ import UnitImage from "./UnitImage";
 import ImageBroken from "./ImageBroken";
 import { formatMoney } from "../lib/formatMoney";
 import Rating from "./Rating";
+import RenderIcon from "../ui/RenderIcon";
+import { FaCircleCheck } from "react-icons/fa6";
 
 export interface IProductAttribute {
   name: string;
@@ -21,6 +23,7 @@ export interface IProductItemProps {
   name: string;
   price: number;
   photos: IProductPhoto[];
+  attributes: IProductAttribute[];
 }
 
 export default function ProductItem({
@@ -28,13 +31,36 @@ export default function ProductItem({
   price,
   id,
   photos,
+  attributes,
 }: IProductItemProps) {
+  let iconExcess_count = 0;
   return (
     <div className="overflow-hidden min-w-0 border-2 border-[#0B5173]/30 text-secondary-normal rounded-lg">
       <div className="relative">
-        <div className="w-full h-[2.5rem] absolute top-0 left-0 bg-linear-to-r from-[#000000]/50 to-[#808080]/20 z-1">
-          <div className="flex items-center px-[1rem] py-[0.5rem] text-xs h-full">
+        <div className="px-[1rem] py-[0.5rem] w-full h-[2.5rem] absolute top-0 left-0 bg-linear-to-r from-[#000000]/50 to-[#808080]/20 z-1 flex items-center">
+          <div className="flex items-center text-xs h-full flex-1/2 min-w-0 overflow-x-hidden">
             <Rating value={4.5} textColor="text-[#efefef]" />
+          </div>
+          <div className="flex-1/2 min-w-0 overflow-x-hidden flex justify-end text-white">
+            <ul className="flex items-center gap-x-2">
+              {attributes.map((attribute, index) => {
+                if (index <= 3) {
+                  return (
+                    <li key={attribute.iconId} className=" shadow-lg">
+                      <RenderIcon iconId={attribute.iconId} />
+                      <span className="text-xs text-success-normal translate-x-[50%] translate-y-[-40%] block rounded-full bg-white w-max">
+                        <FaCircleCheck />
+                      </span>
+                    </li>
+                  );
+                } else {
+                  iconExcess_count += 1;
+                }
+              })}
+              {iconExcess_count !== 0 ? (
+                <li className="text-xs">+{iconExcess_count}</li>
+              ) : null}
+            </ul>
           </div>
         </div>
         {photos[0] ? (

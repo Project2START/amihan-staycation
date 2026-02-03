@@ -17,10 +17,11 @@ export default async function verifyGuest(req: NextRequest) {
     const { payload } = await jwtVerify(auth_token || "", secret);
 
     const role = payload.user_role;
+    const userId = payload.user_id;
 
     if (role !== "admin") return NextResponse.next();
 
-    return NextResponse.redirect(new URL("/spaces", req.url));
+    return NextResponse.redirect(new URL(`/spaces?user=${userId}`, req.url));
   } catch (err) {
     return NextResponse.rewrite(notForYouPage);
   }

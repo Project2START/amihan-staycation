@@ -28,15 +28,16 @@ export default async function ProductList() {
         <div className="mt-[3rem] mb-[4rem] mx-[1rem] grid gap-y-5">
           {parsedProducts.products && parsedProducts.products.length !== 0 ? (
             parsedProducts.products.map((product) => {
-              const { id, name, price, photos } = product;
+              const { id, name, price, photos, attributes } = product;
 
               return (
                 <ProductItem
-                  key={product.id}
+                  key={id}
                   id={id}
                   name={name}
                   price={price}
                   photos={photos}
+                  attributes={attributes}
                 />
               );
             })
