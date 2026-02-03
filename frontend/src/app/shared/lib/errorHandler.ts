@@ -25,5 +25,6 @@ export function errorHandler(error: unknown) {
   } else {
     message = "Something went wrong. Please try again later.";
   }
+
   return { message, status };
 }

@@ -24,7 +24,8 @@ interface IImagesDraggable {
   sources: { id: string; src: string }[];
   activeImage?: string | null;
   onHandleActiveImage: (id: string) => void;
-  onSetSources: (movedArray: any[]) => void;
+  onSetSources?: (movedArray: any[]) => void; // optional now
+  enableDrag?: boolean; // optional, default true
 }
 
 export default function UnitImagesDraggable({
@@ -32,6 +33,7 @@ export default function UnitImagesDraggable({
   activeImage,
   onHandleActiveImage,
   onSetSources,
+  enableDrag = true,
 }: IImagesDraggable) {
   const [items, setItems] = useState<IImagesDraggable["sources"]>([]);
 
@@ -40,16 +42,9 @@ export default function UnitImagesDraggable({
   const prevLengthRef = useRef(sources.length);
 
   const sensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: {
-        distance: 10,
-      },
-    }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
     useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 250,
-        tolerance: 5,
-      },
+      activationConstraint: { delay: 250, tolerance: 5 },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -57,8 +52,9 @@ export default function UnitImagesDraggable({
   );
 
   function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
+    if (!enableDrag || !onSetSources) return; // drag disabled if prop not provided
 
+    const { active, over } = event;
     if (!over) return;
 
     if (active.id !== over.id) {
@@ -74,15 +70,13 @@ export default function UnitImagesDraggable({
     }
   }
 
-  function handeActiveImage(id: string) {
+  function handleActiveImage(id: string) {
     onHandleActiveImage(id);
   }
 
   const handleScrollParentCont = () => {
     if (!parentContainerRef.current) return;
-
     const container = parentContainerRef.current;
-
     container.scrollTo({
       left: container.scrollWidth - container.clientWidth,
       top: 0,
@@ -111,45 +105,62 @@ export default function UnitImagesDraggable({
     prevLengthRef.current = currLength;
   }, [items.length]);
 
+  const renderImages = () =>
+    items.map((item) => {
+      const isActive = item.id === activeImage;
+      return enableDrag && onSetSources ? (
+        <SortableItem key={item.id} id={item.id}>
+          <button
+            type="button"
+            onClick={() => handleActiveImage(item.id)}
+            className={
+              isActive
+                ? "outline-3 outline-primary-normal rounded-lg"
+                : undefined
+            }
+          >
+            <UnitImage src={item.src} style="w-[7rem] h-[4rem]" />
+          </button>
+        </SortableItem>
+      ) : (
+        <button
+          key={item.id}
+          type="button"
+          onClick={() => handleActiveImage(item.id)}
+          className={
+            isActive ? "outline-3 outline-primary-normal rounded-lg" : undefined
+          }
+        >
+          <UnitImage src={item.src} style="w-[7rem] h-[4rem]" />
+        </button>
+      );
+    });
+
   return (
     <div className="w-full overflow-x-auto" ref={parentContainerRef}>
       <div
         ref={containerRef}
-        className="w-max flex gap-x-3 overflow-x-hidden py-[0.75rem]"
+        className="w-max flex gap-x-3 overflow-x-hidden p-[0.75rem]"
       >
-        <DndContext
-          onDragEnd={handleDragEnd}
-          collisionDetection={closestCenter}
-          sensors={sensors}
-          autoScroll={{
-            canScroll: (element) => element !== containerRef.current,
-          }}
-        >
-          <SortableContext
-            strategy={horizontalListSortingStrategy}
-            items={items.map((item) => ({ item, id: item.id }))}
+        {enableDrag && onSetSources ? (
+          <DndContext
+            onDragEnd={handleDragEnd}
+            collisionDetection={closestCenter}
+            sensors={sensors}
+            autoScroll={{
+              canScroll: (element) => element !== containerRef.current,
+            }}
           >
-            {items.map((item) => {
-              const isActive = item.id === activeImage;
-
-              return (
-                <SortableItem key={item.id} id={item.id}>
-                  <button
-                    type="button"
-                    onClick={() => handeActiveImage(item.id)}
-                    className={
-                      isActive
-                        ? "outline-3 outline-primary-normal rounded-lg"
-                        : undefined
-                    }
-                  >
-                    <UnitImage src={item.src} width={7} height={4} />
-                  </button>
-                </SortableItem>
-              );
-            })}
-          </SortableContext>
-        </DndContext>
+            <SortableContext
+              strategy={horizontalListSortingStrategy}
+              items={items.map((item) => ({ item, id: item.id }))}
+            >
+              {renderImages()}
+            </SortableContext>
+          </DndContext>
+        ) : (
+          renderImages()
+        )}
       </div>
     </div>
   );

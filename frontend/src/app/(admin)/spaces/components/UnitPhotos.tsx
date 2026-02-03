@@ -1,6 +1,6 @@
 "use client";
 
-import PrimaryBackButton from "@/app/shared/ui/PrimaryBackButton";
+import PrimaryBackButton from "@/app/shared/components/PrimaryBackButton";
 import { useFormContext } from "react-hook-form";
 import { NewUnitSchema } from "../lib/newUnitSchema";
 import UnitPhotosView from "./UnitPhotosView";

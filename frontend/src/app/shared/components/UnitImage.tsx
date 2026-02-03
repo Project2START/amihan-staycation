@@ -1,30 +1,23 @@
 import Image from "next/image";
 interface IUnitImageProps {
   src: string;
-  width?: number;
-  height?: number;
   alt?: string;
+  style?: string;
 }
 
 export default function UnitImage({
   src,
-  width = 10,
-  height = 6,
+  style = "w-[10rem] h-[6rem]",
   alt = "Amihan Staycation Unit Image",
 }: IUnitImageProps) {
   return (
-    <div
-      style={{
-        width: `${width}rem`,
-        height: `${height}rem`,
-      }}
-      className="relative rounded-lg"
-    >
+    <div className={`relative rounded-lg ${style}`}>
       <Image
         src={src}
         fill
         className="object-cover object-center rounded-lg"
         alt={alt}
+        sizes="100%"
       />
     </div>
   );

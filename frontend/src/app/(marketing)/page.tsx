@@ -5,7 +5,7 @@ import ReadyPrompt from "./components/ReadyPromptSection";
 import TestimonialSection from "./components/testimonial-section/TestimonialsSection";
 import ExploreUnitsSection from "./components/ExploreUnitsSection";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div>
       <HeaderPromptAuth />
