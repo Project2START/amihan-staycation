@@ -1,5 +1,6 @@
 import HeaderAdmin from "@/app/(admin)/components/HeaderAdmin";
 import NavigationBottomAdmin from "@/app/(admin)/components/NavigationBottomSpaces";
+import ProductList from "./components/ProductList";
 
 export default function SpacesPage() {
   return (
