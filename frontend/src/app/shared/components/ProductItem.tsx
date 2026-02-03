@@ -20,20 +20,54 @@ export interface IProductItemProps {
   id: string;
   name: string;
   price: number;
-  about: string;
   photos: IProductPhoto[];
 }
 
 export default function ProductItem({
   name,
   price,
-  about,
   id,
   photos,
 }: IProductItemProps) {
   return (
-    <div className="w-[100%] overflow-hidden">
-      <div className="py-[1rem] px-[0.5rem] flex border-2 border-secondary-normal/20 rounded-lg">
+    <div className="overflow-hidden min-w-0 border-2 border-[#0B5173]/30 text-secondary-normal rounded-lg">
+      <div className="relative">
+        <div className="w-full h-[2.5rem] absolute top-0 left-0 bg-linear-to-r from-[#000000]/50 to-[#808080]/20 z-1">
+          <div className="flex items-center px-[1rem] py-[0.5rem] text-xs h-full">
+            <Rating value={4.5} textColor="text-[#efefef]" />
+          </div>
+        </div>
+        {photos[0] ? (
+          <UnitImage
+            src={photos[0].image_url}
+            alt={photos[0].alt}
+            style="w-full h-[12rem]"
+          />
+        ) : (
+          <ImageBroken
+            style="w-[9rem] h-[6rem] bg-gray-200"
+            iconStyle="text-2xl opacity-50"
+          />
+        )}
+      </div>
+      <div className="p-[1rem]">
+        <div className="flex justify-between items-center font-bold ">
+          <span className="text-xl flex-1/2 truncate">{name}</span>
+          <span className="text-lg flex-1/2 truncate text-right">
+            {formatMoney(price, { decimals: 2, symbol: "₱" })}
+          </span>
+        </div>
+        <div>
+          <Link
+            href={`/spaces/${id}`}
+            className="primary-button-link px-[0.75rem] py-[0.75rem] mt-[1.5rem]"
+          >
+            <span className="text-xs text-nowrap">View Details</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* <div className="py-[1rem] px-[0.5rem] flex border-2 border-secondary-normal/20 rounded-lg">
         <div>
           <div>
             {photos[0] ? (
@@ -84,7 +118,7 @@ export default function ProductItem({
             </Link>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

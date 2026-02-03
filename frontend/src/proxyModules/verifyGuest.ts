@@ -20,7 +20,7 @@ export default async function verifyGuest(req: NextRequest) {
 
     if (role !== "admin") return NextResponse.next();
 
-    return NextResponse.rewrite(notForYouPage);
+    return NextResponse.redirect(new URL("/spaces", req.url));
   } catch (err) {
     return NextResponse.rewrite(notForYouPage);
   }
