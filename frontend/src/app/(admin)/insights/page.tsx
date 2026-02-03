@@ -51,21 +51,24 @@ export default function InsightsPage() {
 
         {/* Content Area - Scrollable */}
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-4xl mx-auto px-6 py-8">
-            {/* Total Revenue Card */}
-            <TotalRevenueCard totalRevenue={insights.totalRevenue} />
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+              <div className="col-span-2 md:col-span-1">
+                <TotalRevenueCard totalRevenue={insights.totalRevenue} />
+              </div>
 
-            {/* Metrics Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-2 gap-6 mb-8">
-              {/* Total Bookings Card */}
-              <TotalBookingsCard totalBookings={insights.totalBookings} />
+              <div className="col-span-1 md:col-span-1">
+                <TotalBookingsCard totalBookings={insights.totalBookings} />
+              </div>
 
-              {/* Occupancy Rate Card */}
-              <OccupancyRateCard occupancyRate={insights.occupancyRate} />
+              <div className="col-span-1 md:col-span-1">
+                <OccupancyRateCard occupancyRate={insights.occupancyRate} />
+              </div>
+
+              <div className="col-span-2 md:col-span-1">
+                <TotalGuestsCard totalGuestsHosted={insights.totalGuestsHosted} />
+              </div>
             </div>
-
-            {/* Total Guests Hosted */}
-            <TotalGuestsCard totalGuestsHosted={insights.totalGuestsHosted} />
 
             {/* Additional Info Section */}
             <MonthlyOverview monthYear={monthYear} />
