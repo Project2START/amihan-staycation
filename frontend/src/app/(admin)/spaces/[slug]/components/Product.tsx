@@ -18,7 +18,7 @@ export default async function Product({ spaceId }: { spaceId: string }) {
   const result = await fetch(`${HOST}/api/products/${spaceId}`);
 
   if (!result.ok) {
-    return <h1>An error occured</h1>;
+    return notFound();
   }
 
   const parsedProduct: { message: string; product: Product } =

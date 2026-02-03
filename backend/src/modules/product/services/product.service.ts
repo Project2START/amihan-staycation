@@ -1,12 +1,20 @@
 import { supabase } from "../../../shared/lib/supabase";
 import { productRepository } from "../repositories/product.repository";
 import { ProductDTO, ProductWithPhotosDTO } from "../schemas/product.schema";
-import { BadRequestError } from "../../../shared/helpers/appErrors";
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from "../../../shared/helpers/appErrors";
 import { generateFilePath } from "../helpers/generateFilePath";
 import { getSupabaseImagesPath } from "../helpers/getSupabaseImagesPath";
 
 export class ProductService {
-  async create(newProduct: ProductDTO, photos: Express.Multer.File[]) {
+  async create(
+    newProduct: ProductDTO,
+    photos: Express.Multer.File[],
+    userId: string,
+  ) {
     const { name, maxPersons, price, about, attributes } = newProduct;
 
     // Validate photos array
@@ -20,6 +28,7 @@ export class ProductService {
       price,
       about,
       attributes,
+      user: { connect: { id: userId } },
     });
 
     const uploadedFiles: {
@@ -88,7 +97,19 @@ export class ProductService {
       return rest;
     });
   }
-  async update(products: ProductWithPhotosDTO, photos: Express.Multer.File[]) {
+  async getAllById(id: string) {
+    const products = await productRepository.findAllById(id);
+
+    return products.map((product) => {
+      const { createdAt, updatedAt, ...rest } = product;
+      return rest;
+    });
+  }
+  async update(
+    products: ProductWithPhotosDTO,
+    photos: Express.Multer.File[],
+    userId: string,
+  ) {
     const {
       maxPersons,
       name,
@@ -99,6 +120,15 @@ export class ProductService {
       about,
       attributes,
     } = products;
+
+    const product = await productRepository.findById(product_id);
+
+    if (!product) throw new NotFoundError("Product not found");
+
+    if (product.userId !== userId)
+      throw new ForbiddenError(
+        "You do not have permission to update this product",
+      );
 
     let ordered_photos: {
       id: string;
@@ -195,7 +225,15 @@ export class ProductService {
 
     return;
   }
-  async delete(id: string) {
+  async delete(id: string, userId: string) {
+    const product = await productRepository.findById(id);
+
+    if (!product) throw new NotFoundError("Product not found");
+
+    if (product.userId !== userId)
+      throw new ForbiddenError(
+        "You do not have permission to delete this product",
+      );
     await productRepository.delete(id);
   }
 }

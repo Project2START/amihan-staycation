@@ -22,6 +22,7 @@ export interface IProductItemProps {
   id: string;
   name: string;
   price: number;
+  about: string;
   photos: IProductPhoto[];
   attributes: IProductAttribute[];
 }
