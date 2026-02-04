@@ -37,6 +37,14 @@ router.post(
 );
 
 router.get("/", asyncHandler(productController.getProducts));
+
+router.get(
+  "/admin",
+  requireAuth,
+  checkRole(["admin"]),
+  asyncHandler(productController.getProductsById),
+);
+
 router.get("/:id", asyncHandler(productController.getProduct));
 
 router.put(

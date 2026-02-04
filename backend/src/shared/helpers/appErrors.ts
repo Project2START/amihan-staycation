@@ -8,7 +8,8 @@
  * - `BadRequestError` (400)
  * - `ConflictError` (409)
  * - `NotFoundError` (404)
- *
+ * - `ForbiddenError` (403)
+ * - `UnauthorizedError` (401)
  * These classes help standardize error responses in APIs or middleware.
  */
 
@@ -39,5 +40,17 @@ export class ConflictError extends AppError {
 export class NotFoundError extends AppError {
   constructor(message: string) {
     super(message, 404);
+  }
+}
+
+export class ForbiddenError extends AppError {
+  constructor(message: string) {
+    super(message, 403);
+  }
+}
+
+export class UnauthorizedError extends AppError {
+  constructor(message: string) {
+    super(message, 401);
   }
 }

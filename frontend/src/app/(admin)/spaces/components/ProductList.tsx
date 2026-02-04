@@ -3,14 +3,27 @@ import ProductItem, {
 } from "@/app/shared/components/ProductItem";
 
 import { HOST } from "@/app/shared/constants/config";
+import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
 
 export default async function ProductList() {
-  const result = await fetch(`${HOST}/api/products`, {
+  const cookieStore = await cookies();
+  const authToken = cookieStore.get("auth_token")?.value;
+
+  if (!authToken) {
+    return notFound();
+  }
+
+  const result = await fetch(`${HOST}/api/products/admin`, {
     cache: "no-cache",
+    method: "GET",
+    headers: {
+      cookie: `auth_token=${authToken}`,
+    },
   });
 
   if (!result.ok) {
-    return <h1>An error occured</h1>;
+    return notFound();
   }
 
   const parsedProducts: { message: string; products: IProductItemProps[] } =
@@ -28,16 +41,17 @@ export default async function ProductList() {
         <div className="mt-[3rem] mb-[4rem] mx-[1rem] grid gap-y-5">
           {parsedProducts.products && parsedProducts.products.length !== 0 ? (
             parsedProducts.products.map((product) => {
-              const { id, about, name, price, photos } = product;
+              const { id, name, price, photos, attributes, about } = product;
 
               return (
                 <ProductItem
-                  key={product.id}
+                  key={id}
                   id={id}
-                  about={about}
                   name={name}
                   price={price}
                   photos={photos}
+                  attributes={attributes}
+                  about={about}
                 />
               );
             })

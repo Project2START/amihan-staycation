@@ -7,7 +7,12 @@ interface RequestWithFiles extends Request {
 
 export class ProductController {
   async createProduct(req: RequestWithFiles, res: Response) {
-    const product = await productService.create(req.body, req.files);
+    const user = (req as any).user;
+    const product = await productService.create(
+      req.body,
+      req.files,
+      user.user_id,
+    );
 
     const { createdAt, updatedAt, ...rest } = product;
     res.status(201).json({
@@ -26,7 +31,7 @@ export class ProductController {
     });
   }
 
-  async getProducts(_: RequestWithFiles, res: Response) {
+  async getProducts(_: Request, res: Response) {
     const products = await productService.getAll();
 
     res.status(200).json({
@@ -34,17 +39,31 @@ export class ProductController {
       products,
     });
   }
+  async getProductsById(req: Request, res: Response) {
+    const user = (req as any).user;
+
+    const products = await productService.getAllById(user.user_id);
+
+    res.status(200).json({
+      message: "Products successfully fetched",
+      products,
+    });
+  }
   async updateProduct(req: RequestWithFiles, res: Response) {
-    await productService.update(req.body, req.files);
+    const user = (req as any).user;
+
+    await productService.update(req.body, req.files, user.user_id);
 
     res.status(200).json({
       message: "Product successfully updated",
     });
   }
   async deleteProduct(req: Request, res: Response) {
+    const user = (req as any).user;
+
     const { id } = req.params;
 
-    await productService.delete(id);
+    await productService.delete(id, user.user_id);
 
     res.status(200).json({ message: "Unit product successfully deleted" });
   }

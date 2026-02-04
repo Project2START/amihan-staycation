@@ -36,7 +36,7 @@ export default function NavigationBottomSpaces() {
   const isOnSpacesPage = pathname === "/spaces";
 
   return (
-    <div className="fixed bottom-0 left-0 w-full">
+    <div className="fixed bottom-0 left-0 w-full z-999">
       <nav className="relative px-[1.5rem] py-[0.75rem] text-gray-500 bg-white shadow-[0_0_15px]">
         <ul className="flex items-center justify-between">
           {/* Plus Button - Only visible on Spaces page */}

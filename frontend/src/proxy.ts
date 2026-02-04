@@ -11,17 +11,19 @@ export async function proxy(req: NextRequest) {
     return await verifyRegistree(req);
   }
 
-  // if (["/spaces"].includes(currentPath)) {
-  //   return await verifyAdmin(req);
-  // }
+  if (["/spaces"].includes(currentPath)) {
+    return await verifyAdmin(req);
+  }
+
   if (["/user"].includes(currentPath)) {
     return await verifyUser(req);
   }
+
   if (["/browse-units"].includes(currentPath)) {
     return await verifyGuest(req);
   }
 }
 
 export const config = {
-  matcher: ["/verify-code/:path*"],
+  matcher: ["/verify-code/:path*", "/browse-units", "/spaces"],
 };
