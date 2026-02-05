@@ -3,18 +3,18 @@ import {
   IProductAttribute,
   IProductItemProps,
 } from "@/app/shared/components/ProductItem";
-import ProductHeader from "./ProductHeader";
-import ProductPhotosView from "../../../../shared/components/ProductPhotosView";
-import ProductDetails from "../../../../shared/components/ProductDetails";
-import ProductFooter from "./ProductFooter";
+
 import { notFound } from "next/navigation";
+import ProductPhotosView from "@/app/shared/components/ProductPhotosView";
+import ProductDetails from "@/app/shared/components/ProductDetails";
+import GuestProductHeader from "./GuestProductHeader";
 
 export interface Product extends IProductItemProps {
   maxPersons: number;
   attributes: IProductAttribute[];
 }
 
-export default async function Product({ spaceId }: { spaceId: string }) {
+export default async function GuestProduct({ spaceId }: { spaceId: string }) {
   const result = await fetch(`${HOST}/api/products/${spaceId}`);
 
   if (!result.ok) {
@@ -32,9 +32,9 @@ export default async function Product({ spaceId }: { spaceId: string }) {
 
   return (
     <div className="text-secondary-normal">
-      <div className="px-[1rem]">
+      <div className="px-[1rem] pb-[2rem]">
         <div>
-          <ProductHeader product={product} />
+          <GuestProductHeader name={product.name} />
         </div>
         <div>
           <ProductPhotosView photos={product.photos} />
@@ -47,10 +47,6 @@ export default async function Product({ spaceId }: { spaceId: string }) {
             price={product.price}
           />
         </div>
-      </div>
-
-      <div>
-        <ProductFooter />
       </div>
     </div>
   );

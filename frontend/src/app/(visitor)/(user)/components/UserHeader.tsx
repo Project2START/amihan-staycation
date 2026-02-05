@@ -1,5 +1,3 @@
-"use client";
-
 import AvatarHead from "../../../shared/components/AvatarHead";
 import ImageMainLogo from "../../../shared/components/ImageMainLogo";
 
