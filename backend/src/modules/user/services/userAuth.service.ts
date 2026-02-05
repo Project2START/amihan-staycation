@@ -2,6 +2,7 @@ import {
   BadRequestError,
   ConflictError,
   NotFoundError,
+  UnauthorizedError,
 } from "../../../shared/helpers/appErrors";
 import { registreeAuthService } from "../../registree/services/registreeAuth.service";
 import { userRepository } from "../repositories/user.repository";
@@ -13,7 +14,7 @@ import bcrypt from "bcrypt";
 const oAuth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URL
+  process.env.GOOGLE_REDIRECT_URL,
 );
 
 export class UserAuthService {
@@ -51,13 +52,13 @@ export class UserAuthService {
     const INVALID_CREDENTIALS = "Invalid email or password";
 
     if (!user || !user.password) {
-      throw new NotFoundError(INVALID_CREDENTIALS);
+      throw new UnauthorizedError(INVALID_CREDENTIALS);
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
-      throw new NotFoundError(INVALID_CREDENTIALS);
+      throw new UnauthorizedError(INVALID_CREDENTIALS);
     }
 
     return user;
@@ -87,7 +88,7 @@ export class UserAuthService {
     }
 
     const google_user = JSON.parse(
-      Buffer.from(id_token.split(".")[1], "base64").toString()
+      Buffer.from(id_token.split(".")[1], "base64").toString(),
     );
 
     const { email, given_name, family_name, picture, sub, email_verified } =
@@ -121,7 +122,7 @@ export class UserAuthService {
 
     if (user) {
       throw new ConflictError(
-        "Email already in use. Please provide a different one."
+        "Email already in use. Please provide a different one.",
       );
     }
 

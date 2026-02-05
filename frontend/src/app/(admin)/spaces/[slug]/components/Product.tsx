@@ -4,8 +4,8 @@ import {
   IProductItemProps,
 } from "@/app/shared/components/ProductItem";
 import ProductHeader from "./ProductHeader";
-import ProductPhotosView from "./ProductPhotosView";
-import ProductDetails from "./ProductDetails";
+import ProductPhotosView from "../../../../shared/components/ProductPhotosView";
+import ProductDetails from "../../../../shared/components/ProductDetails";
 import ProductFooter from "./ProductFooter";
 import { notFound } from "next/navigation";
 
@@ -18,7 +18,7 @@ export default async function Product({ spaceId }: { spaceId: string }) {
   const result = await fetch(`${HOST}/api/products/${spaceId}`);
 
   if (!result.ok) {
-    return <h1>An error occured</h1>;
+    return notFound();
   }
 
   const parsedProduct: { message: string; product: Product } =

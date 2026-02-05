@@ -14,8 +14,11 @@ import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
 import { IoIosAlert } from "react-icons/io";
 import { Product } from "./Product";
 import ProductEdit from "./ProductEdit";
+import { useAppSelector } from "@/lib/hooks";
 
 export default function ProductHeader({ product }: { product: Product }) {
+  const user = useAppSelector((state) => state.users.data);
+
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [editDialog, setEditDialog] = useState(false);
 
@@ -35,7 +38,7 @@ export default function ProductHeader({ product }: { product: Product }) {
         indicator: "success",
       });
 
-      router.push("/spaces");
+      router.push(`/spaces?user=${user?.id}`);
     } catch (err) {
       CustomToast.show(errorHandler(err).message, {
         indicator: "error",
@@ -51,7 +54,7 @@ export default function ProductHeader({ product }: { product: Product }) {
       <div className="flex-1/4">
         <PrimaryBackButton
           onClick={() => {
-            router.push("/spaces");
+            router.push(`/spaces?user=${user?.id}`);
           }}
           style="text-xl"
         />

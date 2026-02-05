@@ -11,6 +11,7 @@ datasource db {
 model Users {
   id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @updatedAt
   role        String   @default("user")
   first_name  String?
   last_name   String?
@@ -20,6 +21,8 @@ model Users {
   google_id   String?  @unique
   avatar_url  String?
 
+  products Product[]
+  
   @@map("users")
 }
 
@@ -48,6 +51,9 @@ model Product {
   attributes Json?    // array of objects: { name, iconId, quantity }
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  userId     String   @db.Uuid   // ← foreign key
+  user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade) // relation field
 
   photos     Photo[]
 

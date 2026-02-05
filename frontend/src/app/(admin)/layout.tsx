@@ -1,4 +1,5 @@
 import React from "react";
+import AdminLayoutGuard from "./ui/AdminLayoutGuard";
 
 export default function AdminLayout({
   children,
@@ -7,7 +8,9 @@ export default function AdminLayout({
 }) {
   return (
     <>
-      <main className="grow">{children}</main>
+      <AdminLayoutGuard>
+        <main className="grow">{children}</main>
+      </AdminLayoutGuard>
     </>
   );
 }

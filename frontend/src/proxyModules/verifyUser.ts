@@ -13,7 +13,7 @@ export default async function verifyUser(req: NextRequest) {
   const notForYouPage = new URL("/not-found", req.url);
 
   if (!auth_token) {
-    return NextResponse.rewrite(notForYouPage);
+    return NextResponse.redirect(new URL(`/browse-units`, req.url));
   }
 
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -26,7 +26,7 @@ export default async function verifyUser(req: NextRequest) {
     if (role === "user") {
       return NextResponse.next();
     } else {
-      return NextResponse.rewrite(notForYouPage);
+      return NextResponse.redirect(new URL(`/browse-units`, req.url));
     }
   } catch (err) {
     return NextResponse.rewrite(notForYouPage);

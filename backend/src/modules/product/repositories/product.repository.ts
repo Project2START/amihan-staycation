@@ -47,6 +47,16 @@ export class ProductRepository {
       throw new AppError("Could not fetch products. Please try again");
     }
   }
+  async findAllById(id: string): Promise<ProductWithPhotos[]> {
+    try {
+      return await prisma.product.findMany({
+        where: { userId: id },
+        include: { photos: { orderBy: { order_index: "asc" } } },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch products. Please try again");
+    }
+  }
 
   async update(id: string, data: Prisma.ProductUpdateInput): Promise<Product> {
     try {
