@@ -1,6 +1,6 @@
 import React from "react";
 import HeaderAdmin from "@/app/(admin)/components/HeaderAdmin";
-import NavigationBottomAdmin from "@/app/(admin)/spaces/components/NavigationBottomSpaces";
+import NavigationBottomAdmin from "@/app/(admin)/components/NavigationBottomSpaces";
 import SpacesHeaderBanner from "./components/SpacesHeaderBanner";
 
 export default function BookingsPage() {
