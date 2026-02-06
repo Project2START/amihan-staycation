@@ -52,6 +52,7 @@ export default async function ProductList() {
                   photos={photos}
                   attributes={attributes}
                   about={about}
+                  linkPath="/spaces"
                 />
               );
             })

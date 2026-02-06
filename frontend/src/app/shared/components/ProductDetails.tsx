@@ -1,5 +1,5 @@
 import Rating from "@/app/shared/components/Rating";
-import { Product } from "./Product";
+import { Product } from "../../(admin)/spaces/[slug]/components/Product";
 import { formatMoney } from "@/app/shared/lib/formatMoney";
 import IconLabel from "@/app/shared/components/IconLabel";
 import ClampedParagraph from "@/app/shared/components/ClampedParagraph";

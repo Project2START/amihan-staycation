@@ -7,6 +7,7 @@ import {
   BadRequestError,
   ConflictError,
   NotFoundError,
+  UnauthorizedError,
 } from "../../../../shared/helpers/appErrors";
 
 // ------------------------
@@ -41,7 +42,7 @@ describe("UserAuthService", () => {
 
     it("successfully creates a new user", async () => {
       (registreeAuthService.verifyVCode as jest.Mock).mockResolvedValue(
-        mockRegistree
+        mockRegistree,
       );
       jest.spyOn(userAuthService, "emailAvailability").mockResolvedValue(null);
       (userRepository.create as jest.Mock).mockResolvedValue({
@@ -49,7 +50,7 @@ describe("UserAuthService", () => {
         id: "user123",
       });
       (registreeRepository.deleteManyByEmail as jest.Mock).mockResolvedValue(
-        undefined
+        undefined,
       );
 
       const result = await userAuthService.signUp({
@@ -58,7 +59,7 @@ describe("UserAuthService", () => {
       });
 
       expect(registreeAuthService.verifyVCode).toHaveBeenCalledWith(
-        mockRegistree.id
+        mockRegistree.id,
       );
       expect(userRepository.create).toHaveBeenCalledWith({
         first_name: mockRegistree.first_name,
@@ -67,27 +68,27 @@ describe("UserAuthService", () => {
         password: mockRegistree.password,
       });
       expect(registreeRepository.deleteManyByEmail).toHaveBeenCalledWith(
-        mockRegistree.email
+        mockRegistree.email,
       );
       expect(result).toHaveProperty("id", "user123");
     });
 
     it("throws BadRequestError if verification code does not match", async () => {
       (registreeAuthService.verifyVCode as jest.Mock).mockResolvedValue(
-        mockRegistree
+        mockRegistree,
       );
 
       await expect(
         userAuthService.signUp({
           id: mockRegistree.id,
           verificationCode: "wrong",
-        })
+        }),
       ).rejects.toThrow(BadRequestError);
     });
 
     it("throws ConflictError if email already exists", async () => {
       (registreeAuthService.verifyVCode as jest.Mock).mockResolvedValue(
-        mockRegistree
+        mockRegistree,
       );
       jest
         .spyOn(userAuthService, "emailAvailability")
@@ -97,7 +98,7 @@ describe("UserAuthService", () => {
         userAuthService.signUp({
           id: mockRegistree.id,
           verificationCode: "123456",
-        })
+        }),
       ).rejects.toThrow(ConflictError);
     });
   });
@@ -121,21 +122,21 @@ describe("UserAuthService", () => {
       expect(bcrypt.compare).toHaveBeenCalledWith("plain", mockUser.password);
     });
 
-    it("throws NotFoundError if user not found", async () => {
+    it("throws UnauthorizedError if user not found", async () => {
       (userRepository.findByEmail as jest.Mock).mockResolvedValue(null);
 
       await expect(
-        userAuthService.signIn({ email: "x", password: "x" })
-      ).rejects.toThrow(NotFoundError);
+        userAuthService.signIn({ email: "x", password: "x" }),
+      ).rejects.toThrow(UnauthorizedError);
     });
 
-    it("throws NotFoundError if password does not match", async () => {
+    it("throws UnauthorizedError if password does not match", async () => {
       (userRepository.findByEmail as jest.Mock).mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(
-        userAuthService.signIn({ email: mockUser.email, password: "wrong" })
-      ).rejects.toThrow(NotFoundError);
+        userAuthService.signIn({ email: mockUser.email, password: "wrong" }),
+      ).rejects.toThrow(UnauthorizedError);
     });
   });
 
@@ -156,7 +157,7 @@ describe("UserAuthService", () => {
         .mockRejectedValue(new ConflictError("Email already in use"));
 
       await expect(
-        userAuthService.emailAvailability("exists@example.com")
+        userAuthService.emailAvailability("exists@example.com"),
       ).rejects.toThrow(ConflictError);
     });
   });

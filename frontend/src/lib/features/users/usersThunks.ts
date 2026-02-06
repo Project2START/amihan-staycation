@@ -5,7 +5,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 export const fetchUser = createAsyncThunk(
   "users/fetchUser",
   async (id: string, { rejectWithValue }) => {
-    const res = await fetch(`${HOST}/api/users/${id}`);
+    const res = await fetch(`${HOST}/api/users/${id}`, {
+      credentials: "include",
+    });
     if (!res.ok) {
       return rejectWithValue("Failed to fetch user");
     }

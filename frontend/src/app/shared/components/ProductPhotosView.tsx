@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import UnitImagesDraggable from "../../components/UnitImagesDraggable";
+import UnitImagesDraggable from "../../(admin)/spaces/components/UnitImagesDraggable";
 import { IProductPhoto } from "@/app/shared/components/ProductItem";
 import Image from "next/image";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";

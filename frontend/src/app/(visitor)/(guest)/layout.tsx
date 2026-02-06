@@ -1,14 +1,14 @@
 import React from "react";
-import HeaderUser from "./components/HeaderUser";
+import HeaderPromptAuth from "@/app/shared/components/HeaderPromptAuth";
 
-export default function UserLayout({
+export default function GuestLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <>
-      <HeaderUser />
+      <HeaderPromptAuth />
       <main className="grow">{children}</main>
     </>
   );
