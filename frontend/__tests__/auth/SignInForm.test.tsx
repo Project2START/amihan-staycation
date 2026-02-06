@@ -111,7 +111,7 @@ describe("SignInForm Component", () => {
   });
 
   describe("Sign In Flow", () => {
-    it("redirects to dashboard when sign in is successful", async () => {
+    it("redirects to auth when sign in is successful", async () => {
       (signIn as jest.Mock).mockResolvedValue({ success: true });
 
       await userEvent.type(emailInput, "test@example.com");
@@ -120,7 +120,7 @@ describe("SignInForm Component", () => {
       await userEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(pushMock).toHaveBeenCalledWith("/browse-units");
+        expect(pushMock).toHaveBeenCalledWith("/auth");
       });
     });
     it("shows error when sign in fails due to invalid credentials", async () => {
