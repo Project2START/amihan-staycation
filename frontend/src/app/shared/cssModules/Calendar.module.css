@@ -1,0 +1,6 @@
+.day[data-selected] {
+  background-color: var(--color-primary-normal);
+}
+.day[data-today] {
+  font-weight: bold;
+}

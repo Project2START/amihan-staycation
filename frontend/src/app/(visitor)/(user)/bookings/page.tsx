@@ -1,3 +1,9 @@
+import BookingsForm from "./components/BookingsForm";
+
 export default function Bookings() {
-  return <div></div>;
+  return (
+    <div>
+      <BookingsForm />
+    </div>
+  );
 }
