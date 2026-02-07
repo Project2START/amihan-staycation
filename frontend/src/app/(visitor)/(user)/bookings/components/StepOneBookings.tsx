@@ -8,6 +8,7 @@ import CalendarBooking from "@/app/shared/components/CalendarBooking";
 import { useFormContext } from "react-hook-form";
 import { BookingSchema } from "../schema/bookings.schema";
 import SelectNationality from "./SelectNationality";
+import PhoneFormatter from "./PhoneNumberInput";
 
 export default function StepOneBookings() {
   const [openCalendar, setOpenCalendar] = useState(false);
@@ -120,7 +121,8 @@ export default function StepOneBookings() {
         </div>
         {/* GUEST CONTACT NUMBER FIELD */}
         <div className="h-[2.5rem]">
-          <input
+          <PhoneFormatter defaultCountry="JP" />
+          {/* <input
             {...register("contact_number")}
             type="tel"
             inputMode="numeric"
@@ -138,7 +140,7 @@ export default function StepOneBookings() {
             >
               {errors.contact_number.message}
             </p>
-          )}
+          )} */}
         </div>
       </div>
     </div>
