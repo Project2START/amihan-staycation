@@ -15,15 +15,24 @@ export async function proxy(req: NextRequest) {
     return await verifyAdmin(req);
   }
 
+  console.log(["/units"].includes(currentPath));
+
   if (["/units"].includes(currentPath)) {
     return await verifyUser(req);
   }
 
-  if (["/auth"].includes(currentPath)) {
+  if (["/browse-units", "/sign-in", "/sign-up"].includes(currentPath)) {
     return await verifyGuest(req);
   }
 }
 
 export const config = {
-  matcher: ["/verify-code/:path*", "/auth/:path*", "/units/:path*"],
+  matcher: [
+    "/verify-code/:path*",
+    "/spaces/:path*",
+    "/units/:path*",
+    "/browse-units",
+    "/sign-in",
+    "/sign-up",
+  ],
 };

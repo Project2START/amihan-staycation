@@ -7,6 +7,8 @@
   --color-success-normal: #64be73;
   --color-reject-normal: #a9463f;
   --color-yellow-normal: #e2d118;
+  --color-primary-opacity: rgba(36, 180, 167, 0.3);
+  --color-secondary-opacity: rgba(11, 81, 115, 0.3);
 }
 
 @layer components {

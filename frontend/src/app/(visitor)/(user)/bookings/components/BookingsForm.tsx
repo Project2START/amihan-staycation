@@ -9,9 +9,10 @@ import StepOneBookings from "./StepOneBookings";
 import StepTwoBookings from "./StepTwoBookings";
 import StepThreeBookings from "./StepThreeBookings";
 import StepFourBookings from "./StepFourBookings";
+import { AnimatePresence, motion } from "motion/react";
 
 export default function BookingsForm() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
 
   const methods = useForm<BookingSchema>({
     resolver: zodResolver(bookingSchema),
@@ -42,28 +43,73 @@ export default function BookingsForm() {
                 style={{ marginBottom: "1.5rem" }}
               >
                 <Stepper.Step>
-                  <StepOneBookings />
+                  <AnimatePresence>
+                    <motion.div
+                      initial={{ opacity: 0, translateY: "-5%" }}
+                      animate={{ opacity: 1, translateY: "0%" }}
+                      exit={{ opacity: 0, translateY: "-5%" }}
+                      key="user-booking-step-one"
+                      data-testid="user-booking-step-one"
+                    >
+                      <StepOneBookings />
+                    </motion.div>
+                  </AnimatePresence>
                 </Stepper.Step>
+
                 <Stepper.Step>
-                  <StepTwoBookings />
+                  <AnimatePresence>
+                    <motion.div
+                      initial={{ opacity: 0, translateY: "-5%" }}
+                      animate={{ opacity: 1, translateY: "0%" }}
+                      exit={{ opacity: 0, translateY: "-5%" }}
+                      key="user-booking-step-two"
+                      data-testid="user-booking-step-two"
+                    >
+                      <StepTwoBookings />
+                    </motion.div>
+                  </AnimatePresence>
                 </Stepper.Step>
+
                 <Stepper.Step>
-                  <StepThreeBookings />
+                  <AnimatePresence>
+                    <motion.div
+                      initial={{ opacity: 0, translateY: "-5%" }}
+                      animate={{ opacity: 1, translateY: "0%" }}
+                      exit={{ opacity: 0, translateY: "-5%" }}
+                      key="user-booking-step-three"
+                      data-testid="user-booking-step-three"
+                    >
+                      <StepThreeBookings />
+                    </motion.div>
+                  </AnimatePresence>
                 </Stepper.Step>
+
                 <Stepper.Completed>
-                  <StepFourBookings />
+                  <AnimatePresence>
+                    <motion.div
+                      initial={{ opacity: 0, translateY: "-5%" }}
+                      animate={{ opacity: 1, translateY: "0%" }}
+                      exit={{ opacity: 0, translateY: "-5%" }}
+                      key="user-booking-step-completed"
+                      data-testid="user-booking-step-completed"
+                    >
+                      <StepFourBookings />
+                    </motion.div>
+                  </AnimatePresence>
                 </Stepper.Completed>
               </Stepper>
             </div>
             <div>
               <div className="flex justify-evenly gap-x-5 font-bold">
                 <button
+                  type="button"
                   className="flex-1/2 text-primary-normal py-[0.5rem]"
                   onClick={prevStep}
                 >
                   <span>Back</span>
                 </button>
                 <button
+                  type="button"
                   className="flex-1/2 bg-primary-normal text-white py-[0.5rem] rounded-lg"
                   onClick={nextStep}
                 >

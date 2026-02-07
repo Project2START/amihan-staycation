@@ -3,15 +3,18 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { LuCalendarDays } from "react-icons/lu";
-import { DatePicker } from "@mantine/dates";
 import ClickOutside from "@/app/shared/ui/ClickOutside";
-import classes from "@/app/shared/cssModules/Calendar.module.css";
+import CalendarBooking from "@/app/shared/components/CalendarBooking";
+import { useFormContext } from "react-hook-form";
+import { BookingSchema } from "../schema/bookings.schema";
+import SelectNationality from "./SelectNationality";
 
 export default function StepOneBookings() {
   const [openCalendar, setOpenCalendar] = useState(false);
-  const [calendarValue, setCalendarValue] = useState<
-    [string | null, string | null]
-  >([null, null]);
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<BookingSchema>();
 
   const handleOpenCalendar = () => {
     setOpenCalendar(true);
@@ -21,15 +24,21 @@ export default function StepOneBookings() {
     setOpenCalendar(false);
   };
 
-  console.log(classes["mantine-DatePicker-day"]);
+  // const disabledDates = [
+  //   new Date("2026-02-06 15:15:55.752+00"), // Feb 06, 2026
+  //   new Date("2026-02-06 15:15:55.752+00"), // Feb 06, 2026
+  // ];
+
   return (
     <div>
       <div>
         <h2 className="text-center font-normal mb-[1rem]">Primary Guest</h2>
       </div>
-      <div>
+      <div className="flex flex-col gap-y-5">
+        {/* CHECK IN / CHECK OUT */}
         <div className="relative">
           <button
+            type="button"
             className="flex justify-center input-base relative"
             onClick={handleOpenCalendar}
           >
@@ -53,23 +62,83 @@ export default function StepOneBookings() {
                 exit={{ opacity: 0, translateY: "-5%" }}
                 key="user-booking-check-period-calendar"
                 data-testid="user-booking-check-period-calendar"
-                className="absolute w-max top-[100%] z-999"
+                className="absolute w-[100%] top-[100%] z-999"
               >
                 <ClickOutside onClickOutside={handleCloseCalendar}>
-                  <div className="bg-white p-[1.5rem] rounded-lg">
-                    <div>
-                      <DatePicker
-                        classNames={{ day: classes.day }}
-                        type="range"
-                        value={calendarValue}
-                        onChange={setCalendarValue}
-                      />
-                    </div>
-                  </div>
+                  <CalendarBooking
+                    onCalendarChange={(value) => console.log(value)}
+                  />
                 </ClickOutside>
               </motion.div>
             ) : null}
           </AnimatePresence>
+        </div>
+        {/* GUEST NAME FIELD */}
+        <div className="h-[2.5rem]">
+          <input
+            {...register("name")}
+            type="text"
+            placeholder="Name"
+            aria-describedby={errors.name ? "guestName-error" : undefined}
+            className="w-full h-full border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
+          />
+          {errors.name && (
+            <p className="text-red-900 text-[0.65rem]" id="guestName-error">
+              {errors.name.message}
+            </p>
+          )}
+        </div>
+        {/* GUEST AGE AND NATIONALITY FIELD */}
+        <div className="flex items-end justify-between gap-x-5 h-[2.5rem]">
+          <div className="flex-1/2 h-full">
+            <input
+              {...register("age", { valueAsNumber: true })}
+              type="number"
+              placeholder="Age"
+              aria-describedby={errors.age ? "guestAge-error" : undefined}
+              onWheel={(e) => e.currentTarget.blur()}
+              className="w-full h-full border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
+            />
+            {errors.age && (
+              <p className="text-red-900 text-[0.65rem]" id="guestAge-error">
+                {errors.age.message}
+              </p>
+            )}
+          </div>
+          <div className="flex-1/2 h-full">
+            <SelectNationality />
+
+            {errors.nationality && (
+              <p
+                className="text-red-900 text-[0.65rem]"
+                id="guestNationality-error"
+              >
+                {errors.nationality.message}
+              </p>
+            )}
+          </div>
+        </div>
+        {/* GUEST CONTACT NUMBER FIELD */}
+        <div className="h-[2.5rem]">
+          <input
+            {...register("contact_number")}
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="Contact Number"
+            aria-describedby={
+              errors.contact_number ? "guestContactNumber-error" : undefined
+            }
+            className="w-full h-full border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
+          />
+          {errors.contact_number && (
+            <p
+              className="text-red-900 text-[0.65rem]"
+              id="guestContactNumber-error"
+            >
+              {errors.contact_number.message}
+            </p>
+          )}
         </div>
       </div>
     </div>

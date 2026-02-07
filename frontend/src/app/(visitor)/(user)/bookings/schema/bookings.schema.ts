@@ -34,16 +34,16 @@ const poolAccessSchema = z.object({
 
 const additionalGuestsSchema = z.object({
   name: z
-    .string("Guest name is required.")
-    .min(USER_NAME_MIN, "Guest name must be at least 2 characters.")
-    .max(USER_NAME_MAX, "Guest name must not exceed 50 characters."),
+    .string("Additional guest name is required.")
+    .min(USER_NAME_MIN, "Additional guest name must be at least 2 characters.")
+    .max(USER_NAME_MAX, "Additional guest name must not exceed 50 characters."),
   age: z
-    .number("Guest age is required.")
+    .number("Additional guest age is required.")
     .min(AGE_MIN, "Age cannot be negative.")
     .max(AGE_MAX, "Please enter a valid age."),
   below_three_feet: z.boolean("Please indicate height requirement."),
   valid_id: z
-    .file("Guest valid ID is required.")
+    .file("Additional guest valid ID is required.")
     .min(IMAGE_FILE_MIN_SIZE_BYTE, "File must not be empty.")
     .max(IMAGE_FILE_MAX_SIZE_MB * 1024 * 1024, "File size must not exceed 5MB.")
     .mime(IMAGE_FILE_ALLOWED_TYPES, {
