@@ -6,6 +6,8 @@ import HeaderAdmin from "@/app/(admin)/components/HeaderAdmin";
 import NavigationBottomAdmin from "@/app/(admin)/components/NavigationBottomSpaces";
 import BookingFiltersNav, { type BookingCounts } from "./components/BookingFiltersNav";
 import { BookingStatus } from "./constants/bookingFilters";
+import BookingsList from "./components/BookingsList";
+import { MOCK_BOOKINGS } from "./lib/mockData";
 
 export default function BookingsPage() {
   const [activeFilter, setActiveFilter] = useState<BookingStatus>("all");
@@ -100,28 +102,7 @@ export default function BookingsPage() {
 
         {/* Content Area - Ready for your content */}
         <div className="flex-1 max-w-7xl w-full mx-auto px-6 py-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center min-h-96 flex flex-col items-center justify-center">
-            <div className="text-6xl mb-4">📋</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {activeFilter === "all"
-                ? "All Bookings"
-                : activeFilter === "pending"
-                ? "Pending Bookings"
-                : activeFilter === "confirmed"
-                ? "Confirmed Bookings"
-                : activeFilter === "checked-in"
-                ? "Checked-In Guests"
-                : activeFilter === "checked-out"
-                ? "Checked-Out Bookings"
-                : "Action Needed"}
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Your booking content will be displayed here.
-            </p>
-            <p className="text-sm text-gray-500">
-              Currently filtering by: <span className="font-semibold">{activeFilter}</span>
-            </p>
-          </div>
+          <BookingsList bookings={MOCK_BOOKINGS} activeFilter={activeFilter} />
         </div>
       </div>
 
