@@ -8,13 +8,19 @@ import CalendarBooking from "@/app/shared/components/CalendarBooking";
 import { useFormContext } from "react-hook-form";
 import { BookingSchema } from "../schema/bookings.schema";
 import SelectNationality from "./SelectNationality";
-import PhoneFormatter from "./PhoneNumberInput";
+import PhoneNumberInput from "./PhoneNumberInput";
+import { CountryCode } from "libphonenumber-js";
+import UploadFilePhoto from "./UploadFilePhoto";
 
 export default function StepOneBookings() {
   const [openCalendar, setOpenCalendar] = useState(false);
   const {
     register,
     formState: { errors },
+    watch,
+    setValue,
+    getValues,
+    resetField,
   } = useFormContext<BookingSchema>();
 
   const handleOpenCalendar = () => {
@@ -25,10 +31,7 @@ export default function StepOneBookings() {
     setOpenCalendar(false);
   };
 
-  // const disabledDates = [
-  //   new Date("2026-02-06 15:15:55.752+00"), // Feb 06, 2026
-  //   new Date("2026-02-06 15:15:55.752+00"), // Feb 06, 2026
-  // ];
+  const valid_id_file = watch("valid_id");
 
   return (
     <div>
@@ -121,26 +124,24 @@ export default function StepOneBookings() {
         </div>
         {/* GUEST CONTACT NUMBER FIELD */}
         <div className="h-[2.5rem]">
-          <PhoneFormatter defaultCountry="JP" />
-          {/* <input
-            {...register("contact_number")}
-            type="tel"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            placeholder="Contact Number"
-            aria-describedby={
-              errors.contact_number ? "guestContactNumber-error" : undefined
+          <PhoneNumberInput
+            defaultCountry={
+              (watch("contact_number.countryCode") as CountryCode) ?? "PH"
             }
-            className="w-full h-full border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
           />
-          {errors.contact_number && (
-            <p
-              className="text-red-900 text-[0.65rem]"
-              id="guestContactNumber-error"
-            >
-              {errors.contact_number.message}
-            </p>
-          )} */}
+        </div>
+        {/* GUEST VALID PHOTO ID */}
+        <div>
+          <UploadFilePhoto
+            uploadTextContent="Valid ID"
+            url={valid_id_file?.url}
+            onSelectPhoto={(photoFile) => {
+              setValue("valid_id", photoFile);
+            }}
+            onDeletePhoto={() => {
+              resetField("valid_id", undefined);
+            }}
+          />
         </div>
       </div>
     </div>

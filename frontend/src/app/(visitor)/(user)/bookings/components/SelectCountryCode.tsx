@@ -1,4 +1,3 @@
-import { nationalities } from "@/app/shared/constants/nationalities";
 import ClickOutside from "@/app/shared/ui/ClickOutside";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
@@ -12,7 +11,7 @@ export default function SelectCountryCode({
 }: {
   codes: { countryCode: string; callingCode: string }[];
 }) {
-  const [code, setCode] = useState("PH");
+  const [code, setCode] = useState({ countryCode: "PH", callingCode: "+63" });
   const [openSelect, setOpenSelect] = useState(false);
 
   const { setValue } = useFormContext<BookingSchema>();
@@ -20,6 +19,7 @@ export default function SelectCountryCode({
   const handleOpenSelect = () => {
     setOpenSelect(true);
   };
+
   const handleCloseSelect = () => {
     setOpenSelect(false);
   };
@@ -29,14 +29,17 @@ export default function SelectCountryCode({
       <button
         type="button"
         onClick={handleOpenSelect}
-        className="flex items-center justify-between border-2 border-secondary-normal/30 py-[0.5rem] relative w-full h-full input-base-focus"
+        className="rounded-lg flex items-center justify-between gap-x-1 border-2 border-secondary-normal/30 p-[0.25rem] relative w-[6.5rem] overflow-hidden h-full input-base-focus"
       >
         <ReactCountryFlag
-          countryCode={code}
+          countryCode={code.countryCode}
           svg
           style={{ width: "1.5em", height: "1.5em" }}
         />
-        <span>{codes.find((c) => c.countryCode === code)?.callingCode}</span>
+        <span className="text-sm font-bold">{code.callingCode}</span>
+        <span className="text-lg">
+          <HiOutlineSelector />
+        </span>
       </button>
 
       <AnimatePresence>
@@ -47,22 +50,25 @@ export default function SelectCountryCode({
             exit={{ opacity: 0, translateY: "-1%" }}
             key="user-booking-select-code"
             data-testid="user-booking-select-code"
-            className="absolute w-[10rem] top-[100%] z-999"
+            className="absolute w-[8.5rem] top-[100%] z-999"
           >
             <ClickOutside onClickOutside={handleCloseSelect}>
               <div className="bg-white shadow-lg h-[12rem] overflow-y-auto overflow-x-hidden rounded-lg">
                 <ul>
                   {codes.map((c) => {
-                    if (c.countryCode === code) {
+                    if (c.countryCode === code.countryCode) {
                       return (
                         <li key={c.countryCode}>
                           <button
                             type="button"
                             onClick={() => {
-                              setCode(c.countryCode);
+                              setCode({
+                                callingCode: c.callingCode,
+                                countryCode: c.countryCode,
+                              });
                               handleCloseSelect();
                             }}
-                            className="p-[0.5rem] truncate w-full text-left bg-secondary-normal input-base-focus"
+                            className=" text-white p-[0.5rem] truncate w-full text-left bg-secondary-normal input-base-focus"
                           >
                             <span>
                               <ReactCountryFlag
@@ -71,9 +77,7 @@ export default function SelectCountryCode({
                                 style={{ width: "1.5em", height: "1.5em" }}
                               />
                             </span>
-                            <span className="font-bold text-white">
-                              {c.callingCode}
-                            </span>
+                            <span className="font-bold">{c.callingCode}</span>
                           </button>
                         </li>
                       );
@@ -83,7 +87,19 @@ export default function SelectCountryCode({
                         <button
                           type="button"
                           onClick={() => {
-                            setCode(c.countryCode);
+                            setCode({
+                              callingCode: c.callingCode,
+                              countryCode: c.countryCode,
+                            });
+
+                            setValue(
+                              "contact_number.countryCode",
+                              c.countryCode,
+                            );
+                            setValue(
+                              "contact_number.callingCode",
+                              c.callingCode,
+                            );
                             handleCloseSelect();
                           }}
                           className="p-[0.5rem] truncate w-full text-left hover:bg-secondary-normal/50 hover:text-white input-base-focus"
@@ -95,7 +111,7 @@ export default function SelectCountryCode({
                               style={{ width: "1.5em", height: "1.5em" }}
                             />
                           </span>
-                          <span>{c.callingCode}</span>
+                          <span>{c.callingCode} </span>
                         </button>
                       </li>
                     );

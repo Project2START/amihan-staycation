@@ -1,4 +1,5 @@
-// components/PhoneFormatter.tsx
+"use client";
+
 import { useState, ChangeEvent, useMemo } from "react";
 import {
   getCountryCallingCode,
@@ -7,21 +8,39 @@ import {
 } from "libphonenumber-js";
 import examples from "libphonenumber-js/examples.mobile.json";
 import metadata from "libphonenumber-js/metadata.full.json";
-import ReactCountryFlag from "react-country-flag";
 import SelectCountryCode from "./SelectCountryCode";
+import { useFormContext } from "react-hook-form";
+import { BookingSchema } from "../schema/bookings.schema";
 
 const countryKeys = Object.keys(metadata.countries) as CountryCode[];
 
-// Specify priority countries first
-const priorityCountries: CountryCode[] = ["PH", "US", "GB"];
+const priorityCountries: CountryCode[] = [
+  "PH",
+  "US",
+  "JP",
+  "KR",
+  "CN",
+  "CA",
+  "GB",
+  "AU",
+  "SG",
+  "MY",
+  "TW",
+  "IN",
+  "NZ",
+  "MX",
+  "AE",
+  "SA",
+  "TH",
+  "ID",
+  "VN",
+];
 
 const countries = [
-  // First, the priority countries
   ...priorityCountries.map((code) => ({
     countryCode: code,
     callingCode: `+${getCountryCallingCode(code)}`,
   })),
-  // Then, all other countries excluding priority ones
   ...countryKeys
     .filter((code) => !priorityCountries.includes(code))
     .map((code) => ({
@@ -30,18 +49,16 @@ const countries = [
     })),
 ];
 
-console.log(countries);
-
-interface PhoneFormatterProps {
+interface INumberInputProps {
   defaultCountry?: CountryCode;
 }
 
-const PhoneFormatter: React.FC<PhoneFormatterProps> = ({
+export default function PhoneNumberInput({
   defaultCountry = "PH",
-}) => {
-  const [value, setValue] = useState("");
+}: INumberInputProps) {
+  const [phoneNumber, setPhoneNumber] = useState("");
 
-  const countryCodes: string[] = Object.keys(metadata.countries);
+  const { register } = useFormContext<BookingSchema>();
 
   // Determine max digits dynamically based on national number length
   const maxDigits = useMemo(() => {
@@ -120,23 +137,22 @@ const PhoneFormatter: React.FC<PhoneFormatterProps> = ({
       }
     }
 
-    setValue(groups.join(" "));
+    setPhoneNumber(groups.join(" "));
   };
 
   return (
-    <div className="h-full flex">
+    <div className="h-full flex gap-x-2">
       <div>
         <SelectCountryCode codes={countries} />
       </div>
       <input
+        {...register("contact_number.number")}
         type="text"
-        value={value}
+        value={phoneNumber}
         onChange={handleChange}
         placeholder={placeholder}
         className="w-full h-full border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
       />
     </div>
   );
-};
-
-export default PhoneFormatter;
+}

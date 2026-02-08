@@ -16,7 +16,12 @@ export default function BookingsForm() {
 
   const methods = useForm<BookingSchema>({
     resolver: zodResolver(bookingSchema),
-    defaultValues: {},
+    defaultValues: {
+      contact_number: {
+        callingCode: "+63",
+        countryCode: "PH",
+      },
+    },
   });
 
   const nextStep = () =>

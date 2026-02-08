@@ -11,6 +11,8 @@ export const NATIONALITY_MAX_LENGTH = 50;
 
 export const CONTACT_NUMBER_MIN_LENGTH = 7;
 export const CONTACT_NUMBER_MAX_LENGTH = 15;
+export const CONTACT_NUMBER_CODE_MIN_LENGTH = 2;
+export const CONTACT_NUMBER_CODE_MAX_LENGTH = 5;
 
 const IMAGE_FILE_MIN_SIZE_BYTE = 1;
 const IMAGE_FILE_MAX_SIZE_MB = 5;
@@ -23,8 +25,41 @@ const ADDITIONAL_GUESTS_MAX = 10;
 const PAYMENT_TYPE_MIN_LENGTH = 2;
 const PAYMENT_TYPE_MAX_LENGTH = 50;
 
-export const STATUS_MIN_LENGTH = 1;
-export const STATUS_MAX_LENGTH = 20;
+const STATUS_MIN_LENGTH = 2;
+const STATUS_MAX_LENGTH = 20;
+
+export const URL_MIN_LENGTH = 5;
+export const URL_MAX_LENGTH = 2048;
+
+const photoFileSchema = z.object({
+  file: z
+    .file("Valid photo is required.")
+    .min(IMAGE_FILE_MIN_SIZE_BYTE, "File must not be empty.")
+    .max(IMAGE_FILE_MAX_SIZE_MB * 1024 * 1024, "File size must not exceed 5MB.")
+    .mime(IMAGE_FILE_ALLOWED_TYPES, {
+      error: "Only JPG, PNG, or GIF files are allowed.",
+    }),
+  url: z
+    .string("URL is required")
+    .min(URL_MIN_LENGTH, `URL must be at least ${URL_MIN_LENGTH} characters.`)
+    .max(URL_MAX_LENGTH, `URL must not exceed ${URL_MAX_LENGTH} characters.`),
+  id: z.uuid("Invalid photo id"),
+});
+
+const contactNumberSchema = z.object({
+  countryCode: z
+    .string("Country code is required")
+    .min(CONTACT_NUMBER_CODE_MIN_LENGTH, "Country code is too short.")
+    .max(CONTACT_NUMBER_CODE_MAX_LENGTH, "Country code is too long."),
+  callingCode: z
+    .string("Calling code is required")
+    .min(CONTACT_NUMBER_CODE_MIN_LENGTH, "Calling code is too short.")
+    .max(CONTACT_NUMBER_CODE_MAX_LENGTH, "Calling code is too long."),
+  number: z
+    .string("Contact number is required.")
+    .min(CONTACT_NUMBER_MIN_LENGTH, "Contact number is too short.")
+    .max(CONTACT_NUMBER_MAX_LENGTH, "Contact number is too long."),
+});
 
 const poolAccessSchema = z.object({
   date: z.date("Please select a valid date."),
@@ -42,13 +77,7 @@ const additionalGuestsSchema = z.object({
     .min(AGE_MIN, "Age cannot be negative.")
     .max(AGE_MAX, "Please enter a valid age."),
   below_three_feet: z.boolean("Please indicate height requirement."),
-  valid_id: z
-    .file("Additional guest valid ID is required.")
-    .min(IMAGE_FILE_MIN_SIZE_BYTE, "File must not be empty.")
-    .max(IMAGE_FILE_MAX_SIZE_MB * 1024 * 1024, "File size must not exceed 5MB.")
-    .mime(IMAGE_FILE_ALLOWED_TYPES, {
-      error: "Only JPG, PNG, or GIF files are allowed.",
-    }),
+  valid_id: photoFileSchema,
   pool_access: z
     .array(poolAccessSchema, "Invalid pool access data.")
     .max(POOL_ACCESS_MAX_DAYS, "Pool access days exceed allowed limit.")
@@ -71,17 +100,8 @@ export const bookingSchema = z.object({
     .string("Nationality is required.")
     .min(NATIONALITY_MIN_LENGTH, "Nationality must be at least 2 characters.")
     .max(NATIONALITY_MAX_LENGTH, "Nationality must not exceed 50 characters."),
-  contact_number: z
-    .string("Contact number is required.")
-    .min(CONTACT_NUMBER_MIN_LENGTH, "Contact number is too short.")
-    .max(CONTACT_NUMBER_MAX_LENGTH, "Contact number is too long."),
-  valid_id: z
-    .file("Valid ID is required.")
-    .min(IMAGE_FILE_MIN_SIZE_BYTE, "File must not be empty.")
-    .max(IMAGE_FILE_MAX_SIZE_MB * 1024 * 1024, "File size must not exceed 5MB.")
-    .mime(IMAGE_FILE_ALLOWED_TYPES, {
-      error: "Only JPG, PNG, or GIF files are allowed.",
-    }),
+  contact_number: contactNumberSchema,
+  valid_id: photoFileSchema,
   pool_access: z
     .array(poolAccessSchema, "Invalid pool access data.")
     .max(POOL_ACCESS_MAX_DAYS, "Pool access days exceed allowed limit.")
@@ -97,13 +117,7 @@ export const bookingSchema = z.object({
     .string("Payment type is required.")
     .min(PAYMENT_TYPE_MIN_LENGTH, "Payment type is too short.")
     .max(PAYMENT_TYPE_MAX_LENGTH, "Payment type is too long."),
-  payment_proof: z
-    .file("Payment proof is required.")
-    .min(IMAGE_FILE_MIN_SIZE_BYTE, "File must not be empty.")
-    .max(IMAGE_FILE_MAX_SIZE_MB * 1024 * 1024, "File size must not exceed 5MB.")
-    .mime(IMAGE_FILE_ALLOWED_TYPES, {
-      error: "Only JPG, PNG, or GIF files are allowed.",
-    }),
+  payment_proof: photoFileSchema,
   agree_terms: z.boolean(),
   user_id: z.uuid("Invalid user ID."),
   product_id: z.uuid("Invalid product ID."),
@@ -114,6 +128,7 @@ export const bookingSchema = z.object({
 });
 
 export type BookingSchema = z.infer<typeof bookingSchema>;
+export type BookingPhotoFileSchema = z.infer<typeof photoFileSchema>;
 // import z from "zod";
 
 // export const USER_NAME_MIN = 2; // Minimum 2 characters (e.g., "Al")
