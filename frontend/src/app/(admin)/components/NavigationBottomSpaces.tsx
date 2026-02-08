@@ -5,10 +5,9 @@ import { BsHouseDoor } from "react-icons/bs";
 import { GoGraph } from "react-icons/go";
 import { MdPerson3 } from "react-icons/md";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { FaPlus } from "react-icons/fa6";
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
 import NewUnitForm from "@/app/(admin)/spaces/components/NewUnitForm";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 
@@ -19,20 +18,35 @@ const navList = [
     id: "bookings-1",
     icon: <LuCalendarDays />,
   },
-
-  { path: "/spaces", name: "Spaces", id: "spaces-1", icon: <BsHouseDoor /> },
-
-  { path: "/insights", name: "Insights", id: "insights-1", icon: <GoGraph /> },
-
-  { path: "/agents", name: "Agents", id: "agents-1", icon: <MdPerson3 /> },
+  { 
+    path: "/spaces", 
+    name: "Spaces", 
+    id: "spaces-1", 
+    icon: <BsHouseDoor /> 
+  },
+  { 
+    path: "/insights", 
+    name: "Insights", 
+    id: "insights-1", 
+    icon: <GoGraph /> 
+  },
+  { 
+    path: "/agents", 
+    name: "Agents", 
+    id: "agents-1", 
+    icon: <MdPerson3 /> 
+  },
 ];
 
 export default function NavigationBottomSpaces() {
   const [addNew, setAddNew] = useState<boolean>(false);
-
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   
-  // Check if on Spaces page
+  // Get user ID from query params
+  const userId = searchParams.get("user");
+  
+  // Check if on Spaces page (ignoring query params)
   const isOnSpacesPage = pathname === "/spaces";
 
   return (
@@ -45,6 +59,7 @@ export default function NavigationBottomSpaces() {
               <button
                 onClick={() => setAddNew(true)}
                 className="bg-primary-normal border-5 border-white shadow-[0_-2.5px_5px] rounded-full p-[0.75rem] transition-transform hover:scale-110"
+                aria-label="Add new space"
               >
                 <span className="text-white text-base">
                   <FaPlus />
@@ -55,51 +70,53 @@ export default function NavigationBottomSpaces() {
 
           {/* Dialog - Only renders when on Spaces page and addNew is true */}
           {isOnSpacesPage && (
-            <li className="absolute">
-              <DialogBaseContent
-                onCloseDialog={() => setAddNew(false)}
-                openDialog={addNew}
-                enableClickOutside={false}
-                scrollVertically={false}
-              >
-                <NewUnitForm onCloseDialog={() => setAddNew(false)} />
-              </DialogBaseContent>
-            </li>
+            <DialogBaseContent
+              onCloseDialog={() => setAddNew(false)}
+              openDialog={addNew}
+              enableClickOutside={false}
+              scrollVertically={false}
+            >
+              <NewUnitForm onCloseDialog={() => setAddNew(false)} />
+            </DialogBaseContent>
           )}
 
           {navList.map((list) => {
-            const isActive = pathname === list.path;
+            const isActive = pathname === list.path || pathname.startsWith(`${list.path}/`);
+            
+            // Append user query param to the path
+            const href = userId ? `${list.path}?user=${userId}` : list.path;
 
             return (
               <li key={list.id}>
-                <Link href={list.path}>
-                  <div className="flex flex-col items-center">
-                    <span
-                      className="text-xl transition-colors"
-                      style={
-                        isActive
-                          ? {
-                              color: "var(--color-secondary-normal)",
-                            }
-                          : { color: "inherit" }
-                      }
-                    >
-                      {list.icon}
-                    </span>
-                    <span
-                      className="text-xs mt-[0.5rem] transition-colors"
-                      style={
-                        isActive
-                          ? {
-                              color: "var(--color-secondary-normal)",
-                              fontWeight: "bold",
-                            }
-                          : { color: "inherit" }
-                      }
-                    >
-                      {list.name}
-                    </span>
-                  </div>
+                <Link 
+                  href={href}
+                  className="flex flex-col items-center"
+                >
+                  <span
+                    className="text-xl transition-colors"
+                    style={
+                      isActive
+                        ? {
+                            color: "var(--color-secondary-normal)",
+                          }
+                        : { color: "inherit" }
+                    }
+                  >
+                    {list.icon}
+                  </span>
+                  <span
+                    className="text-xs mt-[0.5rem] transition-colors"
+                    style={
+                      isActive
+                        ? {
+                            color: "var(--color-secondary-normal)",
+                            fontWeight: "bold",
+                          }
+                        : { color: "inherit" }
+                    }
+                  >
+                    {list.name}
+                  </span>
                 </Link>
               </li>
             );

@@ -11,7 +11,8 @@ export async function proxy(req: NextRequest) {
     return await verifyRegistree(req);
   }
 
-  if (["/spaces"].includes(currentPath)) {
+  // Admin-protected routes (matching NavigationBottomSpaces paths)
+  if (["/spaces", "/bookings", "/insights", "/agents"].includes(currentPath)) {
     return await verifyAdmin(req);
   }
 
@@ -25,5 +26,13 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/verify-code/:path*", "/auth/:path*", "/units/:path*"],
+  matcher: [
+    "/verify-code/:path*",
+    "/auth/:path*",
+    "/units/:path*",
+    "/spaces/:path*",
+    "/bookings/:path*",
+    "/insights/:path*",
+    "/agents/:path*",
+  ],
 };
