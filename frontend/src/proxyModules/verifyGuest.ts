@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
+// interface MyJWTPayload {
+//   user_id: string;
+//   user_role: "admin" | "user";
+//   iat?: number;
+//   exp?: number;
+// }
+
 export default async function verifyGuest(req: NextRequest) {
   const auth_token = req.cookies.get("auth_token")?.value;
   const notForYouPage = new URL("/not-found", req.url);
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-
-  if (!auth_token) return NextResponse.next();
 
   try {
     const { payload } = await jwtVerify(auth_token || "", secret);
@@ -20,8 +25,9 @@ export default async function verifyGuest(req: NextRequest) {
     if (role === "admin") {
       return NextResponse.redirect(new URL(`/spaces?user=${userId}`, req.url));
     }
+
+    return NextResponse.redirect(new URL(`/browse-units`, req.url));
   } catch (err) {
-    console.log(err);
     return NextResponse.rewrite(notForYouPage);
   }
 }

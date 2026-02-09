@@ -11,17 +11,16 @@ export async function proxy(req: NextRequest) {
     return await verifyRegistree(req);
   }
 
-  // Admin routes
+  // Admin-protected routes (matching NavigationBottomSpaces paths)
   if (["/spaces", "/bookings", "/insights", "/agents"].includes(currentPath)) {
     return await verifyAdmin(req);
   }
 
-  // User routes - use different path
-  if (["/my-bookings"].includes(currentPath)) {
+  if (["/units"].includes(currentPath)) {
     return await verifyUser(req);
   }
 
-  if (["/browse-units", "/sign-in", "/sign-up"].includes(currentPath)) {
+  if (["/auth"].includes(currentPath)) {
     return await verifyGuest(req);
   }
 }
@@ -30,13 +29,10 @@ export const config = {
   matcher: [
     "/verify-code/:path*",
     "/auth/:path*",
-    "/my-bookings/:path*",  // Changed from /units
+    "/units/:path*",
     "/spaces/:path*",
     "/bookings/:path*",
     "/insights/:path*",
     "/agents/:path*",
-    "/browse-units",
-    "/sign-in",
-    "/sign-up",
   ],
 };

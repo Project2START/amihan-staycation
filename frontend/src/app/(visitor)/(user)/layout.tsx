@@ -9,10 +9,10 @@ export default function UserLayout({
 }) {
   return (
     <>
-      {/* <UserLayoutGuard> */}
-      <UserHeader />
-      <main className="grow">{children}</main>
-      {/* </UserLayoutGuard> */}
+      <UserLayoutGuard>
+        <UserHeader />
+        <main className="grow">{children}</main>
+      </UserLayoutGuard>
     </>
   );
 }
