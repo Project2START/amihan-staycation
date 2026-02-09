@@ -11,6 +11,8 @@ import SelectNationality from "./SelectNationality";
 import PhoneNumberInput from "./PhoneNumberInput";
 import { CountryCode } from "libphonenumber-js";
 import UploadFilePhoto from "./UploadFilePhoto";
+import PoolAccess from "./PoolAccess";
+import { DatesRangeValue } from "@mantine/dates";
 
 export default function StepOneBookings() {
   const [openCalendar, setOpenCalendar] = useState(false);
@@ -70,7 +72,13 @@ export default function StepOneBookings() {
               >
                 <ClickOutside onClickOutside={handleCloseCalendar}>
                   <CalendarBooking
-                    onCalendarChange={(value) => console.log(value)}
+                    onCalendarChange={(value: DatesRangeValue<string>) => {
+                      if (value[0] && value[1])
+                        setValue("check_period", {
+                          check_in: value[0],
+                          check_out: value[1],
+                        });
+                    }}
                   />
                 </ClickOutside>
               </motion.div>
@@ -123,7 +131,7 @@ export default function StepOneBookings() {
           </div>
         </div>
         {/* GUEST CONTACT NUMBER FIELD */}
-        <div className="h-[2.5rem]">
+        <div className="h-[2.5rem] mt-[0.5rem]">
           <PhoneNumberInput
             defaultCountry={
               (watch("contact_number.countryCode") as CountryCode) ?? "PH"
@@ -139,9 +147,14 @@ export default function StepOneBookings() {
               setValue("valid_id", photoFile);
             }}
             onDeletePhoto={() => {
-              resetField("valid_id", undefined);
+              setValue("valid_id", { file: undefined, id: "", url: "" });
             }}
           />
+        </div>
+
+        {/*  GUEST POOL ACCESS */}
+        <div>
+          <PoolAccess />
         </div>
       </div>
     </div>

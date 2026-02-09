@@ -1,11 +1,13 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { v4 as uuid } from "uuid";
 import { BookingPhotoFileSchema } from "../schema/bookings.schema";
 import Image from "next/image";
 import { IoIosCloseCircle } from "react-icons/io";
+import PhotoFullView from "@/app/shared/components/PhotoFullView";
+import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 
 interface IUploadFilePhoto {
   uploadTextContent?: string;
@@ -21,27 +23,49 @@ export default function UploadFilePhoto({
   url,
 }: IUploadFilePhoto) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  console.log(url);
+  const [photoFullView, setPhotoFullView] = useState(false);
+
+  const handleOpenFullView = () => {
+    setPhotoFullView(true);
+  };
+  const handleCloseFullView = () => {
+    setPhotoFullView(false);
+  };
   return (
     <div>
       {url ? (
-        <div className="w-full border-2 border-secondary-normal/30 rounded-lg px-[0.75rem] mt-[0.5rem] h-[7rem]">
+        <div className="w-full border-2 border-secondary-normal/30 rounded-lg py-[0.25rem] mt-[0.5rem] h-[8rem]">
           <div className="w-full h-full flex items-center justify-center">
-            <div className="relative rounded-lg w-[30%] h-full">
-              <Image
-                src={url}
-                fill
-                className="object-cover object-center"
-                alt="Amihan Staycaion file upload image for booking"
-                sizes="100%"
-              />
-              <button type="button" onClick={onDeletePhoto}>
-                <span className="text-lg absolute text-reject-normal top-[-0.25rem] right-[-0.25rem]">
+            <div className="relative rounded-lg w-[40%] h-full">
+              <button type="button" onClick={handleOpenFullView}>
+                <Image
+                  src={url}
+                  fill
+                  className="object-cover object-center"
+                  alt="Amihan Staycaion file upload image for booking"
+                  sizes="100%"
+                />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  URL.revokeObjectURL(url);
+                  onDeletePhoto();
+                }}
+              >
+                <span className="w-max h-max text-lg absolute text-reject-normal top-0 right-0 translate-y-[-50%] translate-x-[50%] bg-white rounded-full ">
                   <IoIosCloseCircle />
                 </span>
               </button>
             </div>
           </div>
+          <DialogBaseContent
+            onCloseDialog={handleCloseFullView}
+            openDialog={photoFullView}
+            enableClickOutside={true}
+          >
+            <PhotoFullView photoSrc={url} onCloseDialog={handleCloseFullView} />
+          </DialogBaseContent>
         </div>
       ) : (
         <div>
@@ -50,7 +74,7 @@ export default function UploadFilePhoto({
             onClick={() => {
               fileInputRef.current?.click();
             }}
-            className="w-full border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] h-[7rem]"
+            className="w-full border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] h-[8rem]"
           >
             <div className="w-full h-full flex items-center justify-center">
               <div className="flex items-center gap-x-2 opacity-50">

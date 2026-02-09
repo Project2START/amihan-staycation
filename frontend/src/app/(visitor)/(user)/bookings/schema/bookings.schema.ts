@@ -31,6 +31,8 @@ const STATUS_MAX_LENGTH = 20;
 export const URL_MIN_LENGTH = 5;
 export const URL_MAX_LENGTH = 2048;
 
+const STANDARD_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
 const photoFileSchema = z.object({
   file: z
     .file("Valid photo is required.")
@@ -38,7 +40,8 @@ const photoFileSchema = z.object({
     .max(IMAGE_FILE_MAX_SIZE_MB * 1024 * 1024, "File size must not exceed 5MB.")
     .mime(IMAGE_FILE_ALLOWED_TYPES, {
       error: "Only JPG, PNG, or GIF files are allowed.",
-    }),
+    })
+    .optional(),
   url: z
     .string("URL is required")
     .min(URL_MIN_LENGTH, `URL must be at least ${URL_MIN_LENGTH} characters.`)
@@ -62,9 +65,11 @@ const contactNumberSchema = z.object({
 });
 
 const poolAccessSchema = z.object({
-  date: z.date("Please select a valid date."),
-  am: z.boolean("Please specify AM access."),
-  pm: z.boolean("Please specify PM access."),
+  date: z
+    .string()
+    .regex(STANDARD_DATE_PATTERN, "Check-in date must be in YYYY-MM-DD format"),
+  am: z.boolean("Please specify AM access.").nullable(),
+  pm: z.boolean("Please specify PM access.").nullable(),
 });
 
 const additionalGuestsSchema = z.object({
@@ -85,9 +90,29 @@ const additionalGuestsSchema = z.object({
   with_vehicle: z.boolean("Please specify vehicle information."),
 });
 
+const checkPeriodSchema = z
+  .object({
+    check_in: z
+      .string()
+      .regex(
+        STANDARD_DATE_PATTERN,
+        "Check-in date must be in YYYY-MM-DD format",
+      ),
+
+    check_out: z
+      .string()
+      .regex(
+        STANDARD_DATE_PATTERN,
+        "Check-out date must be in YYYY-MM-DD format",
+      ),
+  })
+  .refine((data) => data.check_in < data.check_out, {
+    message: "Check-out date must be after check-in date",
+    path: ["check_out"],
+  });
+
 export const bookingSchema = z.object({
-  check_in: z.date("Check-in date is required."),
-  check_out: z.date("Check-out date is required."),
+  check_period: checkPeriodSchema,
   name: z
     .string("Name is required.")
     .min(USER_NAME_MIN, "Name must be at least 2 characters.")

@@ -141,7 +141,7 @@ export default function PhoneNumberInput({
   };
 
   return (
-    <div className="h-full flex gap-x-2">
+    <div className="h-full flex">
       <div>
         <SelectCountryCode codes={countries} />
       </div>
@@ -151,7 +151,7 @@ export default function PhoneNumberInput({
         value={phoneNumber}
         onChange={handleChange}
         placeholder={placeholder}
-        className="w-full h-full border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
+        className="rounded-tr-lg rounded-br-lg w-full h-full border-2 border-l-0 border-secondary-normal/30 pl-[1rem] py-[0.5rem] input-base-focus"
       />
     </div>
   );

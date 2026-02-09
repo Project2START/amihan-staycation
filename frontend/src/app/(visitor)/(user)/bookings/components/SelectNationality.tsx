@@ -1,3 +1,5 @@
+"use client";
+
 import { nationalities } from "@/app/shared/constants/nationalities";
 import ClickOutside from "@/app/shared/ui/ClickOutside";
 import { AnimatePresence, motion } from "motion/react";

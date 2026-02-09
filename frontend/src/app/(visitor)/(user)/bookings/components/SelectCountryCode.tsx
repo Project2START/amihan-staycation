@@ -1,3 +1,4 @@
+"use client";
 import ClickOutside from "@/app/shared/ui/ClickOutside";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
@@ -29,7 +30,7 @@ export default function SelectCountryCode({
       <button
         type="button"
         onClick={handleOpenSelect}
-        className="rounded-lg flex items-center justify-between gap-x-1 border-2 border-secondary-normal/30 p-[0.25rem] relative w-[6.5rem] overflow-hidden h-full input-base-focus"
+        className="rounded-tl-lg rounded-bl-lg flex items-center justify-between gap-x-1 border-2 border-secondary-normal/30 p-[0.25rem] relative w-[6.5rem] overflow-hidden h-full input-base-focus"
       >
         <ReactCountryFlag
           countryCode={code.countryCode}
