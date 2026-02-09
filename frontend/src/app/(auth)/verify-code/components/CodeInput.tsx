@@ -29,7 +29,7 @@ export default function CodeInput({ id }: { id?: string }) {
         { withCredentials: true },
       );
       setErrorLabel("");
-      router.push("/auth");
+      router.push("/browse-units");
     } catch (error) {
       const errorResult = errorHandler(error);
 
