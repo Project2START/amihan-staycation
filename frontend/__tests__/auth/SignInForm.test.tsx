@@ -120,7 +120,7 @@ describe("SignInForm Component", () => {
       await userEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(pushMock).toHaveBeenCalledWith("/auth");
+        expect(pushMock).toHaveBeenCalledWith("/browse-units");
       });
     });
     it("shows error when sign in fails due to invalid credentials", async () => {

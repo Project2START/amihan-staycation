@@ -1,0 +1,46 @@
+.day {
+  color: var(--color-secondary-normal);
+}
+
+.day[data-in-range] {
+  background-color: var(--color-secondary-opacity);
+}
+
+.day[data-today] {
+  color: var(--color-primary-normal);
+  font-weight: bold;
+}
+.day[data-weekend] {
+  color: var(--color-primary-normal);
+}
+
+.day[data-selected],
+.day[data-first-in-range],
+.day[data-last-in-range] {
+  background-color: var(--color-primary-normal);
+  color: white;
+  font-weight: bold;
+}
+
+.datePickerRoot {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
+}
+.presetsList {
+  margin-top: 0.5rem;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 0.5rem;
+  border: none;
+  border-top: 1px solid var(--color-secondary-opacity);
+  padding-top: 1rem;
+}
+.presetButton {
+  border: 2px solid var(--color-primary-normal);
+}
+.levelsGroup {
+  display: flex;
+  justify-content: center;
+}
