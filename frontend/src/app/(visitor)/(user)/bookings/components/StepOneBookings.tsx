@@ -13,6 +13,7 @@ import { CountryCode } from "libphonenumber-js";
 import UploadFilePhoto from "./UploadFilePhoto";
 import PoolAccess from "./PoolAccess";
 import { DatesRangeValue } from "@mantine/dates";
+import WithVehicle from "./WithVehicle";
 
 export default function StepOneBookings() {
   const [openCalendar, setOpenCalendar] = useState(false);
@@ -155,6 +156,11 @@ export default function StepOneBookings() {
         {/*  GUEST POOL ACCESS */}
         <div>
           <PoolAccess />
+        </div>
+
+        {/*  GUEST WITH VEHICLE*/}
+        <div>
+          <WithVehicle />
         </div>
       </div>
     </div>

@@ -104,7 +104,7 @@ export default function BookingsForm() {
                 </Stepper.Completed>
               </Stepper>
             </div>
-            <div>
+            <div className="mt-[3rem]">
               <div className="flex justify-evenly gap-x-5 font-bold">
                 <button
                   type="button"
