@@ -43,7 +43,7 @@ describe("UserAuthController", () => {
       expect(userAuthService.signUp).toHaveBeenCalledWith(req.body);
       expect(signToken).toHaveBeenCalledWith(
         { user_id: mockUser.id, user_role: mockUser.role },
-        "24h"
+        "24h",
       );
       expect(res.cookie).toHaveBeenCalledWith("auth_token", "jwt-token", {
         httpOnly: true,
@@ -72,7 +72,7 @@ describe("UserAuthController", () => {
       expect(userAuthService.signIn).toHaveBeenCalledWith(req.body);
       expect(signToken).toHaveBeenCalledWith(
         { user_id: mockUser.id, user_role: mockUser.role },
-        "24h"
+        "24h",
       );
       expect(res.cookie).toHaveBeenCalledWith("auth_token", "jwt-token", {
         httpOnly: true,
@@ -117,7 +117,7 @@ describe("UserAuthController", () => {
       req.query = { error: "access_denied" };
 
       await expect(
-        userAuthController.googleAuthCallback(req as any, res as any)
+        userAuthController.googleAuthCallback(req as any, res as any),
       ).rejects.toThrow(BadRequestError);
       expect(res.redirect).toHaveBeenCalledWith(`${FRONTEND_HOST}/sign-up`);
     });
@@ -127,7 +127,7 @@ describe("UserAuthController", () => {
       req.query = { code: "code123", state: "wrong" };
 
       await expect(
-        userAuthController.googleAuthCallback(req as any, res as any)
+        userAuthController.googleAuthCallback(req as any, res as any),
       ).rejects.toThrow(BadRequestError);
       expect(res.redirect).toHaveBeenCalledWith(`${FRONTEND_HOST}/sign-up`);
     });
@@ -137,7 +137,7 @@ describe("UserAuthController", () => {
       req.query = { state: "abc" };
 
       await expect(
-        userAuthController.googleAuthCallback(req as any, res as any)
+        userAuthController.googleAuthCallback(req as any, res as any),
       ).rejects.toThrow(BadRequestError);
       expect(res.redirect).toHaveBeenCalledWith(`${FRONTEND_HOST}/sign-up`);
     });
@@ -145,7 +145,7 @@ describe("UserAuthController", () => {
     it("should set cookie and redirect to dashboard on success", async () => {
       const mockUser = { id: "u1", role: "user" };
       (userAuthService.googleAuthCallback as jest.Mock).mockResolvedValue(
-        mockUser
+        mockUser,
       );
       (signToken as jest.Mock).mockReturnValue("jwt-token");
       (cookieOptions as jest.Mock).mockReturnValue({ httpOnly: true });
@@ -156,12 +156,14 @@ describe("UserAuthController", () => {
       await userAuthController.googleAuthCallback(req as any, res as any);
 
       expect(userAuthService.googleAuthCallback).toHaveBeenCalledWith(
-        "code123"
+        "code123",
       );
       expect(res.cookie).toHaveBeenCalledWith("auth_token", "jwt-token", {
         httpOnly: true,
       });
-      expect(res.redirect).toHaveBeenCalledWith(`${FRONTEND_HOST}/dashboard`);
+      expect(res.redirect).toHaveBeenCalledWith(
+        `${FRONTEND_HOST}/units?user=${mockUser.id}`,
+      );
     });
   });
 });
