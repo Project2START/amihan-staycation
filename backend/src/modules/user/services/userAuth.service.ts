@@ -98,6 +98,12 @@ export class UserAuthService {
       throw new BadRequestError("Email not verified by Google");
     }
 
+    const existing_user = await userRepository.findByEmail(email);
+
+    if (existing_user) {
+      return existing_user;
+    }
+
     const user = await userRepository.findByGoogleId(sub);
 
     if (user) {
