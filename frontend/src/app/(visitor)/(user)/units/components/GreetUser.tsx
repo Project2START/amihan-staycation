@@ -5,6 +5,7 @@ import { useAppSelector } from "@/lib/hooks";
 export default function GreetUser() {
   const user = useAppSelector((state) => state.users.data);
 
+  console.log(user);
   return (
     <div className="text-center">
       <h1>Welcome, {user?.first_name}</h1>

@@ -25,7 +25,7 @@ export default function SelectNationality() {
       <button
         type="button"
         onClick={handleOpenSelect}
-        className="flex items-center justify-between border-b-2 border-secondary-normal/30 py-[0.5rem] relative w-full h-full input-base-focus"
+        className="rounded-lg flex items-center justify-between border-2 border-secondary-normal/30 p-[0.5rem] relative w-full h-full input-base-focus"
       >
         <span>{nationality}</span>
         <span className="absolute right-0 text-lg">

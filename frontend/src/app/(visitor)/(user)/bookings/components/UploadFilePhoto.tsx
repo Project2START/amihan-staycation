@@ -3,11 +3,15 @@
 import { useRef, useState } from "react";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { v4 as uuid } from "uuid";
-import { BookingPhotoFileSchema } from "../schema/bookings.schema";
+import {
+  BookingPhotoFileSchema,
+  BookingSchema,
+} from "../schema/bookings.schema";
 import Image from "next/image";
 import { IoIosCloseCircle } from "react-icons/io";
 import PhotoFullView from "@/app/shared/components/PhotoFullView";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
+import { useFormContext } from "react-hook-form";
 
 interface IUploadFilePhoto {
   uploadTextContent?: string;
@@ -24,6 +28,10 @@ export default function UploadFilePhoto({
 }: IUploadFilePhoto) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoFullView, setPhotoFullView] = useState(false);
+
+  const {
+    formState: { errors },
+  } = useFormContext<BookingSchema>();
 
   const handleOpenFullView = () => {
     setPhotoFullView(true);
@@ -85,6 +93,7 @@ export default function UploadFilePhoto({
               </div>
             </div>
           </button>
+
           <input
             ref={fileInputRef}
             type="file"

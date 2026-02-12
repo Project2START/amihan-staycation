@@ -14,6 +14,7 @@ import UploadFilePhoto from "./UploadFilePhoto";
 import PoolAccess from "./PoolAccess";
 import { DatesRangeValue } from "@mantine/dates";
 import WithVehicle from "./WithVehicle";
+import dayjs from "dayjs";
 
 export default function StepOneBookings() {
   const [openCalendar, setOpenCalendar] = useState(false);
@@ -22,8 +23,7 @@ export default function StepOneBookings() {
     formState: { errors },
     watch,
     setValue,
-    getValues,
-    resetField,
+    clearErrors,
   } = useFormContext<BookingSchema>();
 
   const handleOpenCalendar = () => {
@@ -35,6 +35,8 @@ export default function StepOneBookings() {
   };
 
   const valid_id_file = watch("valid_id");
+
+  const checkPeriod = watch("check_period");
 
   return (
     <div>
@@ -49,11 +51,19 @@ export default function StepOneBookings() {
             className="flex justify-center input-base relative"
             onClick={handleOpenCalendar}
           >
-            <div className="flex items-center gap-x-3 font-bold opacity-50">
-              <span>Check-in</span>
-              <span>—</span>
-              <span>Check-out</span>
-            </div>
+            {!checkPeriod ? (
+              <div className="flex items-center gap-x-3 font-bold opacity-50">
+                <span>Check-in</span>
+                <span>—</span>
+                <span>Check-out</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-x-3 font-bold">
+                <span>{dayjs(checkPeriod.check_in).format("MMMM DD")}</span>
+                <span>—</span>
+                <span>{dayjs(checkPeriod.check_out).format("MMMM DD")}</span>
+              </div>
+            )}
 
             <div className="absolute right-5 top-[50%] translate-y-[-50%] opacity-50">
               <span className="text-lg">
@@ -61,6 +71,14 @@ export default function StepOneBookings() {
               </span>
             </div>
           </button>
+          {errors.check_period && (
+            <p
+              className="text-red-900 text-[0.65rem]"
+              id="guestCheckPeriod-error"
+            >
+              Check in and check out date is required
+            </p>
+          )}
           <AnimatePresence>
             {openCalendar ? (
               <motion.div
@@ -73,12 +91,18 @@ export default function StepOneBookings() {
               >
                 <ClickOutside onClickOutside={handleCloseCalendar}>
                   <CalendarBooking
+                    defaultValue={[
+                      checkPeriod?.check_in ? checkPeriod.check_in : null,
+                      checkPeriod?.check_out ? checkPeriod.check_out : null,
+                    ]}
                     onCalendarChange={(value: DatesRangeValue<string>) => {
-                      if (value[0] && value[1])
+                      if (value[0] && value[1]) {
                         setValue("check_period", {
                           check_in: value[0],
                           check_out: value[1],
                         });
+                        clearErrors("check_period");
+                      }
                     }}
                   />
                 </ClickOutside>
@@ -93,7 +117,7 @@ export default function StepOneBookings() {
             type="text"
             placeholder="Name"
             aria-describedby={errors.name ? "guestName-error" : undefined}
-            className="w-full h-full border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
+            className="w-full h-full border-2 rounded-lg border-secondary-normal/30 p-[0.5rem] input-base-focus"
           />
           {errors.name && (
             <p className="text-red-900 text-[0.65rem]" id="guestName-error">
@@ -110,7 +134,7 @@ export default function StepOneBookings() {
               placeholder="Age"
               aria-describedby={errors.age ? "guestAge-error" : undefined}
               onWheel={(e) => e.currentTarget.blur()}
-              className="w-full h-full border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
+              className="w-full h-full border-2 rounded-lg border-secondary-normal/30 p-[0.5rem] input-base-focus"
             />
             {errors.age && (
               <p className="text-red-900 text-[0.65rem]" id="guestAge-error">
@@ -138,6 +162,15 @@ export default function StepOneBookings() {
               (watch("contact_number.countryCode") as CountryCode) ?? "PH"
             }
           />
+
+          {errors.contact_number?.number && (
+            <p
+              className="text-red-900 text-[0.65rem]"
+              id="guestPhoneNumber-error"
+            >
+              {errors.contact_number.number?.message}
+            </p>
+          )}
         </div>
         {/* GUEST VALID PHOTO ID */}
         <div>
@@ -151,6 +184,11 @@ export default function StepOneBookings() {
               setValue("valid_id", { file: undefined, id: "", url: "" });
             }}
           />
+          {errors.valid_id && (
+            <p className="text-red-900 text-[0.65rem]" id="guestValidId-error">
+              Valid ID is required
+            </p>
+          )}
         </div>
 
         {/*  GUEST POOL ACCESS */}

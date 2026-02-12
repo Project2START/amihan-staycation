@@ -78,7 +78,9 @@ export default function SelectCountryCode({
                                 style={{ width: "1.5em", height: "1.5em" }}
                               />
                             </span>
-                            <span className="font-bold">{c.callingCode}</span>
+                            <span className="font-bold ml-[0.5rem]">
+                              {c.callingCode}
+                            </span>
                           </button>
                         </li>
                       );
@@ -112,7 +114,7 @@ export default function SelectCountryCode({
                               style={{ width: "1.5em", height: "1.5em" }}
                             />
                           </span>
-                          <span>{c.callingCode} </span>
+                          <span className="ml-[0.5rem]">{c.callingCode} </span>
                         </button>
                       </li>
                     );
