@@ -1,43 +1,24 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
-import { LuCalendarDays } from "react-icons/lu";
-import ClickOutside from "@/app/shared/ui/ClickOutside";
-import CalendarBooking from "@/app/shared/components/CalendarBooking";
 import { useFormContext } from "react-hook-form";
-import { BookingSchema } from "../schema/bookings.schema";
-import SelectNationality from "./SelectNationality";
-import PhoneNumberInput from "./PhoneNumberInput";
-import { CountryCode } from "libphonenumber-js";
+import {
+  BookingSchema,
+  CONTACT_NUMBER_MAX_LENGTH,
+} from "../schema/bookings.schema";
 import UploadFilePhoto from "./UploadFilePhoto";
+import BookingCalendar from "./BookingCalendar";
+import UploadFileParent from "./UploadFileParent";
+import SelectNationality from "./SelectNationality";
 import PoolAccess from "./PoolAccess";
-import { DatesRangeValue } from "@mantine/dates";
 import WithVehicle from "./WithVehicle";
-import dayjs from "dayjs";
 
 export default function StepOneBookings() {
-  const [openCalendar, setOpenCalendar] = useState(false);
   const {
     register,
     formState: { errors },
-    watch,
-    setValue,
-    clearErrors,
   } = useFormContext<BookingSchema>();
 
-  const handleOpenCalendar = () => {
-    setOpenCalendar(true);
-  };
-
-  const handleCloseCalendar = () => {
-    setOpenCalendar(false);
-  };
-
-  const valid_id_file = watch("valid_id");
-
-  const checkPeriod = watch("check_period");
-
+  console.log("i run");
   return (
     <div>
       <div>
@@ -45,71 +26,7 @@ export default function StepOneBookings() {
       </div>
       <div className="flex flex-col gap-y-5">
         {/* CHECK IN / CHECK OUT */}
-        <div className="relative">
-          <button
-            type="button"
-            className="flex justify-center input-base relative"
-            onClick={handleOpenCalendar}
-          >
-            {!checkPeriod ? (
-              <div className="flex items-center gap-x-3 font-bold opacity-50">
-                <span>Check-in</span>
-                <span>—</span>
-                <span>Check-out</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-x-3 font-bold">
-                <span>{dayjs(checkPeriod.check_in).format("MMMM DD")}</span>
-                <span>—</span>
-                <span>{dayjs(checkPeriod.check_out).format("MMMM DD")}</span>
-              </div>
-            )}
-
-            <div className="absolute right-5 top-[50%] translate-y-[-50%] opacity-50">
-              <span className="text-lg">
-                <LuCalendarDays />
-              </span>
-            </div>
-          </button>
-          {errors.check_period && (
-            <p
-              className="text-red-900 text-[0.65rem]"
-              id="guestCheckPeriod-error"
-            >
-              Check in and check out date is required
-            </p>
-          )}
-          <AnimatePresence>
-            {openCalendar ? (
-              <motion.div
-                initial={{ opacity: 0, translateY: "-5%" }}
-                animate={{ opacity: 1, translateY: "0%" }}
-                exit={{ opacity: 0, translateY: "-5%" }}
-                key="user-booking-check-period-calendar"
-                data-testid="user-booking-check-period-calendar"
-                className="absolute w-[100%] top-[100%] z-999"
-              >
-                <ClickOutside onClickOutside={handleCloseCalendar}>
-                  <CalendarBooking
-                    defaultValue={[
-                      checkPeriod?.check_in ? checkPeriod.check_in : null,
-                      checkPeriod?.check_out ? checkPeriod.check_out : null,
-                    ]}
-                    onCalendarChange={(value: DatesRangeValue<string>) => {
-                      if (value[0] && value[1]) {
-                        setValue("check_period", {
-                          check_in: value[0],
-                          check_out: value[1],
-                        });
-                        clearErrors("check_period");
-                      }
-                    }}
-                  />
-                </ClickOutside>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-        </div>
+        <BookingCalendar />
         {/* GUEST NAME FIELD */}
         <div className="h-[2.5rem]">
           <input
@@ -144,61 +61,61 @@ export default function StepOneBookings() {
           </div>
           <div className="flex-1/2 h-full">
             <SelectNationality />
-
-            {errors.nationality && (
-              <p
-                className="text-red-900 text-[0.65rem]"
-                id="guestNationality-error"
-              >
-                {errors.nationality.message}
-              </p>
-            )}
           </div>
         </div>
         {/* GUEST CONTACT NUMBER FIELD */}
         <div className="h-[2.5rem] mt-[0.5rem]">
-          <PhoneNumberInput
-            defaultCountry={
-              (watch("contact_number.countryCode") as CountryCode) ?? "PH"
+          <input
+            {...register("contact_number")}
+            type="tel"
+            inputMode="tel"
+            placeholder="Contact number"
+            maxLength={CONTACT_NUMBER_MAX_LENGTH}
+            aria-describedby={
+              errors.contact_number ? "guestContactNumber-error" : undefined
             }
+            className="w-full h-full border-2 rounded-lg border-secondary-normal/30 p-[0.5rem] input-base-focus"
+            onKeyDown={(e) => {
+              if (
+                !/[0-9]/.test(e.key) &&
+                ![
+                  "Backspace",
+                  "Delete",
+                  "ArrowLeft",
+                  "ArrowRight",
+                  "Tab",
+                ].includes(e.key) &&
+                !(e.ctrlKey || e.metaKey)
+              ) {
+                e.preventDefault();
+              }
+            }}
           />
-
-          {errors.contact_number?.number && (
+          {errors.contact_number && (
             <p
               className="text-red-900 text-[0.65rem]"
-              id="guestPhoneNumber-error"
+              id="guestContactNumber-error"
             >
-              {errors.contact_number.number?.message}
+              {errors.contact_number.message}
             </p>
           )}
         </div>
         {/* GUEST VALID PHOTO ID */}
         <div>
-          <UploadFilePhoto
-            uploadTextContent="Valid ID"
-            url={valid_id_file?.url}
-            onSelectPhoto={(photoFile) => {
-              setValue("valid_id", photoFile);
-            }}
-            onDeletePhoto={() => {
-              setValue("valid_id", { file: undefined, id: "", url: "" });
-            }}
-          />
-          {errors.valid_id && (
-            <p className="text-red-900 text-[0.65rem]" id="guestValidId-error">
-              Valid ID is required
-            </p>
-          )}
+          <UploadFileParent />
         </div>
 
         {/*  GUEST POOL ACCESS */}
         <div>
-          <PoolAccess />
+          <PoolAccess
+            hasAccess={"pool_access.hasAccess"}
+            name={"pool_access.access"}
+          />
         </div>
 
         {/*  GUEST WITH VEHICLE*/}
         <div>
-          <WithVehicle />
+          <WithVehicle name="with_vehicle" />
         </div>
       </div>
     </div>

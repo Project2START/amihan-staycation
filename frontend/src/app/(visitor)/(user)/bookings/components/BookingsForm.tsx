@@ -20,7 +20,6 @@ const stepFields: Record<number, (keyof BookingSchema)[]> = {
     "valid_id",
     "check_period",
   ],
-  1: ["additional_guests"],
 };
 
 export default function BookingsForm() {
@@ -28,13 +27,11 @@ export default function BookingsForm() {
 
   const methods = useForm<BookingSchema>({
     resolver: zodResolver(bookingSchema),
-    reValidateMode: "onChange",
+    mode: "onChange",
     defaultValues: {
-      contact_number: {
-        callingCode: "+63",
-        countryCode: "PH",
-      },
       nationality: "Filipino",
+      pool_access: { hasAccess: true },
+      with_vehicle: false,
     },
   });
 
@@ -46,18 +43,14 @@ export default function BookingsForm() {
   const onSubmit = async (data: BookingSchema) => {};
 
   const onHandleSubmitStep = async () => {
-    console.log(methods.getValues());
     const isValid = await methods.trigger(stepFields[step]);
 
     if (isValid) {
       nextStep();
     } else {
-      for (const field of stepFields[step]) {
-        const error = methods.formState.errors[field as keyof BookingSchema];
-        if (error) {
-          methods.setFocus(field as keyof BookingSchema);
-          break;
-        }
+      const firstError = Object.keys(methods.formState.errors)[0];
+      if (firstError) {
+        methods.setFocus(firstError as keyof BookingSchema);
       }
     }
   };

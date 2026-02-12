@@ -9,17 +9,22 @@ import { v4 as uuid } from "uuid";
 import dayjs from "dayjs";
 import { AnimatePresence, motion } from "motion/react";
 
-export default function PoolAccess() {
-  const [isPoolAccess, setIsPoolAccess] = useState(true);
-
-  const { watch, control } = useFormContext<BookingSchema>();
+export default function PoolAccess({
+  name,
+  hasAccess,
+}: {
+  name: any;
+  hasAccess: any;
+}) {
+  const { watch, control, setValue } = useFormContext<BookingSchema>();
 
   const { fields, append, remove, update } = useFieldArray({
     control,
-    name: "pool_access",
+    name,
   });
 
   const checkPeriod = watch("check_period");
+  const isPoolAccess = watch(hasAccess);
 
   const poolAccessDates = getPoolAccessDates(
     checkPeriod?.check_in,
@@ -27,12 +32,16 @@ export default function PoolAccess() {
   );
 
   const handlePoolAccessIndex = (date: string) => {
-    const poolAccessIndex = fields.findIndex((field) => field.date === date);
+    const poolAccessIndex = fields.findIndex(
+      (field: any) => field.date === date,
+    );
 
     return poolAccessIndex;
   };
-  const handleCheckPoolAccess = (date: string) => {
-    const poolAccess = fields.find((field) => field.date === date);
+
+  const handleCheckPoolAccess = (date: string): any => {
+    const poolAccess = fields.find((field: any) => field.date === date);
+
     return poolAccess;
   };
 
@@ -45,7 +54,7 @@ export default function PoolAccess() {
             defaultChecked
             checked={isPoolAccess}
             onChange={(event) => {
-              setIsPoolAccess(event.currentTarget.checked);
+              setValue(hasAccess, event.currentTarget.checked);
               remove();
             }}
             color="var(--color-primary-normal)"
@@ -63,106 +72,104 @@ export default function PoolAccess() {
               key="user-booking-pool-access-field"
               data-testid="user-booking-pool-access-field"
             >
-              {isPoolAccess && (
-                <div>
-                  <div className="w-[80%]">
-                    {typeof poolAccessDates === "string" ? null : (
-                      <ul className="w-full flex flex-col gap-y-3 pt-[1.5rem] pb-[1rem]">
-                        {poolAccessDates.map((poolAccessDate, index) => {
-                          const { date, am, pm } = poolAccessDate;
+              <div>
+                <div className="w-[80%]">
+                  {typeof poolAccessDates === "string" ? null : (
+                    <ul className="w-full flex flex-col gap-y-3 pt-[1.5rem] pb-[1rem]">
+                      {poolAccessDates.map((poolAccessDate, index) => {
+                        const { date, am, pm } = poolAccessDate;
 
-                          return (
-                            <li key={uuid()}>
-                              <div className="flex items-center relative">
-                                <div className="flex-1/3 ">
-                                  {dayjs(date).format("MMMM DD")}
-                                </div>
-                                <div className="flex-1/3 flex justify-center  ">
-                                  {index === 0 && (
-                                    <span className="font-bold absolute top-[-150%]">
-                                      AM
-                                    </span>
-                                  )}
-                                  {am !== null ? (
-                                    <Checkbox
-                                      size="xs"
-                                      color="var(--color-primary-normal)"
-                                      checked={
-                                        handleCheckPoolAccess(date)?.am ??
-                                        undefined
-                                      }
-                                      onChange={(event) => {
-                                        const poolAccess =
-                                          handleCheckPoolAccess(date);
-
-                                        if (!poolAccess) {
-                                          append({
-                                            date,
-                                            am: event.currentTarget.checked,
-                                            pm,
-                                          });
-                                        } else {
-                                          const poolAccessIndex =
-                                            handlePoolAccessIndex(date);
-                                          if (poolAccessIndex === -1) return;
-
-                                          update(poolAccessIndex, {
-                                            ...poolAccess,
-                                            am: event.currentTarget.checked,
-                                          });
-                                        }
-                                      }}
-                                    />
-                                  ) : null}
-                                </div>
-                                <div className="flex-1/3 flex justify-center">
-                                  {index === 0 && (
-                                    <span className="font-bold absolute top-[-150%]">
-                                      PM
-                                    </span>
-                                  )}
-                                  {pm !== null ? (
-                                    <Checkbox
-                                      size="xs"
-                                      color="var(--color-primary-normal)"
-                                      checked={
-                                        handleCheckPoolAccess(date)?.pm ??
-                                        undefined
-                                      }
-                                      onChange={(event) => {
-                                        const poolAccess =
-                                          handleCheckPoolAccess(date);
-
-                                        if (!poolAccess) {
-                                          append({
-                                            date,
-                                            am,
-                                            pm: event.currentTarget.checked,
-                                          });
-                                        } else {
-                                          const poolAccessIndex =
-                                            handlePoolAccessIndex(date);
-
-                                          if (poolAccessIndex === -1) return;
-
-                                          update(poolAccessIndex, {
-                                            ...poolAccess,
-                                            pm: event.currentTarget.checked,
-                                          });
-                                        }
-                                      }}
-                                    />
-                                  ) : null}
-                                </div>
+                        return (
+                          <li key={uuid()}>
+                            <div className="flex items-center relative">
+                              <div className="flex-1/3 ">
+                                {dayjs(date).format("MMMM DD")}
                               </div>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
-                  </div>
+                              <div className="flex-1/3 flex justify-center  ">
+                                {index === 0 && (
+                                  <span className="font-bold absolute top-[-150%]">
+                                    AM
+                                  </span>
+                                )}
+                                {am !== null && (
+                                  <Checkbox
+                                    size="xs"
+                                    color="var(--color-primary-normal)"
+                                    checked={
+                                      handleCheckPoolAccess(date)?.am ??
+                                      undefined
+                                    }
+                                    onChange={(event) => {
+                                      const poolAccess =
+                                        handleCheckPoolAccess(date);
+
+                                      if (!poolAccess) {
+                                        append({
+                                          date,
+                                          am: event.currentTarget.checked,
+                                          pm,
+                                        });
+                                      } else {
+                                        const poolAccessIndex =
+                                          handlePoolAccessIndex(date);
+                                        if (poolAccessIndex === -1) return;
+
+                                        update(poolAccessIndex, {
+                                          ...poolAccess,
+                                          am: event.currentTarget.checked,
+                                        });
+                                      }
+                                    }}
+                                  />
+                                )}
+                              </div>
+                              <div className="flex-1/3 flex justify-center">
+                                {index === 0 && (
+                                  <span className="font-bold absolute top-[-150%]">
+                                    PM
+                                  </span>
+                                )}
+                                {pm !== null ? (
+                                  <Checkbox
+                                    size="xs"
+                                    color="var(--color-primary-normal)"
+                                    checked={
+                                      handleCheckPoolAccess(date)?.pm ??
+                                      undefined
+                                    }
+                                    onChange={(event) => {
+                                      const poolAccess =
+                                        handleCheckPoolAccess(date);
+
+                                      if (!poolAccess) {
+                                        append({
+                                          date,
+                                          am,
+                                          pm: event.currentTarget.checked,
+                                        });
+                                      } else {
+                                        const poolAccessIndex =
+                                          handlePoolAccessIndex(date);
+
+                                        if (poolAccessIndex === -1) return;
+
+                                        update(poolAccessIndex, {
+                                          ...poolAccess,
+                                          pm: event.currentTarget.checked,
+                                        });
+                                      }
+                                    }}
+                                  />
+                                ) : null}
+                              </div>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                 </div>
-              )}
+              </div>
             </motion.div>
           ) : null}
         </AnimatePresence>

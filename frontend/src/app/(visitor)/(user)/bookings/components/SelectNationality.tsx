@@ -1,87 +1,95 @@
 "use client";
 
-import { nationalities } from "@/app/shared/constants/nationalities";
-import ClickOutside from "@/app/shared/ui/ClickOutside";
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { HiOutlineSelector } from "react-icons/hi";
 import { BookingSchema } from "../schema/bookings.schema";
+import { useState } from "react";
+import { IoMdArrowDropdown } from "react-icons/io";
+import { AnimatePresence, motion } from "motion/react";
+import ClickOutside from "@/app/shared/ui/ClickOutside";
+import { getNames, registerLocale } from "i18n-nationality";
+
+registerLocale(require("i18n-nationality/langs/en.json"));
+
+const nationalities = getNames("en");
 
 export default function SelectNationality() {
-  const [nationality, setNationality] = useState("Filipino");
-  const [openSelect, setOpenSelect] = useState(false);
+  const [selectNationality, setSelectNationality] = useState(false);
 
-  const { setValue } = useFormContext<BookingSchema>();
+  const { watch, setValue } = useFormContext<BookingSchema>();
 
-  const handleOpenSelect = () => {
-    setOpenSelect(true);
+  const nationality = watch("nationality");
+
+  const handleOpenSelection = () => {
+    setSelectNationality(true);
   };
-  const handleCloseSelect = () => {
-    setOpenSelect(false);
+
+  const handleCloseSelection = () => {
+    setSelectNationality(false);
   };
+
+  const handleSelectNationality = (n: string) => {
+    setValue("nationality", n);
+    handleCloseSelection();
+  };
+
   return (
-    <div className="h-full relative">
+    <div className="relative border-2 border-secondary-normal/30 rounded-lg h-full text-primary-secondary">
       <button
         type="button"
-        onClick={handleOpenSelect}
-        className="rounded-lg flex items-center justify-between border-2 border-secondary-normal/30 p-[0.5rem] relative w-full h-full input-base-focus"
+        onClick={handleOpenSelection}
+        className="w-full h-full flex justify-between items-center p-[0.5rem] overflow-hidden"
       >
-        <span>{nationality}</span>
-        <span className="absolute right-0 text-lg">
-          <HiOutlineSelector />
+        <span className="text-left ">{nationality}</span>
+        <span className="text-lg">
+          <IoMdArrowDropdown />
         </span>
       </button>
 
       <AnimatePresence>
-        {openSelect ? (
+        {selectNationality ? (
           <motion.div
-            initial={{ opacity: 0, translateY: "-1%" }}
+            initial={{ opacity: 0, translateY: "-5%" }}
             animate={{ opacity: 1, translateY: "0%" }}
-            exit={{ opacity: 0, translateY: "-1%" }}
-            key="user-booking-select-nationality"
-            data-testid="user-booking-select-nationality"
+            exit={{ opacity: 0, translateY: "-5%" }}
+            key="user-booking-select-nationalities"
+            data-testid="user-booking-select-nationalities"
             className="absolute w-[100%] top-[100%] z-999"
           >
-            <ClickOutside onClickOutside={handleCloseSelect}>
-              <div className="bg-white shadow-lg h-[12rem] overflow-y-auto overflow-x-hidden rounded-lg">
+            <ClickOutside onClickOutside={handleCloseSelection}>
+              <div className="h-[12.5rem] bg-white shadow-lg rounded-lg overflow-y-auto overflow-x-hidden">
                 <ul>
-                  {nationalities.map((n) => {
-                    if (n.nationality === nationality) {
+                  {Object.keys(nationalities)
+                    .map((n) => {
+                      return nationalities[n];
+                    })
+                    .sort()
+                    .map((n) => {
+                      if (n === nationality) {
+                        return (
+                          <li key={n}>
+                            <button
+                              type="button"
+                              onClick={() => handleSelectNationality(n)}
+                              className="p-[0.5rem] text-left w-full bg-secondary-normal text-white"
+                            >
+                              <span className="font-bold">{n}</span>
+                            </button>
+                          </li>
+                        );
+                      }
+
                       return (
-                        <li key={n.alpha_2_code}>
+                        <li key={n}>
                           <button
                             type="button"
-                            onClick={() => {
-                              setNationality(n.nationality);
-                              setValue("nationality", n.nationality);
-                              handleCloseSelect();
-                            }}
-                            className="p-[0.5rem] truncate w-full text-left bg-secondary-normal input-base-focus"
+                            onClick={() => handleSelectNationality(n)}
+                            className="p-[0.5rem] text-left w-full"
                           >
-                            <span className="font-bold text-white">
-                              {n.nationality}
-                            </span>
+                            <span>{n}</span>
                           </button>
                         </li>
                       );
-                    }
-                    return (
-                      <li key={n.alpha_2_code}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setNationality(n.nationality);
-                            setValue("nationality", n.nationality);
-                            handleCloseSelect();
-                          }}
-                          className="p-[0.5rem] truncate w-full text-left hover:bg-secondary-normal/50 hover:text-white input-base-focus"
-                        >
-                          <span>{n.nationality}</span>
-                        </button>
-                      </li>
-                    );
-                  })}
+                    })}
                 </ul>
               </div>
             </ClickOutside>
@@ -90,7 +98,4 @@ export default function SelectNationality() {
       </AnimatePresence>
     </div>
   );
-
-  {
-  }
 }

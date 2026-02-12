@@ -11,13 +11,14 @@ import Image from "next/image";
 import { IoIosCloseCircle } from "react-icons/io";
 import PhotoFullView from "@/app/shared/components/PhotoFullView";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 interface IUploadFilePhoto {
   uploadTextContent?: string;
   onSelectPhoto: (photoFile: BookingPhotoFileSchema) => void;
   onDeletePhoto: () => void;
   url: string | undefined;
+  fieldName: any;
 }
 
 export default function UploadFilePhoto({
@@ -25,13 +26,12 @@ export default function UploadFilePhoto({
   onSelectPhoto,
   onDeletePhoto,
   url,
+  fieldName,
 }: IUploadFilePhoto) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoFullView, setPhotoFullView] = useState(false);
 
-  const {
-    formState: { errors },
-  } = useFormContext<BookingSchema>();
+  const { control } = useFormContext<BookingSchema>();
 
   const handleOpenFullView = () => {
     setPhotoFullView(true);
@@ -77,22 +77,31 @@ export default function UploadFilePhoto({
         </div>
       ) : (
         <div>
-          <button
-            type="button"
-            onClick={() => {
-              fileInputRef.current?.click();
+          <Controller
+            name={fieldName}
+            control={control}
+            render={({ field }) => {
+              return (
+                <button
+                  ref={field.ref}
+                  type="button"
+                  onClick={() => {
+                    fileInputRef.current?.click();
+                  }}
+                  className="w-full border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] h-[8rem]"
+                >
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="flex items-center gap-x-2 opacity-50">
+                      <span className="text-lg">
+                        <MdOutlineFileUpload />
+                      </span>
+                      <span className="font-bold">{uploadTextContent}</span>
+                    </div>
+                  </div>
+                </button>
+              );
             }}
-            className="w-full border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] h-[8rem]"
-          >
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="flex items-center gap-x-2 opacity-50">
-                <span className="text-lg">
-                  <MdOutlineFileUpload />
-                </span>
-                <span className="font-bold">{uploadTextContent}</span>
-              </div>
-            </div>
-          </button>
+          />
 
           <input
             ref={fileInputRef}

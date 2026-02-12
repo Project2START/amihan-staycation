@@ -60,18 +60,29 @@ const contactNumberSchema = z.object({
     .max(CONTACT_NUMBER_CODE_MAX_LENGTH, "Calling code is too long."),
   number: z
     .string("Contact number is required.")
-    .trim()
     .min(1, "Contact number is required.")
     .min(CONTACT_NUMBER_MIN_LENGTH, "Contact number is too short.")
     .max(CONTACT_NUMBER_MAX_LENGTH, "Contact number is too long."),
 });
 
 const poolAccessSchema = z.object({
-  date: z
-    .string()
-    .regex(STANDARD_DATE_PATTERN, "Check-in date must be in YYYY-MM-DD format"),
-  am: z.boolean("Please specify AM access.").nullable(),
-  pm: z.boolean("Please specify PM access.").nullable(),
+  hasAccess: z.boolean("Please specify pool access."),
+  access: z
+    .array(
+      z.object({
+        date: z
+          .string()
+          .regex(
+            STANDARD_DATE_PATTERN,
+            "Check-in date must be in YYYY-MM-DD format",
+          ),
+        am: z.boolean("Please specify AM access.").nullable(),
+        pm: z.boolean("Please specify PM access.").nullable(),
+      }),
+      "Invalid pool access data.",
+    )
+    .max(POOL_ACCESS_MAX_DAYS, "Pool access days exceed allowed limit.")
+    .optional(),
 });
 
 export const additionalGuestsSchema = z
@@ -89,14 +100,10 @@ export const additionalGuestsSchema = z
     age: z
       .number("Additional guest age is required.")
       .min(AGE_MIN, "Age cannot be negative.")
-      .max(AGE_MAX, "Please enter a valid age.")
-      .optional(),
+      .max(AGE_MAX, "Please enter a valid age."),
     below_three_feet: z.boolean("Please indicate height requirement."),
     valid_id: photoFileSchema.optional(),
-    pool_access: z
-      .array(poolAccessSchema, "Invalid pool access data.")
-      .max(POOL_ACCESS_MAX_DAYS, "Pool access days exceed allowed limit.")
-      .optional(),
+    pool_access: poolAccessSchema,
     with_vehicle: z.boolean("Please specify vehicle information."),
   })
   .superRefine((data, ctx) => {
@@ -144,12 +151,20 @@ export const bookingSchema = z.object({
     .string("Nationality is required.")
     .min(NATIONALITY_MIN_LENGTH, "Nationality must be at least 2 characters.")
     .max(NATIONALITY_MAX_LENGTH, "Nationality must not exceed 50 characters."),
-  contact_number: contactNumberSchema,
+  contact_number: z
+    .string("Contact number is required.")
+    .min(1, "Contact number is required.")
+    .min(CONTACT_NUMBER_MIN_LENGTH, "Contact number is too short.")
+    .max(CONTACT_NUMBER_MAX_LENGTH, "Contact number is too long."),
   valid_id: photoFileSchema,
-  pool_access: z
-    .array(poolAccessSchema, "Invalid pool access data.")
-    .max(POOL_ACCESS_MAX_DAYS, "Pool access days exceed allowed limit.")
-    .optional(),
+  pool_access: poolAccessSchema,
+  // z.object({
+  //   hasAccess: z.boolean("Please specify pool access."),
+  //   access: z
+  //     .array(poolAccessSchema, "Invalid pool access data.")
+  //     .max(POOL_ACCESS_MAX_DAYS, "Pool access days exceed allowed limit.")
+  //     .optional(),
+  // }),
   with_vehicle: z.boolean("Please specify vehicle information."),
   additional_guests: z
     .array(additionalGuestsSchema, "Invalid additional guest data.")
