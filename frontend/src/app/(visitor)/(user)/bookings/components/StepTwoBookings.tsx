@@ -1,23 +1,19 @@
 "use client";
 
 import { useFieldArray, useFormContext } from "react-hook-form";
-import {
-  BookingAdditionalGuestsSchema,
-  BookingSchema,
-} from "../schema/bookings.schema";
-import PoolAccessAdditional from "./PoolAccessAdditional";
-import WithVehicleAdditional from "./WithVehicleAdditional";
-import UploadPhotoAdditional from "./UploadPhotoAdditional";
-import ThreeFeetAdditional from "./ThreeFeetAdditional";
+import { BookingSchema } from "../schema/bookings.schema";
+import UploadFileParentAdditional from "./UploadFileParentAdditional";
+import PoolAccess from "./PoolAccess";
+import WithVehicle from "./WithVehicle";
+import BelowThreeFeet from "./BelowThreeFeet";
+import BelowThreeFeetCondition from "./BelowThreeFeetCondition";
 import { IoIosCloseCircle } from "react-icons/io";
 
-const newGuest: BookingAdditionalGuestsSchema = {
+const value = {
   name: "",
   below_three_feet: false,
+  pool_access: { hasAccess: true },
   with_vehicle: false,
-  age: undefined,
-  valid_id: { id: "", url: "", file: undefined },
-  pool_access: [],
 };
 
 export default function StepTwoBookings() {
@@ -27,9 +23,9 @@ export default function StepTwoBookings() {
     formState: { errors },
   } = useFormContext<BookingSchema>();
 
-  const { fields, remove, append } = useFieldArray({
-    control,
+  const { fields, append, remove } = useFieldArray({
     name: "additional_guests",
+    control,
   });
 
   return (
@@ -37,92 +33,117 @@ export default function StepTwoBookings() {
       <div>
         <h2 className="text-center font-normal mb-[1rem]">Additional Guests</h2>
       </div>
-
       <div className="flex flex-col gap-y-10">
         {fields.map((field, index) => {
           return (
             <div
               key={field.id}
-              className="border-2 border-secondary-normal/30 rounded-lg p-[1rem] relative"
+              className="border-2 border-secondary-normal/30 rounded-lg p-[1rem] flex flex-col gap-y-5 relative"
             >
               <button
-                type="button"
                 onClick={() => {
                   remove(index);
                 }}
+                className="absolute top-[-0.5rem] right-[-0.5rem] bg-white rounded-full"
               >
-                <span className="w-max h-max text-2xl absolute text-reject-normal top-0 right-0 translate-y-[-50%] translate-x-[50%] bg-white rounded-full ">
+                <span className="text-xl">
                   <IoIosCloseCircle />
                 </span>
               </button>
-              <div className="flex flex-col gap-y-5">
-                {/* ADDITIONAL GUEST NAME FIELD */}
-                <div className="h-[2.5rem]">
-                  <input
-                    {...register(`additional_guests.${index}.name`)}
-                    type="text"
-                    placeholder="Name"
-                    aria-describedby={
-                      errors.name ? `guest${index}Name-error` : undefined
-                    }
-                    className="w-full h-full border-b-2 border-secondary-normal/30 p-[0.5rem] input-base-focus"
-                  />
-                  {errors.additional_guests?.[index]?.name?.message && (
-                    <p
-                      className="text-red-900 text-[0.65rem]"
-                      id={`guest${index}Name-error`}
-                    >
-                      {errors.additional_guests[index]?.name?.message}
-                    </p>
-                  )}
-                </div>
-                {/* ADDITIONAL GUEST AGE FIELD */}
-                <div className="h-[2.5rem]">
-                  <input
-                    {...register(`additional_guests.${index}.age`, {
-                      valueAsNumber: true,
-                    })}
-                    type="number"
-                    placeholder="Age"
-                    aria-describedby={
-                      errors.age ? `guest${index}Age-error` : undefined
-                    }
-                    onWheel={(e) => e.currentTarget.blur()}
-                    className="w-full h-full border-b-2 border-secondary-normal/30 p-[0.5rem] input-base-focus"
-                  />
-                  {errors.additional_guests?.[index]?.age?.message && (
-                    <p
-                      className="text-red-900 text-[0.65rem]"
-                      id={`guest${index}Age-error`}
-                    >
-                      {errors.additional_guests[index]?.age?.message}
-                    </p>
-                  )}
-                </div>
-                {/* ADDITIONAL GUEST BELOW THREE FEET */}
-                <div>
-                  <ThreeFeetAdditional index={index} />
-                </div>
-                {/* ADDITIONAL GUEST VALID PHOTO ID */}
-                <UploadPhotoAdditional index={index} />
-                {/* ADDITIONAL GUEST POOL ACCESS */}
-                <PoolAccessAdditional index={index} />
-                {/* ADDITIONAL GUEST WITH VEHICLE */}
-                <WithVehicleAdditional index={index} />
+              {/* ADDITINAL GUEST NAME */}
+              <div>
+                <input
+                  {...register(`additional_guests.${index}.name`)}
+                  type="text"
+                  placeholder="Name"
+                  aria-describedby={
+                    errors.additional_guests?.[index]?.name
+                      ? `additionalGuestName${index}-error`
+                      : undefined
+                  }
+                  className="w-full h-full border-2 rounded-lg border-secondary-normal/30 p-[0.5rem] input-base-focus"
+                />
+                {errors.additional_guests?.[index]?.name && (
+                  <p
+                    className="text-red-900 text-[0.65rem]"
+                    id="guestName-error"
+                  >
+                    {errors.additional_guests[index].name.message}
+                  </p>
+                )}
               </div>
+              {/* ADDITINAL GUEST AGE */}
+
+              <div>
+                <input
+                  {...register(`additional_guests.${index}.age`, {
+                    valueAsNumber: true,
+                  })}
+                  type="number"
+                  placeholder="Age"
+                  aria-describedby={
+                    errors.additional_guests?.[index]?.age
+                      ? `additionalGuestAge${index}-error`
+                      : undefined
+                  }
+                  onWheel={(e) => e.currentTarget.blur()}
+                  className="w-full h-full border-2 rounded-lg border-secondary-normal/30 p-[0.5rem] input-base-focus"
+                />
+                {errors.additional_guests?.[index]?.age && (
+                  <p
+                    className="text-red-900 text-[0.65rem]"
+                    id="guestAge-error"
+                  >
+                    {errors.additional_guests[index].age.message}
+                  </p>
+                )}
+              </div>
+
+              {/* ADDITINAL GUEST BELOW THREE FEET */}
+              <div>
+                <BelowThreeFeet
+                  // fieldName={`additional_guests.${index}.below_three_feet`}
+                  index={index}
+                  field={field}
+                />
+              </div>
+
+              <BelowThreeFeetCondition
+                fieldName={`additional_guests.${index}.below_three_feet`}
+              >
+                <>
+                  {/* ADDITIONAL GUEST UPLOAD VALID ID */}
+                  <div>
+                    <UploadFileParentAdditional index={index} />
+                  </div>
+                  {/* ADDITIONAL GUEST POOL ACCESS */}
+                  <div>
+                    <PoolAccess
+                      hasAccess={`additional_guests.${index}.pool_access.hasAccess`}
+                      name={`additional_guests.${index}.pool_access.access`}
+                    />
+                  </div>
+                  {/* ADDITIONAL GUEST WITH VEHICLE*/}
+                  <div>
+                    <WithVehicle
+                      name={`additional_guests.${index}.with_vehicle`}
+                    />
+                  </div>
+                </>
+              </BelowThreeFeetCondition>
             </div>
           );
         })}
       </div>
-      <div className="flex justify-center">
+      <div className="mt-[1rem] flex justify-center">
         <button
           type="button"
           onClick={() => {
-            append(newGuest);
+            append(value);
           }}
-          className="px-[2.5rem] py-[0.5rem] mt-[1rem] border-2 border-secondary-normal/30 rounded-lg"
+          className="px-[3rem] py-[0.5rem] rounded-lg border-2 border-secondary-normal/30"
         >
-          Add Guest
+          <span>Add Guest</span>
         </button>
       </div>
     </div>

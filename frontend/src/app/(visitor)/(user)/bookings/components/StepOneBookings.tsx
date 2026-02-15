@@ -5,7 +5,6 @@ import {
   BookingSchema,
   CONTACT_NUMBER_MAX_LENGTH,
 } from "../schema/bookings.schema";
-import UploadFilePhoto from "./UploadFilePhoto";
 import BookingCalendar from "./BookingCalendar";
 import UploadFileParent from "./UploadFileParent";
 import SelectNationality from "./SelectNationality";
@@ -18,7 +17,6 @@ export default function StepOneBookings() {
     formState: { errors },
   } = useFormContext<BookingSchema>();
 
-  console.log("i run");
   return (
     <div>
       <div>

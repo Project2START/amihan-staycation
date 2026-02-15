@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { Stepper } from "@mantine/core";
 import { FormProvider, useForm } from "react-hook-form";
-import { bookingSchema, BookingSchema } from "../schema/bookings.schema";
+import {
+  BookingAdditionalGuestsSchema,
+  bookingSchema,
+  BookingSchema,
+} from "../schema/bookings.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import StepOneBookings from "./StepOneBookings";
 import StepTwoBookings from "./StepTwoBookings";
@@ -20,6 +24,8 @@ const stepFields: Record<number, (keyof BookingSchema)[]> = {
     "valid_id",
     "check_period",
   ],
+  1: ["additional_guests"],
+  2: ["payment_proof"],
 };
 
 export default function BookingsForm() {
@@ -32,6 +38,15 @@ export default function BookingsForm() {
       nationality: "Filipino",
       pool_access: { hasAccess: true },
       with_vehicle: false,
+      additional_guests: [
+        {
+          name: "",
+          below_three_feet: false,
+          pool_access: { hasAccess: true },
+          with_vehicle: false,
+          valid_id: undefined,
+        },
+      ],
     },
   });
 
@@ -43,10 +58,33 @@ export default function BookingsForm() {
   const onSubmit = async (data: BookingSchema) => {};
 
   const onHandleSubmitStep = async () => {
-    const isValid = await methods.trigger(stepFields[step]);
+    const isValid = await methods.trigger(stepFields[step], {
+      shouldFocus: true,
+    });
 
     if (isValid) {
       nextStep();
+    } else if (step === 1 && methods.formState.errors.additional_guests) {
+      const guestErrors = methods.formState.errors.additional_guests;
+
+      const index = Array.isArray(guestErrors)
+        ? guestErrors.findIndex(Boolean)
+        : Object.keys(guestErrors || {}).find((k) =>
+            Boolean((guestErrors as any)[k]),
+          );
+
+      if (typeof index === "number" && index >= 0) {
+        const entry = Array.isArray(guestErrors)
+          ? guestErrors[index]
+          : (guestErrors as any)[String(index)];
+        const firstField = entry && Object.keys(entry)[0];
+
+        if (firstField) {
+          methods.setFocus(
+            `additional_guests.${index}.${firstField as keyof BookingAdditionalGuestsSchema}`,
+          );
+        }
+      }
     } else {
       const firstError = Object.keys(methods.formState.errors)[0];
       if (firstError) {

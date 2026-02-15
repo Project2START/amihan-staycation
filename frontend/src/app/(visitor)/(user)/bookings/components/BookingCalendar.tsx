@@ -30,7 +30,6 @@ export default function BookingCalendar() {
   useEffect(() => {
     if (errors.check_period) {
       setFocus("check_period");
-      setOpenCalendar(true);
     }
   }, [setFocus, errors.check_period]);
 

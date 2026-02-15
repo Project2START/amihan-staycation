@@ -7,6 +7,7 @@ import { BookingSchema } from "../schema/bookings.schema";
 
 export default function ThreeFeetAdditional({ index }: { index: number }) {
   const { setValue, watch } = useFormContext<BookingSchema>();
+
   const isThreeFeet = watch(`additional_guests.${index}.below_three_feet`);
 
   return (
@@ -23,6 +24,10 @@ export default function ThreeFeetAdditional({ index }: { index: number }) {
             );
             setValue(`additional_guests.${index}.with_vehicle`, false);
             setValue(`additional_guests.${index}.valid_id`, undefined);
+            setValue(
+              `additional_guests.${index}.pool_access.access`,
+              undefined,
+            );
           }}
           color="var(--color-primary-normal)"
           withThumbIndicator={false}

@@ -100,14 +100,19 @@ export const additionalGuestsSchema = z
     age: z
       .number("Additional guest age is required.")
       .min(AGE_MIN, "Age cannot be negative.")
-      .max(AGE_MAX, "Please enter a valid age."),
+      .max(AGE_MAX, "Please enter a valid age.")
+      .max(AGE_MAX, "Please enter a valid age.")
+      .optional(),
     below_three_feet: z.boolean("Please indicate height requirement."),
     valid_id: photoFileSchema.optional(),
-    pool_access: poolAccessSchema,
+    pool_access: poolAccessSchema.optional(),
     with_vehicle: z.boolean("Please specify vehicle information."),
   })
   .superRefine((data, ctx) => {
-    if (!data.below_three_feet && !data.valid_id) {
+    if (
+      !data.below_three_feet &&
+      (!data.valid_id || !data.valid_id.file || !data.valid_id.url)
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Valid ID is required.",
