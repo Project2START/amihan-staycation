@@ -1,11 +1,9 @@
 import dayjs from "dayjs";
 import { getDateList } from "./getDateList";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { endTime, startTime } from "../constants/standardStayTime";
 
 dayjs.extend(customParseFormat);
-
-const startTime = "02:00";
-const endTime = "12:00";
 
 export function getPoolAccessDates(
   startDate: string,
@@ -20,7 +18,7 @@ export function getPoolAccessDates(
   return dateList.map((date, index) => {
     if (index === 0) {
       const time = dayjs(startTime, "HH:mm");
-      const hour = time.hour();
+      const hour = Number(time.format("h"));
 
       return hour >= 12
         ? { date, am: false, pm: false }
@@ -29,7 +27,7 @@ export function getPoolAccessDates(
 
     if (index === dateList.length - 1) {
       const time = dayjs(endTime, "HH:mm");
-      const hour = time.hour();
+      const hour = Number(time.format("h"));
 
       return hour >= 12
         ? { date, am: false, pm: null }

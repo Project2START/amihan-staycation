@@ -99,7 +99,9 @@ export default function BookingsForm() {
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div>
             <div>
-              <h1 className="text-center mb-[1rem]">Book Your Stay</h1>
+              <h1 className="text-center mb-[1rem]">
+                {step === 2 ? "Book Your Stay" : "Booking Summary"}
+              </h1>
             </div>
             <div>
               <Stepper

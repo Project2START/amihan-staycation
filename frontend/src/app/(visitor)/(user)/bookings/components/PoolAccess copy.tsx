@@ -1,7 +1,7 @@
 "use client";
 
 import { Checkbox, Switch } from "@mantine/core";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { BookingSchema } from "../schema/bookings.schema";
 import { getPoolAccessDates } from "@/app/shared/lib/getPoolAccessDates";
@@ -18,27 +18,13 @@ export default function PoolAccess({
 }) {
   const { watch, control, setValue } = useFormContext<BookingSchema>();
 
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove, update, replace } = useFieldArray({
     control,
     name,
   });
 
   const checkPeriod = watch("check_period");
   const isPoolAccess = watch(hasAccess);
-
-  const prevCheckIn = useRef(checkPeriod?.check_in);
-  const prevCheckOut = useRef(checkPeriod?.check_out);
-
-  useEffect(() => {
-    const checkInChanged = prevCheckIn.current !== checkPeriod?.check_in;
-    const checkOutChanged = prevCheckOut.current !== checkPeriod?.check_out;
-
-    if (checkInChanged || checkOutChanged) {
-      prevCheckIn.current = checkPeriod?.check_in;
-      prevCheckOut.current = checkPeriod?.check_out;
-      remove();
-    }
-  }, [checkPeriod?.check_in, checkPeriod?.check_out]);
 
   const poolAccessDates = getPoolAccessDates(
     checkPeriod?.check_in,
@@ -58,6 +44,34 @@ export default function PoolAccess({
 
     return poolAccess;
   };
+
+  // console.log(poolAccessDatespoolAccessDates[0].map())
+  useEffect(() => {
+    if (typeof poolAccessDates !== "string") {
+      if (poolAccessDates.length === 0) {
+        for (let i = 0; i < poolAccessDates.length; i++) {
+          append({
+            date: poolAccessDates[i].date,
+            am: poolAccessDates[i].am,
+            pm: poolAccessDates[i].pm,
+          });
+        }
+      } else {
+        const x = fields.map((field: any, index) => {
+          const isDateExist = poolAccessDates.some(
+            (poolAccessDate) => poolAccessDate.date === field.date,
+          );
+          if (isDateExist) {
+            return field;
+          } else {
+            remove(index);
+          }
+        });
+
+        replace(x);
+      }
+    }
+  }, [checkPeriod.check_in, checkPeriod.check_out]);
 
   return (
     <div className="text-xs text-secondary-normal">
@@ -114,31 +128,24 @@ export default function PoolAccess({
                                       undefined
                                     }
                                     onChange={(event) => {
-                                      const newAm = event.currentTarget.checked;
                                       const poolAccess =
                                         handleCheckPoolAccess(date);
 
                                       if (!poolAccess) {
-                                        if (newAm || pm) {
-                                          append({
-                                            date,
-                                            am: newAm,
-                                            pm,
-                                          });
-                                        }
+                                        append({
+                                          date,
+                                          am: event.currentTarget.checked,
+                                          pm,
+                                        });
                                       } else {
                                         const poolAccessIndex =
                                           handlePoolAccessIndex(date);
                                         if (poolAccessIndex === -1) return;
 
-                                        if (!newAm && !poolAccess.pm) {
-                                          remove(poolAccessIndex);
-                                        } else {
-                                          update(poolAccessIndex, {
-                                            ...poolAccess,
-                                            am: newAm,
-                                          });
-                                        }
+                                        update(poolAccessIndex, {
+                                          ...poolAccess,
+                                          am: event.currentTarget.checked,
+                                        });
                                       }
                                     }}
                                   />
@@ -159,32 +166,25 @@ export default function PoolAccess({
                                       undefined
                                     }
                                     onChange={(event) => {
-                                      const newPm = event.currentTarget.checked;
                                       const poolAccess =
                                         handleCheckPoolAccess(date);
 
                                       if (!poolAccess) {
-                                        if (am || newPm) {
-                                          append({
-                                            date,
-                                            am,
-                                            pm: newPm,
-                                          });
-                                        }
+                                        append({
+                                          date,
+                                          am,
+                                          pm: event.currentTarget.checked,
+                                        });
                                       } else {
                                         const poolAccessIndex =
                                           handlePoolAccessIndex(date);
 
                                         if (poolAccessIndex === -1) return;
 
-                                        if (!poolAccess.am && !newPm) {
-                                          remove(poolAccessIndex);
-                                        } else {
-                                          update(poolAccessIndex, {
-                                            ...poolAccess,
-                                            pm: newPm,
-                                          });
-                                        }
+                                        update(poolAccessIndex, {
+                                          ...poolAccess,
+                                          pm: event.currentTarget.checked,
+                                        });
                                       }
                                     }}
                                   />
