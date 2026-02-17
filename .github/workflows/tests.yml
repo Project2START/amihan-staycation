@@ -1,6 +1,5 @@
 name: CI - Unit Tests
 
-# Trigger workflow on PRs to development, testing, main
 on:
   pull_request:
     branches:
@@ -24,7 +23,13 @@ jobs:
       - name: Install frontend dependencies
         run: |
           cd frontend
-          npm install
+          rm -rf node_modules package-lock.json
+          npm ci
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npx next build
 
       - name: Run frontend tests
         run: |
@@ -46,7 +51,7 @@ jobs:
       - name: Install backend dependencies
         run: |
           cd backend
-          npm install
+          npm ci
 
       - name: Run backend tests
         run: |
