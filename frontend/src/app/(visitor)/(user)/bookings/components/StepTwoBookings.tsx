@@ -29,7 +29,7 @@ export default function StepTwoBookings() {
   });
 
   return (
-    <div>
+    <div className="h-[60vh] px-[0.5rem] py-[1.5rem] overflow-y-auto shadow-[inset_0_12px_12px_-12px_rgba(0,0,0,0.2),inset_0_-12px_12px_-12px_rgba(0,0,0,0.2)]">
       <div>
         <h2 className="text-center font-normal mb-[1rem]">Additional Guests</h2>
       </div>
@@ -44,7 +44,7 @@ export default function StepTwoBookings() {
                 onClick={() => {
                   remove(index);
                 }}
-                className="absolute top-[-0.5rem] right-[-0.5rem] bg-white rounded-full"
+                className="absolute top-[-1rem] right-[-0.25rem] bg-white rounded-full"
               >
                 <span className="text-xl">
                   <IoIosCloseCircle />
@@ -101,11 +101,7 @@ export default function StepTwoBookings() {
 
               {/* ADDITINAL GUEST BELOW THREE FEET */}
               <div>
-                <BelowThreeFeet
-                  // fieldName={`additional_guests.${index}.below_three_feet`}
-                  index={index}
-                  field={field}
-                />
+                <BelowThreeFeet index={index} />
               </div>
 
               <BelowThreeFeetCondition

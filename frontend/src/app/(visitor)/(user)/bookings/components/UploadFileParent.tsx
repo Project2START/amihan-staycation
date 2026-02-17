@@ -12,6 +12,7 @@ export default function UploadFileParent() {
     setValue,
     setFocus,
     clearErrors,
+    unregister,
   } = useFormContext<BookingSchema>();
 
   const valid_id_file = watch("valid_id");
@@ -32,7 +33,7 @@ export default function UploadFileParent() {
           clearErrors("valid_id");
         }}
         onDeletePhoto={() => {
-          setValue("valid_id", { file: undefined, id: "", url: "" });
+          unregister("valid_id");
         }}
         fieldName="valid_id"
       />

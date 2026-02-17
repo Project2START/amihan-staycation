@@ -18,7 +18,7 @@ export default function StepOneBookings() {
   } = useFormContext<BookingSchema>();
 
   return (
-    <div>
+    <div className="h-[60vh] py-[1.5rem] overflow-y-auto shadow-[inset_0_12px_12px_-12px_rgba(0,0,0,0.2),inset_0_-12px_12px_-12px_rgba(0,0,0,0.2)]">
       <div>
         <h2 className="text-center font-normal mb-[1rem]">Primary Guest</h2>
       </div>

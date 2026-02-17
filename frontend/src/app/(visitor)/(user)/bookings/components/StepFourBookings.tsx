@@ -7,6 +7,7 @@ import { endTime, startTime } from "@/app/shared/constants/standardStayTime";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import PhotoFullViewDialog from "@/app/shared/components/PhotoFullViewDialog";
 import Image from "next/image";
+import { v4 as uuid } from "uuid";
 
 dayjs.extend(customParseFormat);
 
@@ -28,8 +29,8 @@ export default function StepFourBookings() {
   } = bookings;
 
   return (
-    <div className="text-sm px-[0.25rem]">
-      <div className="flex flex-col gap-y-3 bg-[#efefef] rounded-lg p-[0.5rem]">
+    <div className="text-sm px-[0.25rem] h-[60vh] py-[1.5rem] overflow-y-auto shadow-[inset_0_12px_12px_-12px_rgba(0,0,0,0.2),inset_0_-12px_12px_-12px_rgba(0,0,0,0.2)]">
+      <div className="flex flex-col gap-y-3 bg-[#efefef] rounded-lg p-[1rem] mt-[1rem]">
         <div className="flex justify-between items-center">
           <span>Check-in</span>
           <div className="font-bold">
@@ -50,19 +51,23 @@ export default function StepFourBookings() {
         <h3 className="font-bold">Primary Guest</h3>
         <div className="flex justify-between items-center">
           <span>Name</span>
-          <div className="font-bold">{name}</div>
+          <div className="font-bold">{name ? name : "Not define"}</div>
         </div>
         <div className="flex justify-between items-center">
           <span>Age</span>
-          <div className="font-bold">{age}</div>
+          <div className="font-bold">{age ? age : "Not define"}</div>
         </div>
         <div className="flex justify-between items-center">
           <span>Nationality</span>
-          <div className="font-bold">{nationality}</div>
+          <div className="font-bold">
+            {nationality ? nationality : "Not define"}
+          </div>
         </div>
         <div className="flex justify-between items-center">
           <span>Contact Number</span>
-          <div className="font-bold">{contact_number}</div>
+          <div className="font-bold">
+            {contact_number ? contact_number : "Not define"}
+          </div>
         </div>
         <div className="flex justify-between items-center">
           <span>With Vehicle</span>
@@ -94,24 +99,31 @@ export default function StepFourBookings() {
             )}
           </div>
         </div>
-        <div className="flex flex-col gap-y-2">
-          <span>Valid ID</span>
-          <div>
-            <PhotoFullViewDialog url={valid_id.url}>
-              <div className="p-[0.5rem] flex justify-center items-center w-full h-[10rem] rounded-lg border-2 border-secondary-normal/30">
-                <div className="w-full relative rounded-lg h-full">
-                  <Image
-                    src={valid_id.url}
-                    fill
-                    className="object-contain object-center"
-                    alt="Amihan Staycaion file upload image for booking"
-                    sizes="100%"
-                  />
+        {valid_id ? (
+          <div className="flex flex-col gap-y-2">
+            <span>Valid ID</span>
+            <div>
+              <PhotoFullViewDialog url={valid_id.url}>
+                <div className="p-[0.5rem] flex justify-center items-center w-full h-[10rem] rounded-lg border-2 border-secondary-normal/30">
+                  <div className="w-full relative rounded-lg h-full">
+                    <Image
+                      src={valid_id.url}
+                      fill
+                      className="object-contain object-center"
+                      alt="Amihan Staycaion file upload image for booking"
+                      sizes="100%"
+                    />
+                  </div>
                 </div>
-              </div>
-            </PhotoFullViewDialog>
+              </PhotoFullViewDialog>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex justify-between gap-y-2">
+            <span>Valid ID</span>
+            <div>None</div>
+          </div>
+        )}
       </div>
       {/* ADDITIONAL GUESTS */}
 
@@ -131,11 +143,14 @@ export default function StepFourBookings() {
 
               return (
                 <div
+                  key={uuid()}
                   className={`flex flex-col gap-y-3 pb-[1.5rem] ${arr.length - 1 !== index && "border-b-2 border-secondary-normal/30"}`}
                 >
                   <div className="flex justify-between items-center">
                     <span>Name</span>
-                    <div className="font-bold">{name}</div>
+                    <div className="font-bold">
+                      {name ? name : "Not define"}
+                    </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <span>Age</span>

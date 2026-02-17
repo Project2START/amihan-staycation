@@ -14,6 +14,7 @@ import StepTwoBookings from "./StepTwoBookings";
 import StepThreeBookings from "./StepThreeBookings";
 import StepFourBookings from "./StepFourBookings";
 import { motion } from "motion/react";
+import BackPrevPage from "./BackPrevPage";
 
 const stepFields: Record<number, (keyof BookingSchema)[]> = {
   0: [
@@ -98,10 +99,14 @@ export default function BookingsForm() {
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div>
-            <div>
-              <h1 className="text-center mb-[1rem]">
+            <div className="mb-[1rem] flex justify-between items-center">
+              <div className="flex-1/3">
+                <BackPrevPage />
+              </div>
+              <h1 className="text-nowrap grow-1 text-center">
                 {step === 2 ? "Book Your Stay" : "Booking Summary"}
               </h1>
+              <div className="flex-1/3"></div>
             </div>
             <div>
               <Stepper
@@ -160,12 +165,13 @@ export default function BookingsForm() {
                 </Stepper.Completed>
               </Stepper>
             </div>
-            <div className="mt-[3rem]">
+            <div>
               <div className="flex justify-evenly gap-x-5 font-bold">
                 <button
                   type="button"
                   className="flex-1/2 text-primary-normal py-[0.5rem]"
                   onClick={prevStep}
+                  disabled={step === 0}
                 >
                   <span>Back</span>
                 </button>

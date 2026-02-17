@@ -8,15 +8,8 @@ import {
 } from "react-hook-form";
 import { BookingSchema } from "../schema/bookings.schema";
 
-export default function BelowThreeFeet({
-  field,
-  index,
-}: {
-  field: FieldArrayWithId<BookingSchema, "additional_guests", "id">;
-  index: number;
-}) {
-  const { watch, setValue, control, getValues } =
-    useFormContext<BookingSchema>();
+export default function BelowThreeFeet({ index }: { index: number }) {
+  const { watch, control, getValues } = useFormContext<BookingSchema>();
 
   const { update } = useFieldArray({ name: "additional_guests", control });
 
@@ -48,18 +41,17 @@ export default function BelowThreeFeet({
                 below_three_feet: event.currentTarget.checked,
               });
             }
-            // setValue(fieldName, event.currentTarget.checked);
-            // setValue(`additional_guests.${index}.valid_id`, undefined);
-            // setValue(`additional_guests.${index}.with_vehicle`, false);
-            // setValue(
-            //   `additional_guests.${index}.pool_access.access`,
-            //   undefined,
-            // );
           }}
           color="var(--color-primary-normal)"
           withThumbIndicator={false}
         />
       </div>
+      {!belowThreeFeet && (
+        <p className="py-[0.5rem]">
+          <strong className="mr-[0.25rem]">Note:</strong>
+          <i>Children three feet and below receive free pool access.</i>
+        </p>
+      )}
     </div>
   );
 }
