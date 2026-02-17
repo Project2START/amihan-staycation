@@ -9,7 +9,7 @@ export const AGE_MAX = 120;
 export const NATIONALITY_MIN_LENGTH = 2;
 export const NATIONALITY_MAX_LENGTH = 50;
 
-export const CONTACT_NUMBER_MIN_LENGTH = 7;
+export const CONTACT_NUMBER_MIN_LENGTH = 8;
 export const CONTACT_NUMBER_MAX_LENGTH = 15;
 export const CONTACT_NUMBER_CODE_MIN_LENGTH = 2;
 export const CONTACT_NUMBER_CODE_MAX_LENGTH = 5;
@@ -49,46 +49,61 @@ const photoFileSchema = z.object({
   id: z.uuid("Invalid photo id"),
 });
 
-const contactNumberSchema = z.object({
-  countryCode: z
-    .string("Country code is required")
-    .min(CONTACT_NUMBER_CODE_MIN_LENGTH, "Country code is too short.")
-    .max(CONTACT_NUMBER_CODE_MAX_LENGTH, "Country code is too long."),
-  callingCode: z
-    .string("Calling code is required")
-    .min(CONTACT_NUMBER_CODE_MIN_LENGTH, "Calling code is too short.")
-    .max(CONTACT_NUMBER_CODE_MAX_LENGTH, "Calling code is too long."),
-  number: z
-    .string("Contact number is required.")
-    .min(CONTACT_NUMBER_MIN_LENGTH, "Contact number is too short.")
-    .max(CONTACT_NUMBER_MAX_LENGTH, "Contact number is too long."),
-});
-
 const poolAccessSchema = z.object({
-  date: z
-    .string()
-    .regex(STANDARD_DATE_PATTERN, "Check-in date must be in YYYY-MM-DD format"),
-  am: z.boolean("Please specify AM access.").nullable(),
-  pm: z.boolean("Please specify PM access.").nullable(),
-});
-
-const additionalGuestsSchema = z.object({
-  name: z
-    .string("Additional guest name is required.")
-    .min(USER_NAME_MIN, "Additional guest name must be at least 2 characters.")
-    .max(USER_NAME_MAX, "Additional guest name must not exceed 50 characters."),
-  age: z
-    .number("Additional guest age is required.")
-    .min(AGE_MIN, "Age cannot be negative.")
-    .max(AGE_MAX, "Please enter a valid age."),
-  below_three_feet: z.boolean("Please indicate height requirement."),
-  valid_id: photoFileSchema,
-  pool_access: z
-    .array(poolAccessSchema, "Invalid pool access data.")
+  hasAccess: z.boolean("Please specify pool access."),
+  access: z
+    .array(
+      z.object({
+        date: z
+          .string()
+          .regex(
+            STANDARD_DATE_PATTERN,
+            "Check-in date must be in YYYY-MM-DD format",
+          ),
+        am: z.boolean("Please specify AM access.").nullable(),
+        pm: z.boolean("Please specify PM access.").nullable(),
+      }),
+      "Invalid pool access data.",
+    )
     .max(POOL_ACCESS_MAX_DAYS, "Pool access days exceed allowed limit.")
     .optional(),
-  with_vehicle: z.boolean("Please specify vehicle information."),
 });
+
+export const additionalGuestsSchema = z
+  .object({
+    name: z
+      .string("Additional guest name is required.")
+      .min(
+        USER_NAME_MIN,
+        "Additional guest name must be at least 2 characters.",
+      )
+      .max(
+        USER_NAME_MAX,
+        "Additional guest name must not exceed 50 characters.",
+      ),
+    age: z
+      .number("Additional guest age is required.")
+      .min(AGE_MIN, "Age cannot be negative.")
+      .max(AGE_MAX, "Please enter a valid age.")
+      .max(AGE_MAX, "Please enter a valid age.")
+      .optional(),
+    below_three_feet: z.boolean("Please indicate height requirement."),
+    valid_id: photoFileSchema.optional(),
+    pool_access: poolAccessSchema.optional(),
+    with_vehicle: z.boolean("Please specify vehicle information."),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      !data.below_three_feet &&
+      (!data.valid_id || !data.valid_id.file || !data.valid_id.url)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Valid ID is required.",
+        path: ["valid_id"],
+      });
+    }
+  });
 
 const checkPeriodSchema = z
   .object({
@@ -125,12 +140,13 @@ export const bookingSchema = z.object({
     .string("Nationality is required.")
     .min(NATIONALITY_MIN_LENGTH, "Nationality must be at least 2 characters.")
     .max(NATIONALITY_MAX_LENGTH, "Nationality must not exceed 50 characters."),
-  contact_number: contactNumberSchema,
+  contact_number: z
+    .string("Contact number is required.")
+    .min(1, "Contact number is required.")
+    .min(CONTACT_NUMBER_MIN_LENGTH, "Contact number is too short.")
+    .max(CONTACT_NUMBER_MAX_LENGTH, "Contact number is too long."),
   valid_id: photoFileSchema,
-  pool_access: z
-    .array(poolAccessSchema, "Invalid pool access data.")
-    .max(POOL_ACCESS_MAX_DAYS, "Pool access days exceed allowed limit.")
-    .optional(),
+  pool_access: poolAccessSchema,
   with_vehicle: z.boolean("Please specify vehicle information."),
   additional_guests: z
     .array(additionalGuestsSchema, "Invalid additional guest data.")
@@ -154,93 +170,6 @@ export const bookingSchema = z.object({
 
 export type BookingSchema = z.infer<typeof bookingSchema>;
 export type BookingPhotoFileSchema = z.infer<typeof photoFileSchema>;
-// import z from "zod";
-
-// export const USER_NAME_MIN = 2; // Minimum 2 characters (e.g., "Al")
-// export const USER_NAME_MAX = 50;
-
-// export const AGE_MIN = 0;
-// export const AGE_MAX = 120;
-
-// export const NATIONALITY_MIN_LENGTH = 2;
-// export const NATIONALITY_MAX_LENGTH = 50;
-
-// export const CONTACT_NUMBER_MIN_LENGTH = 7;
-// export const CONTACT_NUMBER_MAX_LENGTH = 15;
-
-// const IMAGE_FILE_MIN_SIZE_BYTE = 1;
-// const IMAGE_FILE_MAX_SIZE_MB = 5;
-// const IMAGE_FILE_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif"];
-
-// const POOL_ACCESS_MAX_DAYS = 183;
-
-// const ADDITIONAL_GUESTS_MAX = 10;
-
-// const PAYMENT_TYPE_MIN_LENGTH = 2;
-// const PAYMENT_TYPE_MAX_LENGTH = 50;
-
-// export const STATUS_MIN_LENGTH = 1;
-// export const STATUS_MAX_LENGTH = 20;
-
-// const poolAccessSchema = z.object({
-//   date: z.date(),
-//   am: z.boolean(),
-//   pm: z.boolean(),
-// });
-
-// const additionalGuestsSchema = z.object({
-//   name: z.string("").min(USER_NAME_MIN, ``).max(USER_NAME_MAX, ``),
-//   age: z.number("").min(AGE_MIN, ``).max(AGE_MAX, ``),
-//   below_three_feet: z.boolean(""),
-//   valid_id: z
-//     .file("")
-//     .min(IMAGE_FILE_MIN_SIZE_BYTE, ``)
-//     .max(IMAGE_FILE_MAX_SIZE_MB * 1024 * 1024, ``)
-//     .mime(IMAGE_FILE_ALLOWED_TYPES, { error: `` }),
-//   pool_access: z
-//     .array(poolAccessSchema, "")
-//     .max(POOL_ACCESS_MAX_DAYS, ``)
-//     .optional(),
-//   with_vehicle: z.boolean(""),
-// });
-
-// export const bookingSchema = z.object({
-//   check_in: z.date(""),
-//   check_out: z.date(""),
-//   name: z.string("").min(USER_NAME_MIN, ``).max(USER_NAME_MAX, ``),
-//   age: z.number("").min(AGE_MIN, ``).max(AGE_MAX, ``),
-//   nationality: z
-//     .string("")
-//     .min(NATIONALITY_MIN_LENGTH, ``)
-//     .max(NATIONALITY_MAX_LENGTH, ``),
-//   contact_number: z
-//     .string("")
-//     .min(CONTACT_NUMBER_MIN_LENGTH, ``)
-//     .max(CONTACT_NUMBER_MAX_LENGTH, ``),
-//   valid_id: z
-//     .file("")
-//     .min(IMAGE_FILE_MIN_SIZE_BYTE, ``)
-//     .max(IMAGE_FILE_MAX_SIZE_MB * 1024 * 1024)
-//     .mime(IMAGE_FILE_ALLOWED_TYPES, { error: `` }),
-//   pool_access: z
-//     .array(poolAccessSchema, "")
-//     .max(POOL_ACCESS_MAX_DAYS, ``)
-//     .optional(),
-//   with_vehicle: z.boolean(""),
-//   additional_guests: z
-//     .array(additionalGuestsSchema, "")
-//     .max(ADDITIONAL_GUESTS_MAX, ``),
-//   payment_type: z
-//     .string("")
-//     .min(PAYMENT_TYPE_MIN_LENGTH, ``)
-//     .max(PAYMENT_TYPE_MAX_LENGTH, ``),
-//   payment_proof: z
-//     .file("")
-//     .min(IMAGE_FILE_MIN_SIZE_BYTE, ``)
-//     .max(IMAGE_FILE_MAX_SIZE_MB * 1024 * 1024)
-//     .mime(IMAGE_FILE_ALLOWED_TYPES, { error: `` }),
-//   agree_terms: z.boolean(),
-//   user_id: z.uuid(""),
-//   product_id: z.uuid(""),
-//   status: z.string("").min(STATUS_MIN_LENGTH, ``).max(STATUS_MAX_LENGTH, ``),
-// });
+export type BookingAdditionalGuestsSchema = z.infer<
+  typeof additionalGuestsSchema
+>;

@@ -1,14 +1,13 @@
 "use client";
 
 import { Switch } from "@mantine/core";
-import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { BookingSchema } from "../schema/bookings.schema";
 
-export default function WithVehicle() {
-  const [withVehicle, setWithVehicle] = useState(false);
+export default function WithVehicle({ name }: { name: any }) {
+  const { setValue, watch } = useFormContext<BookingSchema>();
 
-  const { setValue } = useFormContext<BookingSchema>();
+  const withVehicle = watch(name);
 
   return (
     <div className="text-xs text-secondary-normal">
@@ -18,8 +17,7 @@ export default function WithVehicle() {
           defaultChecked
           checked={withVehicle}
           onChange={(event) => {
-            setWithVehicle(event.currentTarget.checked);
-            setValue("with_vehicle", event.currentTarget.checked);
+            setValue(name, event.currentTarget.checked);
           }}
           color="var(--color-primary-normal)"
           withThumbIndicator={false}

@@ -1,7 +1,7 @@
 "use client";
 
 import { DatePicker, DatesRangeValue } from "@mantine/dates";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import classes from "@/app/shared/cssModules/Calendar.module.css";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -14,11 +14,13 @@ dayjs.extend(timezone);
 interface ICalendarProps {
   onCalendarChange: (value: DatesRangeValue<string>) => void;
   disabledDates?: Date[];
+  defaultValue: [string | null, string | null];
 }
 
 export default function CalendarBooking({
   onCalendarChange,
   disabledDates,
+  defaultValue,
 }: ICalendarProps) {
   const [calendarValue, setCalendarValue] = useState<
     [string | null, string | null]
@@ -26,6 +28,10 @@ export default function CalendarBooking({
 
   // Use PH timezone for presets
   const phToday = dayjs().tz("Asia/Manila").startOf("day");
+
+  useEffect(() => {
+    setCalendarValue(defaultValue);
+  }, [defaultValue]);
 
   return (
     <div className="bg-white p-[1.5rem] rounded-lg overflow-hidden min-w-0 flex justify-center shadow-xl/30">
