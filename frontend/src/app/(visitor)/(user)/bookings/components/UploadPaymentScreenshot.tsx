@@ -38,7 +38,7 @@ export default function UploadPaymentScreenshot() {
       />
       {errors.payment_proof && (
         <p className="text-red-900 text-[0.65rem]" id="guestPaymentProof-error">
-          Payment proof is required
+          A proof of security deposit is required
         </p>
       )}
     </div>

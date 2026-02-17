@@ -22,6 +22,7 @@ model Users {
   avatar_url  String?
 
   products Product[]
+  payment_methods PaymentMethod[]
   
   @@map("users")
 }
@@ -70,3 +71,17 @@ model Photo {
 
   @@map("photos")
 }
+
+model PaymentMethod {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payment_method  String
+  account_name    String
+  account_number  String
+  image_url       String
+
+  userId     String   @db.Uuid
+  user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payment_methods")
+}
+

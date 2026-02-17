@@ -100,13 +100,16 @@ export default function BookingsForm() {
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div>
             <div className="mb-[1rem] flex justify-between items-center">
-              <div className="flex-1/3">
-                <BackPrevPage />
-              </div>
+              {step === 0 && (
+                <div className="flex-1/3">
+                  <BackPrevPage />
+                </div>
+              )}
+
               <h1 className="text-nowrap grow-1 text-center">
                 {step === 2 ? "Book Your Stay" : "Booking Summary"}
               </h1>
-              <div className="flex-1/3"></div>
+              {step === 0 && <div className="flex-1/3"></div>}
             </div>
             <div>
               <Stepper
@@ -128,7 +131,7 @@ export default function BookingsForm() {
                   </motion.div>
                 </Stepper.Step>
 
-                <Stepper.Step allowStepSelect={true}>
+                <Stepper.Step allowStepSelect={false}>
                   <motion.div
                     initial={{ opacity: 0, translateX: "-5%" }}
                     animate={{ opacity: 1, translateX: "0%" }}

@@ -38,7 +38,7 @@ export default function ProductHeader({ product }: { product: Product }) {
         indicator: "success",
       });
 
-      router.push(`/spaces?user=${user?.id}`);
+      router.push(`/spaces`);
     } catch (err) {
       CustomToast.show(errorHandler(err).message, {
         indicator: "error",

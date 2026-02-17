@@ -31,6 +31,7 @@ export default function AvatarHead() {
       CustomToast.show(errorHandler(err).message, { indicator: "error" });
     }
   };
+
   return (
     <div className="flex flex-col items-center relative">
       <button disabled={avatarMenu} onClick={() => setAvatarMenu(true)}>

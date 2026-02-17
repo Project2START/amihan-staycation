@@ -2,8 +2,6 @@
 import Link from "next/link";
 
 interface ImageMainLogoProps {
-  width?: number;
-  height?: number;
   alt?: string;
 }
 

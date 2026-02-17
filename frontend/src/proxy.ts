@@ -11,7 +11,7 @@ export async function proxy(req: NextRequest) {
     return await verifyRegistree(req);
   }
 
-  if (["/spaces"].includes(currentPath)) {
+  if (["/spaces", "/payment-methods"].includes(currentPath)) {
     return await verifyAdmin(req);
   }
 

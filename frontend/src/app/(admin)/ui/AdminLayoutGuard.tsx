@@ -3,18 +3,16 @@
 import { useEffect } from "react";
 import { fetchUser } from "@/lib/features/users/usersThunks";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { useSearchParams } from "next/navigation";
 import Skeleton from "@mui/material/Skeleton";
 import NotFoundError from "../components/NotFoundError";
 
 export default function AdminLayoutGuard({
   children,
+  userId,
 }: {
   children: React.ReactNode;
+  userId: string | undefined;
 }) {
-  const searchParams = useSearchParams();
-  const userId = searchParams.get("user");
-
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.users);
 
