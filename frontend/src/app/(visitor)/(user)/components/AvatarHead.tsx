@@ -3,16 +3,16 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { IoMdPerson } from "react-icons/io";
-import ClickOutside from "../ui/ClickOutside";
+import ClickOutside from "../../../shared/ui/ClickOutside";
 import Link from "next/link";
 import { Button } from "@mui/material";
 import { LuLogOut } from "react-icons/lu";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { logout } from "../api/logout";
+import { logout } from "../../../(user)/api/logout";
 import { resetUser } from "@/lib/features/users/usersSlice";
 import { useRouter } from "next/navigation";
-import { CustomToast } from "../ui/CustomToast";
-import { errorHandler } from "../lib/errorHandler";
+import { CustomToast } from "../../../shared/ui/CustomToast";
+import { errorHandler } from "../../../shared/lib/errorHandler";
 
 export default function AvatarHead() {
   const [avatarMenu, setAvatarMenu] = useState<boolean>(false);

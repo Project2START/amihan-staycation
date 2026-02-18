@@ -1,4 +1,4 @@
-import AvatarHead from "../../../shared/components/AvatarHead";
+import AvatarHead from "./AvatarHead";
 import ImageMainLogo from "../../../shared/components/ImageMainLogo";
 
 export default function UserHeader() {

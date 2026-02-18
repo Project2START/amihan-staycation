@@ -1,7 +1,7 @@
 import React from "react";
-import AdminLayoutGuard from "./ui/AdminLayoutGuard";
 import HeaderAdmin from "./components/HeaderAdmin";
 import { cookies } from "next/headers";
+import ProtectedPagesGuard from "./ui/ProtectedPagesGuard";
 
 export default async function AdminLayout({
   children,
@@ -13,10 +13,10 @@ export default async function AdminLayout({
 
   return (
     <>
-      <AdminLayoutGuard userId={userId}>
+      <ProtectedPagesGuard userId={userId}>
         <HeaderAdmin />
         <main className="grow">{children}</main>
-      </AdminLayoutGuard>
+      </ProtectedPagesGuard>
     </>
   );
 }

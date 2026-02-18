@@ -45,16 +45,24 @@ export default function PaymentMethodList({
 
   return (
     <>
-      <ul className="flex flex-col gap-y-5 text-secondary-normal">
-        {paymentMethods.map((method) => (
-          <li key={method.id}>
-            <PaymentMethodItem
-              method={method}
-              onClick={() => setSelectedMethod(method)}
-            />
-          </li>
-        ))}
-      </ul>
+      {paymentMethods.length === 0 ? (
+        <div className="flex items-center justify-center h-[60vh]">
+          <p className="text-center font-bold text-lg text-gray-300">
+            No payment methods yet. <br /> Tap the + button to add one.
+          </p>
+        </div>
+      ) : (
+        <ul className="flex flex-col gap-y-5 text-secondary-normal">
+          {paymentMethods.map((method) => (
+            <li key={method.id}>
+              <PaymentMethodItem
+                method={method}
+                onClick={() => setSelectedMethod(method)}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
 
       <PaymentMethodDetail
         method={selectedMethod}

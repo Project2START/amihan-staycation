@@ -1,13 +1,10 @@
 "use client";
 
 import PrimaryBackButton from "@/app/shared/components/PrimaryBackButton";
-import { useAppSelector } from "@/lib/hooks";
 
 import { useRouter } from "next/navigation";
 
 export default function UserProductHeader({ name }: { name: string }) {
-  const user = useAppSelector((state) => state.users.data);
-
   const router = useRouter();
 
   return (
@@ -15,7 +12,7 @@ export default function UserProductHeader({ name }: { name: string }) {
       <div className="flex-1/4">
         <PrimaryBackButton
           onClick={() => {
-            router.push(`/units?user=${user?.id}`);
+            router.push(`/units`);
           }}
           style="text-xl"
         />

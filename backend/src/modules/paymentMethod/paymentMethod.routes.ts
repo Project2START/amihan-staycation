@@ -20,6 +20,15 @@ router.post(
   asyncHandler(paymentMethodController.createPaymentMethod),
 );
 
+router.put(
+  "/:id",
+  requireAuth,
+  checkRole(["admin"]),
+  upload.single("qr_code"),
+  validateSchema(paymentMethodSchema),
+  asyncHandler(paymentMethodController.updatePaymentMethod),
+);
+
 router.get(
   "/",
   requireAuth,
@@ -27,6 +36,23 @@ router.get(
   asyncHandler(paymentMethodController.getAllPaymentMethods),
 );
 
+// <<<< ORDER MATTERS HERE: FROM SPECIFIC ROUTE TO DYNAMIC ROUTE
+
+router.get(
+  "/public_products",
+  requireAuth,
+  checkRole(["user"]),
+  asyncHandler(paymentMethodController.getAllByProductId),
+);
+
+router.get(
+  "/:id",
+  requireAuth,
+  checkRole(["admin"]),
+  asyncHandler(paymentMethodController.getPaymentMethod),
+);
+
+// >>>>
 router.delete(
   "/:id",
   requireAuth,

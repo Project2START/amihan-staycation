@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchUser } from "./usersThunks";
 
 type UserState = {
@@ -30,6 +30,9 @@ const usersSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
+    setLoading(state, action: PayloadAction<{ loading: boolean }>) {
+      state.loading = action.payload.loading;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -47,5 +50,5 @@ const usersSlice = createSlice({
   },
 });
 
-export const { resetUser } = usersSlice.actions;
+export const { resetUser, setLoading } = usersSlice.actions;
 export default usersSlice.reducer;

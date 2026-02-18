@@ -7,7 +7,6 @@ import { formatMoney } from "../lib/formatMoney";
 import Rating from "./Rating";
 import RenderIcon from "../ui/RenderIcon";
 import { FaCircleCheck } from "react-icons/fa6";
-import { useAppSelector } from "@/lib/hooks";
 
 export interface IProductAttribute {
   name: string;
@@ -38,8 +37,6 @@ export default function ProductItem({
   attributes,
   linkPath,
 }: IProductItemProps & { linkPath: string }) {
-  const user = useAppSelector((state) => state.users.data);
-
   let iconExcess_count = 0;
   return (
     <div className="overflow-hidden min-w-0 border-2 border-[#0B5173]/30 text-secondary-normal rounded-lg">
@@ -92,7 +89,7 @@ export default function ProductItem({
         </div>
         <div>
           <Link
-            href={`${linkPath}/${id}?user=${user?.id}`}
+            href={`${linkPath}/${id}`}
             className="primary-button-link px-[0.75rem] py-[0.75rem] mt-[1.5rem]"
           >
             <span className="text-xs text-nowrap">View Details</span>

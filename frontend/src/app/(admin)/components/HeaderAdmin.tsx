@@ -1,4 +1,4 @@
-import AvatarHead from "../../shared/components/AvatarHead";
+import AvatarHead from "../../(visitor)/(user)/components/AvatarHead";
 import HeaderSearch from "../../shared/components/HeaderSearch";
 import ImageMainLogo from "../../shared/components/ImageMainLogo";
 import HeaderSideBar from "./HeaderSideBar";

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
-import { logout } from "@/app/shared/api/logout";
+import { logout } from "@/app/(user)/api/logout";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { resetUser } from "@/lib/features/users/usersSlice";
 import { useRouter } from "next/navigation";
@@ -49,6 +50,8 @@ export default function HeaderSideBar() {
     }
   };
 
+  const pathname = usePathname();
+
   return (
     <>
       {/* Burger Button */}
@@ -84,7 +87,7 @@ export default function HeaderSideBar() {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Logo section */}
-              <div className="flex justify-center items-center bg-primary-normal py-3">
+              <div className="flex justify-center items-center bg-secondary-normal py-3">
                 <div className="relative w-8 h-8 rounded-full bg-white overflow-hidden">
                   <Image
                     src="/images/amihan-staycation-mainLogo.png"
@@ -125,18 +128,23 @@ export default function HeaderSideBar() {
                 {/* Navigation list */}
                 <nav className="mt-4">
                   <ul className="flex flex-col gap-y-1">
-                    {navItems.map((item) => (
-                      <li key={item.href}>
-                        <Link
-                          onClick={() => setIsOpen(false)}
-                          href={item.href}
-                          className="flex items-center gap-x-5 px-3 py-3 hover:bg-gray-100 transition-colors border-b-1 border-secondary-normal/10"
-                        >
-                          <item.icon className="text-xl text-secondary-normal/50" />
-                          <span>{item.label}</span>
-                        </Link>
-                      </li>
-                    ))}
+                    {navItems.map((item) => {
+                      const isActive = pathname === item.href;
+                      return (
+                        <li key={item.href}>
+                          <Link
+                            onClick={() => setIsOpen(false)}
+                            href={item.href}
+                            className={`flex items-center gap-x-5 px-3 py-3 hover:bg-gray-100 transition-colors border-b-1 border-secondary-normal/10 ${isActive ? "font-bold text-secondary-normal" : ""}`}
+                          >
+                            <item.icon
+                              className={`text-xl ${isActive ? "text-secondary-normal" : "text-secondary-normal/50"}`}
+                            />
+                            <span>{item.label}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </nav>
               </div>

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useMemo } from "react";
+import { useRouter } from "next/navigation";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 import { IoClose } from "react-icons/io5";
 import { GoPencil } from "react-icons/go";
@@ -22,6 +23,7 @@ export default function PaymentMethodDetail({
   enableClickOutside: boolean;
   onDeleteClick: () => void;
 }) {
+  const router = useRouter();
   const paymentOptions = useMemo(() => getPaymentOptions(), []);
 
   const logo = method
@@ -42,8 +44,13 @@ export default function PaymentMethodDetail({
           {/* Top-right actions */}
           <div className="absolute top-3 right-3 flex items-center gap-x-3 z-10">
             <button
-              type="button"
               className="text-lg text-gray-400 hover:text-secondary-normal transition-colors cursor-pointer"
+              type="button"
+              onClick={() => {
+                if (method) {
+                  router.push(`/payment-methods/${method.id}`);
+                }
+              }}
             >
               <span className="text-xl">
                 <GoPencil />

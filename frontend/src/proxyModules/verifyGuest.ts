@@ -28,7 +28,7 @@ export default async function verifyGuest(req: NextRequest) {
       return response;
       // return NextResponse.redirect(new URL(`/units?user=${userId}`, req.url));
     }
-    if (role === "admin") {
+    if (role === "admin" && userId) {
       const response = NextResponse.redirect(new URL(`/spaces`, req.url));
 
       response.cookies.set("user_id", `${userId}`, {

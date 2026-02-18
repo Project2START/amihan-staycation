@@ -76,14 +76,17 @@ export class UserAuthController {
     throw new ForbiddenError("You do not have permission to sign in");
   }
   async logout(_: Request, res: Response) {
-    res.cookie("auth_token", "", {
+    const cookieOptions = {
       httpOnly: true,
       // secure: process.env.NODE_ENV === "production",
       secure: true,
-      sameSite: "none",
+      sameSite: "none" as const,
       path: "/",
       expires: new Date(0),
-    });
+    };
+
+    res.cookie("user_id", "", cookieOptions);
+    res.cookie("auth_token", "", cookieOptions);
 
     res.status(200).json({ message: "User successfully log out" });
   }

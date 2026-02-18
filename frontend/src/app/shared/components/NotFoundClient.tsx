@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import HeaderAuth from "./HeaderAuth";
 import FooterMain from "./FooterMain";
 
 export default function NotFoundClient() {
@@ -10,10 +9,6 @@ export default function NotFoundClient() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div>
-        <HeaderAuth />
-      </div>
-
       <div className="text-secondary-normal text-sm text-center p-6 grow flex flex-col justify-center items-center">
         <h1 className="mb-4 text-xl font-semibold">404 - Page Not Found</h1>
 

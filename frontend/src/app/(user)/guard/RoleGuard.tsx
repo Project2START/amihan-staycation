@@ -4,9 +4,10 @@ import { useEffect } from "react";
 import { fetchUser } from "@/lib/features/users/usersThunks";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Skeleton from "@mui/material/Skeleton";
-import NotFoundError from "../components/NotFoundError";
+import NotFoundClient from "@/app/shared/components/NotFoundClient";
+import { setLoading } from "@/lib/features/users/usersSlice";
 
-export default function AdminLayoutGuard({
+export default function RoleGuard({
   children,
   userId,
 }: {
@@ -16,12 +17,11 @@ export default function AdminLayoutGuard({
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.users);
 
-  if (!userId) {
-    return <NotFoundError />;
-  }
-
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      dispatch(setLoading({ loading: false }));
+      return;
+    }
 
     if (user.data?.id === userId) return;
 
@@ -56,7 +56,7 @@ export default function AdminLayoutGuard({
   }
 
   if (user.error) {
-    return <NotFoundError />;
+    return <NotFoundClient />;
   }
 
   return <>{children}</>;

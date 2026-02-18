@@ -55,9 +55,11 @@ export class PaymentMethodRepository {
     try {
       const path = getSupabaseImagesPath(image_url);
 
+      const deleted = await prisma.paymentMethod.delete({ where: { id } });
+
       await supabase.storage.from("images").remove([path]);
 
-      return await prisma.paymentMethod.delete({ where: { id } });
+      return deleted;
     } catch (error: any) {
       if (error.code === "P2025") {
         throw new NotFoundError("Payment method not found");

@@ -3,23 +3,21 @@
 import { useEffect } from "react";
 import { fetchUser } from "@/lib/features/users/usersThunks";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { useSearchParams } from "next/navigation";
 import Skeleton from "@mui/material/Skeleton";
-import NotFoundClient from "@/app/shared/components/NotFoundClient";
+import NotFoundError from "../components/NotFoundError";
 
-export default function UserLayoutGuard({
+export default function ProtectedPagesGuard({
   children,
+  userId,
 }: {
   children: React.ReactNode;
+  userId: string | undefined;
 }) {
-  const searchParams = useSearchParams();
-  const userId = searchParams.get("user");
-
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.users);
 
   if (!userId) {
-    return <NotFoundClient />;
+    return <NotFoundError />;
   }
 
   useEffect(() => {
@@ -58,7 +56,7 @@ export default function UserLayoutGuard({
   }
 
   if (user.error) {
-    return <NotFoundClient />;
+    return <NotFoundError />;
   }
 
   return <>{children}</>;

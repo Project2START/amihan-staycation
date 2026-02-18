@@ -83,7 +83,7 @@ export default function AddPaymentForm({
   };
 
   return (
-    <div className="relative text-secondary-normal text-xs px-[1.5rem] py-[2rem]">
+    <div className="relative text-secondary-normal text-xs px-[1rem] py-[2rem]">
       <h1 className="text-center text-xl font-bold">Add Payment Method</h1>
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>

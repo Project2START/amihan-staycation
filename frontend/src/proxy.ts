@@ -15,13 +15,13 @@ export async function proxy(req: NextRequest) {
     return await verifyAdmin(req);
   }
 
-  console.log(["/units"].includes(currentPath));
+  // console.log(["/units"].includes(currentPath));
 
-  if (["/units"].includes(currentPath)) {
+  if (["/bookings"].includes(currentPath)) {
     return await verifyUser(req);
   }
 
-  if (["/browse-units", "/sign-in", "/sign-up"].includes(currentPath)) {
+  if (["/auth", "/sign-in", "/sign-up"].includes(currentPath)) {
     return await verifyGuest(req);
   }
 }
@@ -30,9 +30,9 @@ export const config = {
   matcher: [
     "/verify-code/:path*",
     "/spaces/:path*",
-    "/units/:path*",
-    "/browse-units",
+    "/auth",
     "/sign-in",
     "/sign-up",
+    "/bookings",
   ],
 };

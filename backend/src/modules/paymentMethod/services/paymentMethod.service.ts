@@ -5,6 +5,8 @@ import {
 } from "../../../shared/helpers/appErrors";
 import { supabase } from "../../../shared/lib/supabase";
 import { generateFilePath } from "../../product/helpers/generateFilePath";
+import { getSupabaseImagesPath } from "../../product/helpers/getSupabaseImagesPath";
+import { productService } from "../../product/services/product.service";
 import { paymentMethodRepository } from "../repositories/paymentMethod.repository";
 import { PaymentMethodDTO } from "../schemas/paymentMethod.schema";
 
@@ -30,7 +32,9 @@ export class PaymentMethodService {
         contentType: qr_code.mimetype,
       });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      throw new Error(error.message);
+    }
 
     const { data } = supabase.storage.from("images").getPublicUrl(filePath);
 
@@ -54,21 +58,22 @@ export class PaymentMethodService {
       throw error;
     }
   }
-  async delete(paymentMethodId: string, userId: string) {
+
+  async get(paymentMethodId: string, id: string) {
     const payment_method =
       await paymentMethodRepository.findById(paymentMethodId);
 
-    if (!payment_method) throw new NotFoundError("Payment method not found");
+    if (!payment_method) {
+      throw new NotFoundError("Payment method not found");
+    }
 
-    if (payment_method.userId !== userId)
+    if (payment_method.userId !== id) {
       throw new ForbiddenError(
-        "You do not have permission to delete this payment method",
+        "You do not have permission to get this payment method",
       );
-
-    await paymentMethodRepository.delete(
-      paymentMethodId,
-      payment_method.image_url,
-    );
+    }
+    const { userId, ...rest } = payment_method;
+    return rest;
   }
   async getAllById(userId: string) {
     const payment_methods =
@@ -78,6 +83,107 @@ export class PaymentMethodService {
       const { userId, ...rest } = payment_method;
       return rest;
     });
+  }
+  async getAllByProductId(productId: string) {
+    const product = await productService.get(productId);
+
+    if (!product) {
+      throw new NotFoundError("Product not found");
+    }
+
+    if (!product.userId) {
+      throw new NotFoundError("User not found");
+    }
+
+    const payment_methods = await this.getAllById(product.userId);
+
+    return payment_methods;
+  }
+  async update(
+    paymentMethodId: string,
+    newPaymentMethod: PaymentMethodDTO,
+    qr_code: Express.Multer.File | undefined,
+    userId: string,
+  ) {
+    const { account_name, account_number, payment_method } = newPaymentMethod;
+    const pm = await paymentMethodRepository.findById(paymentMethodId);
+
+    if (!pm) {
+      throw new NotFoundError("Payment method not found");
+    }
+
+    if (pm.userId !== userId) {
+      throw new ForbiddenError(
+        "You do not have permission to update this payment method",
+      );
+    }
+
+    if (qr_code) {
+      const newFilePath = generateFilePath(qr_code, "paymentMethods");
+      const oldFilePath = getSupabaseImagesPath(pm.image_url);
+
+      const { error } = await supabase.storage
+        .from("images")
+        .upload(newFilePath, qr_code.buffer, {
+          contentType: qr_code.mimetype,
+        });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const { data } = supabase.storage
+        .from("images")
+        .getPublicUrl(newFilePath);
+
+      if (!data?.publicUrl) {
+        throw new BadRequestError("Failed to generate public URL");
+      }
+
+      try {
+        await paymentMethodRepository.update(pm.id, {
+          account_name,
+          account_number,
+          image_url: data.publicUrl,
+          payment_method,
+        });
+
+        if (oldFilePath) {
+          await supabase.storage.from("images").remove([oldFilePath]);
+        }
+      } catch (error) {
+        if (newFilePath) {
+          await supabase.storage.from("images").remove([newFilePath]);
+        }
+
+        throw error;
+      }
+    } else {
+      await paymentMethodRepository.update(pm.id, {
+        account_name,
+        account_number,
+        payment_method,
+      });
+    }
+  }
+  async delete(paymentMethodId: string, userId: string) {
+    const payment_method =
+      await paymentMethodRepository.findById(paymentMethodId);
+
+    if (!payment_method) {
+      throw new NotFoundError("Payment method not found");
+    }
+
+    if (payment_method.userId !== userId) {
+      throw new ForbiddenError(
+        "You do not have permission to delete this payment method",
+      );
+    }
+
+    await paymentMethodRepository.delete(
+      paymentMethodId,
+      payment_method.image_url,
+    );
   }
 }
 

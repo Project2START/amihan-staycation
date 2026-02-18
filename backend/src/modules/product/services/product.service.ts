@@ -83,7 +83,9 @@ export class ProductService {
   async get(id: string) {
     const product = await productRepository.findById(id);
 
-    if (!product) return product;
+    if (!product) {
+      throw new NotFoundError("Product not found");
+    }
 
     const { createdAt, updatedAt, ...rest } = product;
 
