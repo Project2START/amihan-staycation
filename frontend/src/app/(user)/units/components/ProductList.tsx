@@ -17,7 +17,7 @@ export default async function ProductList() {
     await result.json();
 
   return (
-    <div className="grid gap-y-5 mt-[2rem]">
+    <div className="grid gap-y-8 mt-[2rem]">
       {parsedProducts.products && parsedProducts.products.length !== 0 ? (
         parsedProducts.products.map((product) => {
           const { id, name, price, photos, attributes, about } = product;

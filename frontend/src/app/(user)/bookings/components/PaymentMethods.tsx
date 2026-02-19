@@ -54,7 +54,7 @@ function PaymentMethodsSkeleton() {
 
       {/* Horizontal thumbnail list placeholder */}
       <div className="mt-4 flex gap-x-3 px-1">
-        {[...Array(4)].map((_, i) => (
+        {[...Array(6)].map((_, i) => (
           <Skeleton key={i} height={48} width={48} radius="md" />
         ))}
       </div>

@@ -15,8 +15,6 @@ export async function proxy(req: NextRequest) {
     return await verifyAdmin(req);
   }
 
-  // console.log(["/units"].includes(currentPath));
-
   if (["/bookings"].includes(currentPath)) {
     return await verifyUser(req);
   }

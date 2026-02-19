@@ -2,9 +2,16 @@
 import NotFoundClient from "@/app/shared/components/NotFoundClient";
 import { HOST } from "@/app/shared/constants/config";
 import { useSearchParams } from "next/navigation";
-import React from "react";
+import React, { createContext, useContext } from "react";
 import useSWR from "swr";
 import { Skeleton } from "@mantine/core";
+import { Product } from "../../units/[slug]/components/Product";
+
+const ProductContext = createContext<Product | undefined>(undefined);
+
+export function useProduct() {
+  return useContext(ProductContext);
+}
 
 export const fetcher = async (url: string) => {
   const res = await fetch(url);
@@ -114,5 +121,9 @@ export default function BookingsGuard({
     return <NotFoundClient />;
   }
 
-  return <>{children}</>;
+  return (
+    <ProductContext.Provider value={data.product}>
+      {children}
+    </ProductContext.Provider>
+  );
 }

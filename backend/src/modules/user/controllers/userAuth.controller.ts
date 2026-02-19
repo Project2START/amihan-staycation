@@ -63,17 +63,9 @@ export class UserAuthController {
 
     res.cookie("auth_token", jwt_token, cookieOptions(24 * 60 * 60 * 1000));
 
-    if (user.role === "user") {
-      return res.redirect(`${process.env.FRONTEND_HOST}/units?user=${user.id}`);
-    }
+    return res.redirect(`${process.env.FRONTEND_HOST}/auth`);
 
-    if (user.role === "admin") {
-      return res.redirect(
-        `${process.env.FRONTEND_HOST}/spaces?user=${user.id}`,
-      );
-    }
-
-    throw new ForbiddenError("You do not have permission to sign in");
+    // throw new ForbiddenError("You do not have permission to sign in");
   }
   async logout(_: Request, res: Response) {
     const cookieOptions = {

@@ -15,6 +15,9 @@ import StepThreeBookings from "./StepThreeBookings";
 import StepFourBookings from "./StepFourBookings";
 import { motion } from "motion/react";
 import BackPrevPage from "./BackPrevPage";
+import ConfirmBooking from "./ConfirmBooking";
+import { useProduct } from "../guard/BookingsGuard";
+import { useAppSelector } from "@/lib/hooks";
 
 const stepFields: Record<number, (keyof BookingSchema)[]> = {
   0: [
@@ -29,13 +32,22 @@ const stepFields: Record<number, (keyof BookingSchema)[]> = {
   2: ["payment_proof"],
 };
 
+const maxStep = 3;
+const minStep = 0;
+
 export default function BookingsForm() {
   const [step, setStep] = useState(0);
+
+  const product = useProduct();
+  const user = useAppSelector((state) => state.users.data);
 
   const methods = useForm<BookingSchema>({
     resolver: zodResolver(bookingSchema),
     mode: "onChange",
     defaultValues: {
+      status: "pending",
+      product_id: product?.id,
+      user_id: user?.id,
       nationality: "Filipino",
       pool_access: { hasAccess: true },
       with_vehicle: false,
@@ -52,11 +64,17 @@ export default function BookingsForm() {
   });
 
   const nextStep = () =>
-    setStep((currentStep) => (currentStep < 3 ? currentStep + 1 : currentStep));
+    setStep((currentStep) =>
+      currentStep < maxStep ? currentStep + 1 : currentStep,
+    );
   const prevStep = () =>
-    setStep((currentStep) => (currentStep > 0 ? currentStep - 1 : currentStep));
+    setStep((currentStep) =>
+      currentStep > minStep ? currentStep - 1 : currentStep,
+    );
 
-  const onSubmit = async (data: BookingSchema) => {};
+  const onSubmit = async (data: BookingSchema) => {
+    console.log(data);
+  };
 
   const onHandleSubmitStep = async () => {
     const isValid = await methods.trigger(stepFields[step], {
@@ -95,21 +113,21 @@ export default function BookingsForm() {
   };
 
   return (
-    <div className="px-[1rem] py-[2rem] text-xs text-secondary-normal">
+    <div className="px-[1rem] pt-[1.5rem] pb-[1rem] text-xs text-secondary-normal">
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div>
             <div className="mb-[1rem] flex justify-between items-center">
-              {step === 0 && (
+              {step === minStep && (
                 <div className="flex-1/3">
                   <BackPrevPage />
                 </div>
               )}
 
               <h1 className="text-nowrap grow-1 text-center">
-                {step === 2 ? "Book Your Stay" : "Booking Summary"}
+                {step === maxStep ? "Booking Summary" : "Book Your Stay"}
               </h1>
-              {step === 0 && <div className="flex-1/3"></div>}
+              {step === minStep && <div className="flex-1/3"></div>}
             </div>
             <div>
               <Stepper
@@ -143,7 +161,7 @@ export default function BookingsForm() {
                   </motion.div>
                 </Stepper.Step>
 
-                <Stepper.Step allowStepSelect={false}>
+                <Stepper.Step allowStepSelect={true}>
                   <motion.div
                     initial={{ opacity: 0, translateX: "-5%" }}
                     animate={{ opacity: 1, translateX: "0%" }}
@@ -169,23 +187,27 @@ export default function BookingsForm() {
               </Stepper>
             </div>
             <div>
-              <div className="flex justify-evenly gap-x-5 font-bold">
-                <button
-                  type="button"
-                  className="flex-1/2 text-primary-normal py-[0.5rem]"
-                  onClick={prevStep}
-                  disabled={step === 0}
-                >
-                  <span>Back</span>
-                </button>
-                <button
-                  type="button"
-                  className="flex-1/2 bg-primary-normal text-white py-[0.5rem] rounded-lg"
-                  onClick={onHandleSubmitStep}
-                >
-                  <span>Next</span>
-                </button>
-              </div>
+              {step !== maxStep ? (
+                <div className="flex justify-evenly gap-x-5 font-bold">
+                  <button
+                    type="button"
+                    className="flex-1/2 text-primary-normal py-[0.5rem]"
+                    onClick={prevStep}
+                    disabled={step === minStep}
+                  >
+                    <span>Back</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="flex-1/2 bg-primary-normal text-white py-[0.5rem] rounded-lg"
+                    onClick={onHandleSubmitStep}
+                  >
+                    <span>Next</span>
+                  </button>
+                </div>
+              ) : (
+                <ConfirmBooking prevStep={prevStep} />
+              )}
             </div>
           </div>
         </form>

@@ -4,6 +4,7 @@ import { useFormContext } from "react-hook-form";
 import UploadFilePhoto from "./UploadFilePhoto";
 import { BookingSchema } from "../schema/bookings.schema";
 import { useEffect } from "react";
+import { FaArrowDown } from "react-icons/fa6";
 
 export default function UploadPaymentScreenshot() {
   const {
@@ -24,6 +25,17 @@ export default function UploadPaymentScreenshot() {
 
   return (
     <div>
+      {errors.payment_proof && (
+        <p
+          className="text-red-900 text-[0.65rem] flex items-center gap-x-1"
+          id="guestPaymentProof-error"
+        >
+          <span>A proof of security deposit is required</span>
+          <span>
+            <FaArrowDown />
+          </span>
+        </p>
+      )}
       <UploadFilePhoto
         uploadTextContent="Upload Payment Screenshot"
         url={payment_proof_file?.url}
@@ -36,11 +48,6 @@ export default function UploadPaymentScreenshot() {
         }}
         fieldName="payment_proof"
       />
-      {errors.payment_proof && (
-        <p className="text-red-900 text-[0.65rem]" id="guestPaymentProof-error">
-          A proof of security deposit is required
-        </p>
-      )}
     </div>
   );
 }

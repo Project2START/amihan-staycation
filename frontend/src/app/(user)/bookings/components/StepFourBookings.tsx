@@ -8,6 +8,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import PhotoFullViewDialog from "@/app/shared/components/PhotoFullViewDialog";
 import Image from "next/image";
 import { v4 as uuid } from "uuid";
+import { useProduct } from "../guard/BookingsGuard";
 
 dayjs.extend(customParseFormat);
 
@@ -28,9 +29,17 @@ export default function StepFourBookings() {
     additional_guests,
   } = bookings;
 
+  const product = useProduct();
+
   return (
-    <div className="text-sm px-[0.25rem] h-[60vh] py-[1.5rem] overflow-y-auto shadow-[inset_0_12px_12px_-12px_rgba(0,0,0,0.2),inset_0_-12px_12px_-12px_rgba(0,0,0,0.2)]">
+    <div className="text-sm px-[0.75rem] h-[60vh] py-[1.5rem] overflow-y-auto shadow-[inset_0_12px_12px_-12px_rgba(0,0,0,0.2),inset_0_-12px_12px_-12px_rgba(0,0,0,0.2)]">
       <div className="flex flex-col gap-y-3 bg-[#efefef] rounded-lg p-[1rem] mt-[1rem]">
+        <div className="flex justify-between items-center">
+          <span>Unit name</span>
+          <div className="font-bold">
+            {product?.name ? product.name : "Not define"}
+          </div>
+        </div>
         <div className="flex justify-between items-center">
           <span>Check-in</span>
           <div className="font-bold">
