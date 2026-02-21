@@ -1,13 +1,9 @@
 import { Prisma, PrismaClient, Booking } from "@prisma/client";
-import {
-  AppError,
-  ConflictError,
-  NotFoundError,
-} from "../../../shared/helpers/appErrors";
+import { AppError, ConflictError } from "../../../shared/helpers/appErrors";
 
 const prisma = new PrismaClient();
 
-export class BookingsRepository {
+class BookingsRepository {
   async create(data: Prisma.BookingCreateInput): Promise<Booking> {
     try {
       return await prisma.booking.create({ data });
@@ -51,3 +47,5 @@ export class BookingsRepository {
     }
   }
 }
+
+export const bookingRepository = new BookingsRepository();

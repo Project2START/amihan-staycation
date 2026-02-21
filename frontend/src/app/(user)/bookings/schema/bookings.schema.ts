@@ -25,8 +25,8 @@ const ADDITIONAL_GUESTS_MAX = 10;
 const PAYMENT_TYPE_MIN_LENGTH = 2;
 const PAYMENT_TYPE_MAX_LENGTH = 50;
 
-const STATUS_MIN_LENGTH = 2;
-const STATUS_MAX_LENGTH = 20;
+// const STATUS_MIN_LENGTH = 2;
+// const STATUS_MAX_LENGTH = 20;
 
 export const URL_MIN_LENGTH = 5;
 export const URL_MAX_LENGTH = 2048;
@@ -161,10 +161,10 @@ export const bookingSchema = z.object({
   payment_proof: photoFileSchema,
   agree_terms: z.boolean(),
   product_id: z.uuid("Invalid product ID."),
-  status: z
-    .string("Status is required.")
-    .min(STATUS_MIN_LENGTH, "Status cannot be empty.")
-    .max(STATUS_MAX_LENGTH, "Status is too long."),
+  // status: z
+  //   .string("Status is required.")
+  //   .min(STATUS_MIN_LENGTH, "Status cannot be empty.")
+  //   .max(STATUS_MAX_LENGTH, "Status is too long."),
 });
 
 export type BookingSchema = z.infer<typeof bookingSchema>;

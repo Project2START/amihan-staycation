@@ -293,8 +293,10 @@ export const bookingSchema = z.object({
   product_id: z
     .string()
     .max(UUID_MAX, `Product ID must be at most ${UUID_MAX} characters.`),
-  status: z
-    .string()
-    .min(STATUS_MIN_LENGTH, "Status cannot be empty.")
-    .max(STATUS_MAX_LENGTH, "Status is too long."),
+  //   status: z
+  //     .string()
+  //     .min(STATUS_MIN_LENGTH, "Status cannot be empty.")
+  //     .max(STATUS_MAX_LENGTH, "Status is too long."),
 });
+
+export type BookingDTO = z.infer<typeof bookingSchema>;

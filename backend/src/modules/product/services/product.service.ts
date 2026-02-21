@@ -6,10 +6,10 @@ import {
   ForbiddenError,
   NotFoundError,
 } from "../../../shared/helpers/appErrors";
-import { generateFilePath } from "../helpers/generateFilePath";
-import { getSupabaseImagesPath } from "../helpers/getSupabaseImagesPath";
+import { generateFilePath } from "../../../shared/helpers/generators/generateFilePath";
+import { getSupabaseImagesPath } from "../../../shared/helpers/getters/getSupabaseImagesPath";
 
-export class ProductService {
+class ProductService {
   async create(
     newProduct: ProductDTO,
     photos: Express.Multer.File[],

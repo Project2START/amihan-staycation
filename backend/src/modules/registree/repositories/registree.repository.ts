@@ -7,7 +7,7 @@ import {
 
 const prisma = new PrismaClient();
 
-export class RegistreeRepository {
+class RegistreeRepository {
   async create(data: Prisma.RegistreesCreateInput): Promise<Registrees> {
     try {
       return await prisma.registrees.create({ data });
@@ -29,7 +29,7 @@ export class RegistreeRepository {
 
   async update(
     id: string,
-    data: Prisma.RegistreesUpdateInput
+    data: Prisma.RegistreesUpdateInput,
   ): Promise<Registrees> {
     try {
       return await prisma.registrees.update({ where: { id }, data });

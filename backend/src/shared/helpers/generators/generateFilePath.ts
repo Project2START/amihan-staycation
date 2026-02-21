@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { BadRequestError } from "../../../shared/helpers/appErrors";
+import { BadRequestError } from "../appErrors";
 // replace with your error class
 
 /**

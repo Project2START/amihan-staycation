@@ -4,13 +4,13 @@ import {
   NotFoundError,
 } from "../../../shared/helpers/appErrors";
 import { supabase } from "../../../shared/lib/supabase";
-import { generateFilePath } from "../../product/helpers/generateFilePath";
-import { getSupabaseImagesPath } from "../../product/helpers/getSupabaseImagesPath";
+import { generateFilePath } from "../../../shared/helpers/generators/generateFilePath";
+import { getSupabaseImagesPath } from "../../../shared/helpers/getters/getSupabaseImagesPath";
 import { productService } from "../../product/services/product.service";
 import { paymentMethodRepository } from "../repositories/paymentMethod.repository";
 import { PaymentMethodDTO } from "../schemas/paymentMethod.schema";
 
-export class PaymentMethodService {
+class PaymentMethodService {
   async create(
     newPaymentMethod: PaymentMethodDTO,
     qr_code: Express.Multer.File,

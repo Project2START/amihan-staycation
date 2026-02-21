@@ -5,7 +5,7 @@ import {
   NotFoundError,
 } from "../../../shared/helpers/appErrors";
 
-export class UserService {
+class UserService {
   async get(req: Request, id: string) {
     const user = await userRepository.findById(id);
 

@@ -50,7 +50,6 @@ export default function BookingsForm() {
     resolver: zodResolver(bookingSchema),
     mode: "onChange",
     defaultValues: {
-      status: "pending",
       product_id: product?.id,
       nationality: "Filipino",
       pool_access: { hasAccess: true },
@@ -226,7 +225,7 @@ export default function BookingsForm() {
                   </motion.div>
                 </Stepper.Step>
 
-                <Stepper.Step allowStepSelect={true}>
+                <Stepper.Step allowStepSelect={false}>
                   <motion.div
                     initial={{ opacity: 0, translateX: "-5%" }}
                     animate={{ opacity: 1, translateX: "0%" }}

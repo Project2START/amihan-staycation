@@ -4,12 +4,12 @@ import {
   ConflictError,
   NotFoundError,
 } from "../../../shared/helpers/appErrors";
-import { getSupabaseImagesPath } from "../../product/helpers/getSupabaseImagesPath";
+import { getSupabaseImagesPath } from "../../../shared/helpers/getters/getSupabaseImagesPath";
 import { supabase } from "../../../shared/lib/supabase";
 
 const prisma = new PrismaClient();
 
-export class PaymentMethodRepository {
+class PaymentMethodRepository {
   async create(data: Prisma.PaymentMethodCreateInput): Promise<PaymentMethod> {
     try {
       return await prisma.paymentMethod.create({ data });

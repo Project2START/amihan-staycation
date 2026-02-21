@@ -5,7 +5,7 @@ import { sendVerificationCode } from "../helpers/sendVerificationCode";
 import { RegistreeDTO } from "../schemas/registree.schema";
 import { userAuthService } from "../../user/services/userAuth.service";
 
-export class RegistreeService {
+class RegistreeService {
   async create(registree: RegistreeDTO) {
     await userAuthService.emailAvailability(registree.email);
 

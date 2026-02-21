@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useFormContext, useWatch } from "react-hook-form";
 import { BookingSchema } from "../schema/bookings.schema";
+import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
 
 export default function ConfirmBooking({
   prevStep,
@@ -42,15 +43,18 @@ export default function ConfirmBooking({
           type="button"
           className="text-primary-normal py-[0.5rem] px-[1.5rem] rounded-lg"
           onClick={prevStep}
+          disabled={confirmLoading}
         >
           <span>Back</span>
         </button>
-        <button
-          className="bg-primary-normal text-white py-[0.5rem] px-[2.5rem] rounded-lg"
-          disabled={!agree_terms}
-        >
-          <span>Confirm Booking</span>
-        </button>
+        <LoadingOverlay loading={confirmLoading}>
+          <button
+            className="bg-primary-normal text-white py-[0.5rem] px-[2.5rem] rounded-lg"
+            disabled={!agree_terms || confirmLoading}
+          >
+            <span>Confirm Booking</span>
+          </button>
+        </LoadingOverlay>
       </div>
     </div>
   );

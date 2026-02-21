@@ -96,22 +96,6 @@ export const productSchema = z.object({
       z.array(newUnitAttributeSchema).max(100, `Unit attributes exceeded 100`),
     )
     .optional(),
-  // photos: z.preprocess(
-  //   (val) => {
-  //     // if you ever send the order index as JSON string array
-  //     if (typeof val === "string") {
-  //       try {
-  //         return JSON.parse(val);
-  //       } catch {
-  //         return val;
-  //       }
-  //     }
-  //     return val;
-  //   },
-  //   z
-  //     .array(z.any())
-  //     .min(PHOTOS_MIN, `Unit must have at least ${PHOTOS_MIN} photos`),
-  // ),
 });
 
 export const productWithPhotosSchema = productSchema.extend({

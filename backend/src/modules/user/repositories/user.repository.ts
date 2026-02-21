@@ -7,7 +7,7 @@ import {
 
 const prisma = new PrismaClient();
 
-export class UserRepository {
+class UserRepository {
   async create(data: Prisma.UsersCreateInput): Promise<Users> {
     try {
       return await prisma.users.create({ data });
@@ -33,7 +33,7 @@ export class UserRepository {
     } catch (error) {
       console.log(error);
       throw new AppError(
-        "Could not fetch user by Google ID. Please try again."
+        "Could not fetch user by Google ID. Please try again.",
       );
     }
   }

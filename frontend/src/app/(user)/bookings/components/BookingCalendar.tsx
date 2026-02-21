@@ -96,6 +96,7 @@ export default function BookingCalendar() {
                         ]}
                         onCalendarChange={(value: DatesRangeValue<string>) => {
                           if (value[0] && value[1]) {
+                            handleCloseCalendar();
                             field.onChange({
                               check_in: value[0],
                               check_out: value[1],

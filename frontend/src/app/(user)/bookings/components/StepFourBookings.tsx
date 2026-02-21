@@ -171,62 +171,66 @@ export default function StepFourBookings() {
                       {below_three_feet ? "Yes" : "No"}
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span>With Vehicle</span>
-                    <div className="font-bold">
-                      {with_vehicle ? "Yes" : "No"}
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-start">
-                    <span>Pool Access</span>
-                    <div>
-                      {pool_access?.access?.length !== 0 ? (
-                        <ul className="font-bold text-right flex flex-col gap-y-2 max-h-[5rem] border-b-2 border-secondary-normal/30 overflow-y-auto pb-[0.5rem]">
-                          {pool_access?.access?.map((a) => {
-                            if (!a.am && !a.pm) return;
-                            return (
-                              <li key={a.date}>
-                                {dayjs(a.date).format("MMM DD")} -{" "}
-                                {a.am && a.pm
-                                  ? "AM/PM"
-                                  : a.am
-                                    ? "AM"
-                                    : a.pm
-                                      ? "PM"
-                                      : null}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      ) : (
-                        "None"
-                      )}
-                    </div>
-                  </div>
-                  {valid_id ? (
-                    <div className="flex flex-col gap-y-2">
-                      <span>Valid ID</span>
-                      <div>
-                        <PhotoFullViewDialog url={valid_id.url}>
-                          <div className="p-[0.5rem] flex justify-center items-center w-full h-[10rem] rounded-lg border-2 border-secondary-normal/30">
-                            <div className="w-full relative rounded-lg h-full">
-                              <Image
-                                src={valid_id.url}
-                                fill
-                                className="object-contain object-center"
-                                alt="Amihan Staycaion file upload image for booking"
-                                sizes="100%"
-                              />
-                            </div>
-                          </div>
-                        </PhotoFullViewDialog>
+                  {below_three_feet ? null : (
+                    <>
+                      <div className="flex justify-between items-center">
+                        <span>With Vehicle</span>
+                        <div className="font-bold">
+                          {with_vehicle ? "Yes" : "No"}
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="flex justify-between gap-y-2">
-                      <span>Valid ID</span>
-                      <div>None</div>
-                    </div>
+                      <div className="flex justify-between items-start">
+                        <span>Pool Access</span>
+                        <div>
+                          {pool_access?.access?.length !== 0 ? (
+                            <ul className="font-bold text-right flex flex-col gap-y-2 max-h-[5rem] border-b-2 border-secondary-normal/30 overflow-y-auto pb-[0.5rem]">
+                              {pool_access?.access?.map((a) => {
+                                if (!a.am && !a.pm) return;
+                                return (
+                                  <li key={a.date}>
+                                    {dayjs(a.date).format("MMM DD")} -{" "}
+                                    {a.am && a.pm
+                                      ? "AM/PM"
+                                      : a.am
+                                        ? "AM"
+                                        : a.pm
+                                          ? "PM"
+                                          : null}
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          ) : (
+                            "None"
+                          )}
+                        </div>
+                      </div>
+                      {valid_id ? (
+                        <div className="flex flex-col gap-y-2">
+                          <span>Valid ID</span>
+                          <div>
+                            <PhotoFullViewDialog url={valid_id.url}>
+                              <div className="p-[0.5rem] flex justify-center items-center w-full h-[10rem] rounded-lg border-2 border-secondary-normal/30">
+                                <div className="w-full relative rounded-lg h-full">
+                                  <Image
+                                    src={valid_id.url}
+                                    fill
+                                    className="object-contain object-center"
+                                    alt="Amihan Staycaion file upload image for booking"
+                                    sizes="100%"
+                                  />
+                                </div>
+                              </div>
+                            </PhotoFullViewDialog>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between gap-y-2">
+                          <span>Valid ID</span>
+                          <div>None</div>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               );
