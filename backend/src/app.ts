@@ -4,6 +4,7 @@ import userRoutes from "./modules/user/user.routes";
 import productRoutes from "./modules/product/product.routes";
 import registreeRoutes from "./modules/registree/registree.routes";
 import paymentMethodRoutes from "./modules/paymentMethod/paymentMethod.routes";
+import bookingRoutes from "./modules/booking/booking.routes";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { expressMiddleware } from "@as-integrations/express4";
 import { ApolloServer } from "@apollo/server";
@@ -32,6 +33,7 @@ app.use("/api/registrees", registreeRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/paymentMethods", paymentMethodRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 async function setUpGraphql() {
   const server = new ApolloServer({

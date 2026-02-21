@@ -17,7 +17,10 @@ import { motion } from "motion/react";
 import BackPrevPage from "./BackPrevPage";
 import ConfirmBooking from "./ConfirmBooking";
 import { useProduct } from "../guard/BookingsGuard";
-import { useAppSelector } from "@/lib/hooks";
+import axios from "axios";
+import { HOST } from "@/app/shared/constants/config";
+import { CustomToast } from "@/app/shared/ui/CustomToast";
+import { errorHandler } from "@/app/shared/lib/errorHandler";
 
 const stepFields: Record<number, (keyof BookingSchema)[]> = {
   0: [
@@ -38,8 +41,10 @@ const minStep = 0;
 export default function BookingsForm() {
   const [step, setStep] = useState(0);
 
+  const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
+  const [confirmationDialog, setConfirmationDialog] = useState<boolean>(false);
+
   const product = useProduct();
-  const user = useAppSelector((state) => state.users.data);
 
   const methods = useForm<BookingSchema>({
     resolver: zodResolver(bookingSchema),
@@ -47,7 +52,6 @@ export default function BookingsForm() {
     defaultValues: {
       status: "pending",
       product_id: product?.id,
-      user_id: user?.id,
       nationality: "Filipino",
       pool_access: { hasAccess: true },
       with_vehicle: false,
@@ -74,6 +78,67 @@ export default function BookingsForm() {
 
   const onSubmit = async (data: BookingSchema) => {
     console.log(data);
+    setConfirmLoading(true);
+
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (typeof value === "string") {
+        formData.append(key, value);
+        return;
+      }
+
+      if (key === "additional_guests") {
+        let non_files: {}[] = [];
+        data["additional_guests"].forEach((additional_guest) => {
+          const additional_guest_file = additional_guest.valid_id?.file;
+
+          if (additional_guest_file) {
+            formData.append(
+              "additional_guests_validIds",
+              additional_guest_file,
+            );
+          }
+
+          const { valid_id, ...rest } = additional_guest;
+
+          non_files.push(rest);
+        });
+        formData.append("additional_guests", JSON.stringify(non_files));
+        return;
+      }
+      if (key === "payment_proof") {
+        const payment_proof_file = data["payment_proof"].file;
+
+        if (payment_proof_file) {
+          formData.append("payment_proof", payment_proof_file);
+        }
+        return;
+      }
+      if (key === "valid_id") {
+        const valid_id_file = data["valid_id"].file;
+
+        if (valid_id_file) {
+          formData.append("valid_id", valid_id_file);
+        }
+        return;
+      }
+      formData.append(key, JSON.stringify(value));
+    });
+
+    try {
+      await axios.post(`${HOST}/api/bookings/`, formData, {
+        withCredentials: true,
+      });
+      CustomToast.show("Booking confirmed successfully", {
+        indicator: "success",
+      });
+      setConfirmationDialog(true);
+    } catch (error) {
+      CustomToast.show(errorHandler(error).message, { indicator: "error" });
+    } finally {
+      setConfirmLoading(false);
+    }
   };
 
   const onHandleSubmitStep = async () => {
@@ -206,7 +271,10 @@ export default function BookingsForm() {
                   </button>
                 </div>
               ) : (
-                <ConfirmBooking prevStep={prevStep} />
+                <ConfirmBooking
+                  confirmLoading={confirmLoading}
+                  prevStep={prevStep}
+                />
               )}
             </div>
           </div>

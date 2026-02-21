@@ -41,6 +41,7 @@ export default function StepTwoBookings() {
               className="border-2 border-secondary-normal/30 rounded-lg p-[1rem] flex flex-col gap-y-5 relative"
             >
               <button
+                type="button"
                 onClick={() => {
                   remove(index);
                 }}

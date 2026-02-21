@@ -160,7 +160,6 @@ export const bookingSchema = z.object({
     .max(PAYMENT_TYPE_MAX_LENGTH, "Payment type is too long."),
   payment_proof: photoFileSchema,
   agree_terms: z.boolean(),
-  user_id: z.uuid("Invalid user ID."),
   product_id: z.uuid("Invalid product ID."),
   status: z
     .string("Status is required.")

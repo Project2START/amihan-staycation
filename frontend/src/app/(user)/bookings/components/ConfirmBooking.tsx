@@ -4,7 +4,13 @@ import Link from "next/link";
 import { useFormContext, useWatch } from "react-hook-form";
 import { BookingSchema } from "../schema/bookings.schema";
 
-export default function ConfirmBooking({ prevStep }: { prevStep: () => void }) {
+export default function ConfirmBooking({
+  prevStep,
+  confirmLoading,
+}: {
+  prevStep: () => void;
+  confirmLoading: boolean;
+}) {
   const { control, register } = useFormContext<BookingSchema>();
 
   const agree_terms = useWatch({ control, name: "agree_terms" });

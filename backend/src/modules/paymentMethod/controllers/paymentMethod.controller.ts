@@ -5,7 +5,7 @@ interface RequestWithFiles extends Request {
   file?: any;
 }
 
-export class PaymentMethodController {
+class PaymentMethodController {
   async createPaymentMethod(req: RequestWithFiles, res: Response) {
     console.log(req.body, req.file);
 

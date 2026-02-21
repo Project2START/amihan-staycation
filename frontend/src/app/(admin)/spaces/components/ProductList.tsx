@@ -41,7 +41,8 @@ export default async function ProductList() {
         <div className="mt-[3rem] mb-[4rem] mx-[1rem] grid gap-y-5">
           {parsedProducts.products && parsedProducts.products.length !== 0 ? (
             parsedProducts.products.map((product) => {
-              const { id, name, price, photos, attributes, about } = product;
+              const { id, name, price, photos, attributes, about, maxPersons } =
+                product;
 
               return (
                 <ProductItem
@@ -52,6 +53,7 @@ export default async function ProductList() {
                   photos={photos}
                   attributes={attributes}
                   about={about}
+                  maxPersons={maxPersons}
                   linkPath="/spaces"
                 />
               );

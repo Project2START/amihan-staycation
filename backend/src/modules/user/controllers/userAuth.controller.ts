@@ -3,12 +3,9 @@ import { signToken } from "../../../shared/helpers/jwt";
 import { cookieOptions } from "../../../shared/helpers/cookieOptions";
 import { userAuthService } from "../services/userAuth.service";
 import { generateSecureRandom } from "../../../shared/helpers/generators/generateSecureRandom";
-import {
-  BadRequestError,
-  ForbiddenError,
-} from "../../../shared/helpers/appErrors";
+import { BadRequestError } from "../../../shared/helpers/appErrors";
 
-export class UserAuthController {
+class UserAuthController {
   async signUp(req: Request, res: Response) {
     const user = await userAuthService.signUp(req.body);
 

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { userService } from "../services/user.service";
 
-export class UserController {
+class UserController {
   async getUser(req: Request, res: Response) {
     const { id } = req.params;
 
