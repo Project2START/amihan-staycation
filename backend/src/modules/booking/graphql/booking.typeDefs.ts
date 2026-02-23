@@ -9,12 +9,17 @@ export const bookingTypeDefs = `#graphql
         last_name: String
     }
 
+    type Product {
+        name: String
+    }
+
     type Booking {
         contact_number: String
         name: String
         check_period: CheckPeriod
-        status: String
+        status: String!
         user: User
+        product: Product
     }
 
     extend type Query {

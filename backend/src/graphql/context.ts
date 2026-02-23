@@ -20,7 +20,7 @@ export const createContext = ({ req }: { req: Request }) => {
   const token = cookieHeader
     .split(";")
     .map((c) => c.trim())
-    .find((c) => c.startsWith("token="))
+    .find((c) => c.startsWith("auth_token="))
     ?.split("=")[1];
 
   let user;

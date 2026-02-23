@@ -5,7 +5,7 @@ import { Skeleton } from "@mui/material";
 
 export default function UnitsPage() {
   return (
-    <main className="px-[1.5rem] py-[2rem]">
+    <div className="px-[1.5rem] py-[2rem]">
       <GreetUser />
 
       <Suspense
@@ -23,6 +23,6 @@ export default function UnitsPage() {
       >
         <ProductList />
       </Suspense>
-    </main>
+    </div>
   );
 }

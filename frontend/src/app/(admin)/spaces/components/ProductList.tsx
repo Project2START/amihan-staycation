@@ -2,9 +2,7 @@ import ProductItem, {
   IProductItemProps,
 } from "@/app/shared/components/ProductItem";
 
-import { HOST } from "@/app/shared/constants/config";
 import fetchWithAuth from "@/app/shared/lib/fetchWithAuth";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 export default async function ProductList() {

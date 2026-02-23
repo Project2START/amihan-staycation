@@ -16,7 +16,7 @@ export default async function UserLayout({
     <>
       <RoleGuard userId={userId}>
         <UserHeader />
-        {children}
+        <main>{children}</main>
         <FooterMain />
       </RoleGuard>
     </>

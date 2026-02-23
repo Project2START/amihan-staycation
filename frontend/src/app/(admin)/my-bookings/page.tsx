@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import NavigationBottom from "../components/NavigationBottom";
 import MyBookings from "./components/MyBookings";
 
@@ -10,7 +11,7 @@ export default function MyBookingsPage() {
           All Your Bookings. One Place to Manage Them All.
         </p>
       </div>
-      <div className="flex-1">
+      <div className="flex-1 px-[1rem] mt-[1rem] mb-[2rem] overflow-y-auto">
         <MyBookings />
       </div>
       <NavigationBottom />

@@ -5,10 +5,21 @@ import { bookingService } from "../services/booking.service";
 
 export const generateBookingModel = ({ user }: { user: any }) => ({
   getAllBookingsByAdminId: async () => {
+    console.log(user);
     requireAuth(user);
     requireRole(user, ["admin"]);
 
     const bookings = await bookingService.getAllByAdmin(user.user_id);
-    return bookings;
+
+    return bookings.map((booking) => {
+      const { contact_number, name, check_period, status, product } = booking;
+      return {
+        contact_number,
+        name,
+        check_period,
+        status,
+        product: { name: product.name },
+      };
+    });
   },
 });
