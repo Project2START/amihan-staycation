@@ -23,6 +23,7 @@ export default function ConfirmBooking({
           type="checkbox"
           {...register("agree_terms")}
           className="accent-secondary-normal scale-125 mt-[0.25rem]"
+          disabled={confirmLoading}
           //   style={{ width: "1rem", height: "1rem" }}
         />
         <p className="leading-5">

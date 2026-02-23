@@ -6,11 +6,10 @@ import { GoGraph } from "react-icons/go";
 import { MdPerson3 } from "react-icons/md";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 
-const navList = [
+export const navList = [
   {
-    path: "/bookings",
+    path: "/my-bookings",
     name: "Bookings",
     id: "bookings-1",
     icon: <LuCalendarDays />,
@@ -24,8 +23,6 @@ const navList = [
 ];
 
 export default function NavigationBottom() {
-  const [addNew, setAddNew] = useState<boolean>(false);
-
   const pathname = usePathname();
 
   return (

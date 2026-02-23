@@ -3,21 +3,12 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import PaymentMethodList from "./PaymentMethodList";
 import type { IPaymentMethod } from "../types/paymentMethod.types";
+import fetchWithAuth from "@/app/shared/lib/fetchWithAuth";
 
 export default async function PaymentMethods() {
-  const cookieStore = await cookies();
-  const authToken = cookieStore.get("auth_token")?.value;
-
-  if (!authToken) {
-    return notFound();
-  }
-
-  const result = await fetch(`${HOST}/api/paymentMethods/`, {
+  const result = await fetchWithAuth("api/paymentMethods/", {
     cache: "no-cache",
     method: "GET",
-    headers: {
-      cookie: `auth_token=${authToken}`,
-    },
   });
 
   if (!result.ok) {

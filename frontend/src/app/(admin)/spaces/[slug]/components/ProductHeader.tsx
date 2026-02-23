@@ -54,7 +54,7 @@ export default function ProductHeader({ product }: { product: Product }) {
       <div className="flex-1/4">
         <PrimaryBackButton
           onClick={() => {
-            router.push(`/spaces?user=${user?.id}`);
+            router.push(`/spaces`);
           }}
           style="text-xl"
         />

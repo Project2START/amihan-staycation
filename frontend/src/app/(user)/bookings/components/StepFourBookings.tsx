@@ -153,7 +153,7 @@ export default function StepFourBookings() {
               return (
                 <div
                   key={uuid()}
-                  className={`flex flex-col gap-y-3 pb-[1.5rem] ${arr.length - 1 !== index && "border-b-2 border-secondary-normal/30"}`}
+                  className={`flex flex-col gap-y-3 pb-[1.5rem] ${arr.length - 1 !== index && "border-b-5 border-secondary-normal/30"}`}
                 >
                   <div className="flex justify-between items-center">
                     <span>Name</span>

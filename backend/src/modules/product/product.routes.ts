@@ -7,7 +7,7 @@ import {
   productWithPhotosSchema,
 } from "./schemas/product.schema";
 import { PHOTOS_MAX } from "../../shared/constants/productFormValidation";
-import { requireAuth } from "../../middleware/requireAuth";
+import { checkAuth } from "../../middleware/checkAuth";
 import { checkRole } from "../../middleware/checkRole";
 import { createUpload } from "../../middleware/upload";
 
@@ -17,7 +17,7 @@ const upload = createUpload({ maxFiles: PHOTOS_MAX });
 
 router.post(
   "/",
-  requireAuth,
+  checkAuth,
   checkRole(["admin"]),
   upload.array("photo_files"),
   validateSchema(productSchema),
@@ -28,7 +28,7 @@ router.get("/", asyncHandler(productController.getProducts));
 
 router.get(
   "/admin",
-  requireAuth,
+  checkAuth,
   checkRole(["admin"]),
   asyncHandler(productController.getProductsById),
 );
@@ -37,7 +37,7 @@ router.get("/:id", asyncHandler(productController.getProduct));
 
 router.put(
   "/",
-  requireAuth,
+  checkAuth,
   checkRole(["admin"]),
   upload.array("photo_files"),
   validateSchema(productWithPhotosSchema),
@@ -46,7 +46,7 @@ router.put(
 
 router.delete(
   "/:id",
-  requireAuth,
+  checkAuth,
   checkRole(["admin"]),
   asyncHandler(productController.deleteProduct),
 );

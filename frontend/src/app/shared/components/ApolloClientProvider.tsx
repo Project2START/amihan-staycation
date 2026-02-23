@@ -5,7 +5,7 @@ import { ApolloProvider } from "@apollo/client/react";
 import { HOST } from "../constants/config";
 
 const client = new ApolloClient({
-  link: new HttpLink({ uri: `${HOST}/graphql` }),
+  link: new HttpLink({ uri: `${HOST}/graphql`, credentials: "include" }),
   cache: new InMemoryCache(),
 });
 

@@ -21,6 +21,9 @@ import axios from "axios";
 import { HOST } from "@/app/shared/constants/config";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
+import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
+import { useRouter } from "next/navigation";
+import { AiOutlineCheckCircle } from "react-icons/ai";
 
 const stepFields: Record<number, (keyof BookingSchema)[]> = {
   0: [
@@ -76,7 +79,6 @@ export default function BookingsForm() {
     );
 
   const onSubmit = async (data: BookingSchema) => {
-    console.log(data);
     setConfirmLoading(true);
 
     const formData = new FormData();
@@ -129,15 +131,22 @@ export default function BookingsForm() {
       await axios.post(`${HOST}/api/bookings/`, formData, {
         withCredentials: true,
       });
-      CustomToast.show("Booking confirmed successfully", {
-        indicator: "success",
-      });
+      // CustomToast.show("Booking confirmed successfully", {
+      //   indicator: "success",
+      // });
       setConfirmationDialog(true);
     } catch (error) {
       CustomToast.show(errorHandler(error).message, { indicator: "error" });
     } finally {
       setConfirmLoading(false);
     }
+  };
+
+  const router = useRouter();
+
+  const handleConfirmationOk = () => {
+    setConfirmationDialog(false);
+    router.push("/units");
   };
 
   const onHandleSubmitStep = async () => {
@@ -279,6 +288,34 @@ export default function BookingsForm() {
           </div>
         </form>
       </FormProvider>
+      <DialogBaseContent
+        openDialog={confirmationDialog}
+        onCloseDialog={() => setConfirmationDialog(false)}
+        enableClickOutside={false}
+      >
+        <div className="p-6 flex flex-col items-center text-center">
+          <div className="mb-4 flex items-center flex-col gap-3">
+            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+              <AiOutlineCheckCircle className="h-6 w-6 text-green-600" />
+            </div>
+            <h2 className="text-lg font-semibold">Booking Confirmed</h2>
+          </div>
+
+          <p className="text-sm text-secondary-normal mb-3">
+            Thank you — we will contact you via email or notify you here in the
+            app.
+          </p>
+
+          <button
+            type="button"
+            onClick={handleConfirmationOk}
+            className="px-16 py-2 rounded-lg text-white"
+            style={{ backgroundColor: "var(--color-primary-normal)" }}
+          >
+            <span className="font-bold">OK</span>
+          </button>
+        </div>
+      </DialogBaseContent>
     </div>
   );
 }

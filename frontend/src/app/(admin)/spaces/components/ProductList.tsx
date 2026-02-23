@@ -3,23 +3,14 @@ import ProductItem, {
 } from "@/app/shared/components/ProductItem";
 
 import { HOST } from "@/app/shared/constants/config";
+import fetchWithAuth from "@/app/shared/lib/fetchWithAuth";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 export default async function ProductList() {
-  const cookieStore = await cookies();
-  const authToken = cookieStore.get("auth_token")?.value;
-
-  if (!authToken) {
-    return notFound();
-  }
-
-  const result = await fetch(`${HOST}/api/products/admin`, {
+  const result = await fetchWithAuth("api/products/admin", {
     cache: "no-cache",
     method: "GET",
-    headers: {
-      cookie: `auth_token=${authToken}`,
-    },
   });
 
   if (!result.ok) {

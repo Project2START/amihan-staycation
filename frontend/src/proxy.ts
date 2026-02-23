@@ -19,13 +19,14 @@ export async function proxy(req: NextRequest) {
     return await verifyUser(req);
   }
 
-  if (["/auth", "/sign-in", "/sign-up"].includes(currentPath)) {
+  if (["/auth", "/sign-in", "/sign-up", "/"].includes(currentPath)) {
     return await verifyGuest(req);
   }
 }
 
 export const config = {
   matcher: [
+    "/",
     "/verify-code/:path*",
     "/spaces/:path*",
     "/auth",

@@ -11,6 +11,7 @@ export default async function verifyGuest(req: NextRequest) {
   try {
     const { payload } = await jwtVerify(auth_token || "", secret);
 
+    console.log(payload);
     const role = payload.user_role;
     const userId = payload.user_id;
 

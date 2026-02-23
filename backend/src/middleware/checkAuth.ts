@@ -1,8 +1,7 @@
-// middleware/requireAuth.ts
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../shared/helpers/jwt";
 
-export function requireAuth(req: Request, res: Response, next: NextFunction) {
+export function checkAuth(req: Request, res: Response, next: NextFunction) {
   try {
     const token = req.cookies?.auth_token; // <-- comes from cookieParser
 

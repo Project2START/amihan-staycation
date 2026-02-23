@@ -11,21 +11,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import NewUnitForm from "./NewUnitForm";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
-
-const navList = [
-  {
-    path: "/bookings",
-    name: "Bookings",
-    id: "bookings-1",
-    icon: <LuCalendarDays />,
-  },
-
-  { path: "/spaces", name: "Spaces", id: "spaces-1", icon: <BsHouseDoor /> },
-
-  { path: "/insights", name: "Insights", id: "insights-1", icon: <GoGraph /> },
-
-  { path: "/agents", name: "Agents", id: "agents-1", icon: <MdPerson3 /> },
-];
+import { navList } from "../../components/NavigationBottom";
 
 export default function NavigationBottomSpaces() {
   const [addNew, setAddNew] = useState<boolean>(false);

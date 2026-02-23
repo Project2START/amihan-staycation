@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth } from "../../middleware/requireAuth";
+import { checkAuth } from "../../middleware/checkAuth";
 import { checkRole } from "../../middleware/checkRole";
 import { createUpload } from "../../middleware/upload";
 import { PHOTOS_MAX } from "../../shared/constants/productFormValidation";
@@ -14,7 +14,7 @@ const upload = createUpload();
 
 router.post(
   "/",
-  requireAuth,
+  checkAuth,
   checkRole(["user", "agent"]),
   upload.fields([
     { name: "additional_guests_validIds", maxCount: PHOTOS_MAX },
@@ -22,7 +22,7 @@ router.post(
     { name: "valid_id", maxCount: 1 },
   ]),
   validateSchema(bookingSchema),
-  asyncHandler(bookingController.create),
+  asyncHandler(bookingController.createBooking),
 );
 
 export default router;

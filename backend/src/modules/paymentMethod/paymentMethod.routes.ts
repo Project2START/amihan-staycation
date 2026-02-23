@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth } from "../../middleware/requireAuth";
+import { checkAuth } from "../../middleware/checkAuth";
 import { checkRole } from "../../middleware/checkRole";
 import { createUpload } from "../../middleware/upload";
 import { validateSchema } from "../../middleware/validateSchema";
@@ -13,7 +13,7 @@ const upload = createUpload({ maxFiles: 1 });
 
 router.post(
   "/",
-  requireAuth,
+  checkAuth,
   checkRole(["admin"]),
   upload.single("qr_code"),
   validateSchema(paymentMethodSchema),
@@ -22,7 +22,7 @@ router.post(
 
 router.put(
   "/:id",
-  requireAuth,
+  checkAuth,
   checkRole(["admin"]),
   upload.single("qr_code"),
   validateSchema(paymentMethodSchema),
@@ -31,7 +31,7 @@ router.put(
 
 router.get(
   "/",
-  requireAuth,
+  checkAuth,
   checkRole(["admin"]),
   asyncHandler(paymentMethodController.getAllPaymentMethods),
 );
@@ -40,14 +40,14 @@ router.get(
 
 router.get(
   "/public_products",
-  requireAuth,
+  checkAuth,
   checkRole(["user"]),
   asyncHandler(paymentMethodController.getAllByProductId),
 );
 
 router.get(
   "/:id",
-  requireAuth,
+  checkAuth,
   checkRole(["admin"]),
   asyncHandler(paymentMethodController.getPaymentMethod),
 );
@@ -55,7 +55,7 @@ router.get(
 // >>>>
 router.delete(
   "/:id",
-  requireAuth,
+  checkAuth,
   checkRole(["admin"]),
   asyncHandler(paymentMethodController.deletePaymentMethod),
 );

@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import userRoutes from "./modules/user/user.routes";
@@ -5,14 +8,13 @@ import productRoutes from "./modules/product/product.routes";
 import registreeRoutes from "./modules/registree/registree.routes";
 import paymentMethodRoutes from "./modules/paymentMethod/paymentMethod.routes";
 import bookingRoutes from "./modules/booking/booking.routes";
-import { globalErrorHandler } from "./middleware/globalErrorHandler";
-import { expressMiddleware } from "@as-integrations/express4";
 import { ApolloServer } from "@apollo/server";
-import { typeDefs } from "./graphql/typeDefs";
-import { resolvers } from "./graphql/resolvers";
 import cookieParser from "cookie-parser";
-
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import session from "express-session";
+import { resolvers, typeDefs } from "./graphql/schema";
+import http from "http";
+// import { MyContext } from "./graphql/context";
 
 const app = express();
 
@@ -35,19 +37,42 @@ app.use("/api/products", productRoutes);
 app.use("/api/paymentMethods", paymentMethodRoutes);
 app.use("/api/bookings", bookingRoutes);
 
-async function setUpGraphql() {
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-  });
+export const httpServer = http.createServer(app);
 
-  await server.start();
-
-  app.use("/graphql", expressMiddleware(server));
-}
-
-setUpGraphql();
-
-app.use(globalErrorHandler);
+export const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+});
 
 export default app;
+
+// async function setUpGraphql() {
+//   const server = new ApolloServer({ typeDefs, resolvers });
+
+//   await server.start();
+
+//   app.use(
+//     "/graphql",
+//     expressMiddleware(server, {
+//       context: async ({ req, res }) => {
+//         const token =
+//           req.cookies?.auth_token ||
+//           (req.headers.authorization || "").replace("Bearer ", "");
+//         let user = null;
+//         if (token) {
+//           try {
+//             user = verifyToken(token);
+//           } catch {
+//             user = null;
+//           }
+//         }
+//         return { req, res, user };
+//       },
+//     }),
+//   );
+// }
+
+// setUpGraphql();
+
+// export default app;

@@ -62,13 +62,15 @@ class BookingService {
       const mapped_additional_guests = additional_guests.map(
         (additional_guest) => {
           if (!additional_guest.below_three_feet) {
+            const id_index = additional_guests_validIds[valid_id_index];
+
+            valid_id_index++;
+
             return {
               ...additional_guest,
-              additional_guest_validId:
-                additional_guests_validIds[valid_id_index],
+              additional_guest_validId: id_index,
             };
           }
-          valid_id_index++;
           return { ...additional_guest, additional_guest_validId: undefined };
         },
       );
@@ -123,6 +125,17 @@ class BookingService {
         .remove([valid_id_file.filePath, payment_proof_file.filePath]);
       throw error;
     }
+  }
+  async getAllByAdmin(adminId: string) {
+    const bookings = await bookingRepository.findAllByAdminId(adminId);
+
+    const bookingsFormatted = bookings.map((booking) => {
+      const { updatedAt, createdAt, ...rest } = booking;
+
+      return rest;
+    });
+
+    return bookingsFormatted;
   }
 }
 
