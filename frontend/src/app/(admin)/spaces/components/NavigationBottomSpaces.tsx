@@ -1,14 +1,9 @@
 "use client";
 
-import { LuCalendarDays } from "react-icons/lu";
-import { BsHouseDoor } from "react-icons/bs";
-import { GoGraph } from "react-icons/go";
-import { MdPerson3 } from "react-icons/md";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaPlus } from "react-icons/fa6";
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
 import NewUnitForm from "./NewUnitForm";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 import { navList } from "../../components/NavigationBottom";
