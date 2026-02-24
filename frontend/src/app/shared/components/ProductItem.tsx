@@ -7,7 +7,6 @@ import { formatMoney } from "../lib/formatMoney";
 import Rating from "./Rating";
 import RenderIcon from "../ui/RenderIcon";
 import { FaCircleCheck } from "react-icons/fa6";
-import { useAppSelector } from "@/lib/hooks";
 
 export interface IProductAttribute {
   name: string;
@@ -28,6 +27,7 @@ export interface IProductItemProps {
   about: string;
   photos: IProductPhoto[];
   attributes: IProductAttribute[];
+  maxPersons: number;
 }
 
 export default function ProductItem({
@@ -37,9 +37,8 @@ export default function ProductItem({
   photos,
   attributes,
   linkPath,
+  maxPersons,
 }: IProductItemProps & { linkPath: string }) {
-  const user = useAppSelector((state) => state.users.data);
-
   let iconExcess_count = 0;
   return (
     <div className="overflow-hidden min-w-0 border-2 border-[#0B5173]/30 text-secondary-normal rounded-lg">
@@ -84,15 +83,20 @@ export default function ProductItem({
         )}
       </div>
       <div className="p-[1rem]">
-        <div className="flex justify-between items-center font-bold ">
+        <div className="flex justify-between items-start font-bold">
           <span className="text-xl flex-1/2 truncate">{name}</span>
-          <span className="text-lg flex-1/2 truncate text-right">
-            {formatMoney(price, { decimals: 2, symbol: "₱" })}
-          </span>
+          <div className="flex-1/2 text-right overflow-y-hidden">
+            <div className="text-lg truncate">
+              {formatMoney(price, { decimals: 2, symbol: "₱" })}
+            </div>
+            <span className="text-xs font-normal">
+              1 night, {maxPersons} persons max
+            </span>
+          </div>
         </div>
         <div>
           <Link
-            href={`${linkPath}/${id}?user=${user?.id}`}
+            href={`${linkPath}/${id}`}
             className="primary-button-link px-[0.75rem] py-[0.75rem] mt-[1.5rem]"
           >
             <span className="text-xs text-nowrap">View Details</span>

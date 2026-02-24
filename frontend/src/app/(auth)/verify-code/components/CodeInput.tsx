@@ -29,7 +29,8 @@ export default function CodeInput({ id }: { id?: string }) {
         { withCredentials: true },
       );
       setErrorLabel("");
-      router.push("/browse-units");
+      localStorage.removeItem("registree_client_resendCountdown");
+      router.push("/auth");
     } catch (error) {
       const errorResult = errorHandler(error);
 

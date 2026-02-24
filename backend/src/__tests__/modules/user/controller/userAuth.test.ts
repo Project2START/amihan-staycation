@@ -161,9 +161,7 @@ describe("UserAuthController", () => {
       expect(res.cookie).toHaveBeenCalledWith("auth_token", "jwt-token", {
         httpOnly: true,
       });
-      expect(res.redirect).toHaveBeenCalledWith(
-        `${FRONTEND_HOST}/units?user=${mockUser.id}`,
-      );
+      expect(res.redirect).toHaveBeenCalledWith(`${FRONTEND_HOST}/auth`);
     });
   });
 });

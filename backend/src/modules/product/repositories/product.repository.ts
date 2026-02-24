@@ -5,7 +5,7 @@ import {
   NotFoundError,
 } from "../../../shared/helpers/appErrors";
 import { supabase } from "../../../shared/lib/supabase";
-import { getSupabaseImagesPath } from "../helpers/getSupabaseImagesPath";
+import { getSupabaseImagesPath } from "../../../shared/helpers/getters/getSupabaseImagesPath";
 
 type ProductWithPhotos = Prisma.ProductGetPayload<{
   include: {
@@ -15,7 +15,7 @@ type ProductWithPhotos = Prisma.ProductGetPayload<{
 
 const prisma = new PrismaClient();
 
-export class ProductRepository {
+class ProductRepository {
   async create(data: Prisma.ProductCreateInput): Promise<Product> {
     try {
       return await prisma.product.create({ data });

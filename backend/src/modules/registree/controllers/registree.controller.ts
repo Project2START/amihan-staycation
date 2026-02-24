@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { registreeService } from "../services/registree.service";
 import { cookieOptions } from "../../../shared/helpers/cookieOptions";
 
-export class RegistreeController {
+class RegistreeController {
   async register(req: Request, res: Response) {
     const newRegistree = await registreeService.create(req.body);
     const cookieMaxAge = newRegistree.codeExpiry.getTime() - Date.now();

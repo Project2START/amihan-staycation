@@ -10,7 +10,6 @@ export default async function SpaceSlugPage({
 
   return (
     <div className="flex flex-col">
-      <HeaderAdmin />
       <Product spaceId={slug} />
     </div>
   );

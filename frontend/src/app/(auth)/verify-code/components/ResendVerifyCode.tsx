@@ -2,7 +2,6 @@
 
 import { HOST } from "@/app/shared/constants/config";
 import { getRemainingSeconds } from "@/app/shared/lib/getRemainingSeconds";
-import { useQuery } from "@apollo/client/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
@@ -10,25 +9,10 @@ import { errorHandler } from "@/app/shared/lib/errorHandler";
 import toast from "react-hot-toast";
 import Snackbar from "@/app/shared/ui/Snackbar";
 import ErrorIcon from "@mui/icons-material/Error";
-import {
-  GET_REGISTREE_NEXTRESEND,
-  REGISTREE_NEXTRESEND_TYPE,
-} from "../lib/graphql-queries";
 
 export default function ResendVerifyCode({ id }: { id?: string }) {
   const [seconds, setSeconds] = useState(0);
-  const [resendLoading, setResendLoading] = useState(false);
-
-  const { loading, error, data } = useQuery<REGISTREE_NEXTRESEND_TYPE>(
-    GET_REGISTREE_NEXTRESEND,
-    {
-      variables: { id },
-      skip: !id,
-    },
-  );
-
-  const nextAllowedResend = data?.registree.nextAllowedResend;
-  const noAllowedResend = seconds > 0;
+  const [resendLoading, setResendLoading] = useState(true);
 
   const handleResendCode = async () => {
     setResendLoading(true);
@@ -37,8 +21,14 @@ export default function ResendVerifyCode({ id }: { id?: string }) {
         `${HOST}/api/registrees/resend-v-code`,
         { id },
       );
+
       const nextAllowedResend = res.data.nextAllowedResend;
       const remainingSeconds = getRemainingSeconds(nextAllowedResend);
+
+      localStorage.setItem(
+        "registree_client_resendCountdown",
+        JSON.stringify(new Date(Date.now() + 30 * 1000)),
+      );
 
       setSeconds(remainingSeconds);
     } catch (error) {
@@ -67,26 +57,18 @@ export default function ResendVerifyCode({ id }: { id?: string }) {
   }, [seconds]);
 
   useEffect(() => {
-    if (!nextAllowedResend) return;
-
-    const remainingSeconds = getRemainingSeconds(nextAllowedResend);
-
-    if (remainingSeconds >= 0) {
-      setSeconds(remainingSeconds);
-    } else {
-      setSeconds(0);
-    }
-  }, [nextAllowedResend]);
-
-  if (loading) {
-    return (
-      <div className="mt-[1rem]">
-        <CircularProgress size={16} />
-      </div>
+    const resendCountdown = localStorage.getItem(
+      "registree_client_resendCountdown",
     );
-  }
+    if (!resendCountdown) return;
 
-  if (error) return;
+    const remainingSeconds = getRemainingSeconds(JSON.parse(resendCountdown));
+
+    setSeconds(remainingSeconds > 0 ? remainingSeconds : 0);
+    setResendLoading(false);
+  }, []);
+
+  const noAllowedResend = seconds > 0;
 
   return (
     <p className="mt-[1rem]">

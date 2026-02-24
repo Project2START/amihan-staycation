@@ -2,24 +2,13 @@ import ProductItem, {
   IProductItemProps,
 } from "@/app/shared/components/ProductItem";
 
-import { HOST } from "@/app/shared/constants/config";
-import { cookies } from "next/headers";
+import fetchWithAuth from "@/app/shared/lib/fetchWithAuth";
 import { notFound } from "next/navigation";
 
 export default async function ProductList() {
-  const cookieStore = await cookies();
-  const authToken = cookieStore.get("auth_token")?.value;
-
-  if (!authToken) {
-    return notFound();
-  }
-
-  const result = await fetch(`${HOST}/api/products/admin`, {
+  const result = await fetchWithAuth("api/products/admin", {
     cache: "no-cache",
     method: "GET",
-    headers: {
-      cookie: `auth_token=${authToken}`,
-    },
   });
 
   if (!result.ok) {
@@ -41,7 +30,8 @@ export default async function ProductList() {
         <div className="mt-[3rem] mb-[4rem] mx-[1rem] grid gap-y-5">
           {parsedProducts.products && parsedProducts.products.length !== 0 ? (
             parsedProducts.products.map((product) => {
-              const { id, name, price, photos, attributes, about } = product;
+              const { id, name, price, photos, attributes, about, maxPersons } =
+                product;
 
               return (
                 <ProductItem
@@ -52,6 +42,7 @@ export default async function ProductList() {
                   photos={photos}
                   attributes={attributes}
                   about={about}
+                  maxPersons={maxPersons}
                   linkPath="/spaces"
                 />
               );

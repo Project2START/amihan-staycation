@@ -9,9 +9,6 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div>
-        <HeaderAuth />
-      </div>
       <div className="text-secondary-normal text-sm text-center p-6 grow-1 flex flex-col justify-center items-center">
         <h1 className="mb-4">404 - Page Not Found</h1>
         <p className="mb-4">

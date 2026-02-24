@@ -3,12 +3,9 @@ import { signToken } from "../../../shared/helpers/jwt";
 import { cookieOptions } from "../../../shared/helpers/cookieOptions";
 import { userAuthService } from "../services/userAuth.service";
 import { generateSecureRandom } from "../../../shared/helpers/generators/generateSecureRandom";
-import {
-  BadRequestError,
-  ForbiddenError,
-} from "../../../shared/helpers/appErrors";
+import { BadRequestError } from "../../../shared/helpers/appErrors";
 
-export class UserAuthController {
+class UserAuthController {
   async signUp(req: Request, res: Response) {
     const user = await userAuthService.signUp(req.body);
 
@@ -63,27 +60,22 @@ export class UserAuthController {
 
     res.cookie("auth_token", jwt_token, cookieOptions(24 * 60 * 60 * 1000));
 
-    if (user.role === "user") {
-      return res.redirect(`${process.env.FRONTEND_HOST}/units?user=${user.id}`);
-    }
+    return res.redirect(`${process.env.FRONTEND_HOST}/auth`);
 
-    if (user.role === "admin") {
-      return res.redirect(
-        `${process.env.FRONTEND_HOST}/spaces?user=${user.id}`,
-      );
-    }
-
-    throw new ForbiddenError("You do not have permission to sign in");
+    // throw new ForbiddenError("You do not have permission to sign in");
   }
   async logout(_: Request, res: Response) {
-    res.cookie("auth_token", "", {
+    const cookieOptions = {
       httpOnly: true,
       // secure: process.env.NODE_ENV === "production",
       secure: true,
-      sameSite: "none",
+      sameSite: "none" as const,
       path: "/",
       expires: new Date(0),
-    });
+    };
+
+    res.cookie("user_id", "", cookieOptions);
+    res.cookie("auth_token", "", cookieOptions);
 
     res.status(200).json({ message: "User successfully log out" });
   }

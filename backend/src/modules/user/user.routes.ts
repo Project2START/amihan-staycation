@@ -3,7 +3,7 @@ import { validateSchema } from "../../middleware/validateSchema";
 import { userSignInSchema, userSignUpSchema } from "./schemas/userAuth.schema";
 import { asyncHandler } from "../../shared/helpers/asyncHandler";
 import { userAuthController } from "./controllers/userAuth.controller";
-import { requireAuth } from "../../middleware/requireAuth";
+import { checkAuth } from "../../middleware/checkAuth";
 import { checkRole } from "../../middleware/checkRole";
 import { userController } from "./controllers/user.controller";
 
@@ -29,11 +29,11 @@ router.get(
 
 router.get(
   "/:id",
-  requireAuth,
+  checkAuth,
   checkRole(["user", "admin"]),
   asyncHandler(userController.getUser),
 );
 
-router.post("/logout", requireAuth, userAuthController.logout);
+router.post("/logout", checkAuth, userAuthController.logout);
 
 export default router;

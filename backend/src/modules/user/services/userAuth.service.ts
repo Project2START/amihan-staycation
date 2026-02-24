@@ -17,7 +17,7 @@ const oAuth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_REDIRECT_URL,
 );
 
-export class UserAuthService {
+class UserAuthService {
   async signUp(userDTO: UserSignUpDTO) {
     const registree = await registreeAuthService.verifyVCode(userDTO.id);
 

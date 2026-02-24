@@ -5,7 +5,7 @@ interface RequestWithFiles extends Request {
   files?: any;
 }
 
-export class ProductController {
+class ProductController {
   async createProduct(req: RequestWithFiles, res: Response) {
     const user = (req as any).user;
     const product = await productService.create(

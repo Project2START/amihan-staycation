@@ -38,7 +38,7 @@ export default function ProductHeader({ product }: { product: Product }) {
         indicator: "success",
       });
 
-      router.push(`/spaces?user=${user?.id}`);
+      router.push(`/spaces`);
     } catch (err) {
       CustomToast.show(errorHandler(err).message, {
         indicator: "error",
@@ -54,7 +54,7 @@ export default function ProductHeader({ product }: { product: Product }) {
       <div className="flex-1/4">
         <PrimaryBackButton
           onClick={() => {
-            router.push(`/spaces?user=${user?.id}`);
+            router.push(`/spaces`);
           }}
           style="text-xl"
         />

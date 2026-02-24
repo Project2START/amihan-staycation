@@ -3,8 +3,10 @@
 
 import { useState, useEffect } from "react";
 import HeaderAdmin from "@/app/(admin)/components/HeaderAdmin";
-import NavigationBottomAdmin from "@/app/(admin)/components/NavigationBottomSpaces";
-import BookingFiltersNav, { type BookingCounts } from "./components/BookingFiltersNav";
+import NavigationBottomAdmin from "@/app/(admin)/spaces/components/NavigationBottomSpaces";
+import BookingFiltersNav, {
+  type BookingCounts,
+} from "./components/BookingFiltersNav";
 import { BookingStatus } from "./constants/bookingFilters";
 
 export default function BookingsPage() {
@@ -67,9 +69,14 @@ export default function BookingsPage() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Booking Management Header - Scrollable (NOT sticky) */}
-        <div style={{ backgroundColor: "#0B5173" }} className="text-white px-6 py-10 shadow-lg">
+        <div
+          style={{ backgroundColor: "#0B5173" }}
+          className="text-white px-6 py-10 shadow-lg"
+        >
           <div className="w-full flex flex-col items-center justify-center">
-            <h1 className="text-4xl font-bold mb-2 text-center">Booking Management</h1>
+            <h1 className="text-4xl font-bold mb-2 text-center">
+              Booking Management
+            </h1>
             <p className="text-blue-50 text-lg text-center">
               All Your Bookings. One Place to Manage Them All.
             </p>
@@ -81,9 +88,12 @@ export default function BookingsPage() {
           <div className="w-full flex justify-center">
             {isLoading ? (
               <div className="flex items-center justify-center py-4">
-                <div 
+                <div
                   className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2"
-                  style={{ borderTopColor: "#009EA9", borderBottomColor: "#009EA9" }}
+                  style={{
+                    borderTopColor: "#009EA9",
+                    borderBottomColor: "#009EA9",
+                  }}
                 ></div>
               </div>
             ) : (
@@ -106,20 +116,21 @@ export default function BookingsPage() {
               {activeFilter === "all"
                 ? "All Bookings"
                 : activeFilter === "pending"
-                ? "Pending Bookings"
-                : activeFilter === "confirmed"
-                ? "Confirmed Bookings"
-                : activeFilter === "checked-in"
-                ? "Checked-In Guests"
-                : activeFilter === "checked-out"
-                ? "Checked-Out Bookings"
-                : "Action Needed"}
+                  ? "Pending Bookings"
+                  : activeFilter === "confirmed"
+                    ? "Confirmed Bookings"
+                    : activeFilter === "checked-in"
+                      ? "Checked-In Guests"
+                      : activeFilter === "checked-out"
+                        ? "Checked-Out Bookings"
+                        : "Action Needed"}
             </h2>
             <p className="text-gray-600 mb-6">
               Your booking content will be displayed here.
             </p>
             <p className="text-sm text-gray-500">
-              Currently filtering by: <span className="font-semibold">{activeFilter}</span>
+              Currently filtering by:{" "}
+              <span className="font-semibold">{activeFilter}</span>
             </p>
           </div>
         </div>

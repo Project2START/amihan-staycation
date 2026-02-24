@@ -14,14 +14,35 @@ export default async function verifyGuest(req: NextRequest) {
     const role = payload.user_role;
     const userId = payload.user_id;
 
-    if (role === "user") {
-      return NextResponse.redirect(new URL(`/units?user=${userId}`, req.url));
+    if (role === "user" && userId) {
+      const response = NextResponse.redirect(new URL(`/units`, req.url));
+
+      response.cookies.set("user_id", `${userId}`, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: "/",
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+      return response;
+      // return NextResponse.redirect(new URL(`/units?user=${userId}`, req.url));
     }
-    if (role === "admin") {
-      return NextResponse.redirect(new URL(`/spaces?user=${userId}`, req.url));
+    if (role === "admin" && userId) {
+      const response = NextResponse.redirect(new URL(`/spaces`, req.url));
+
+      response.cookies.set("user_id", `${userId}`, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: "/",
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+      return response;
+      // return NextResponse.redirect(new URL(`/spaces?user=${userId}`, req.url));
     }
   } catch (err) {
-    console.log(err);
     return NextResponse.rewrite(notForYouPage);
   }
 }

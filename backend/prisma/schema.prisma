@@ -22,7 +22,11 @@ model Users {
   avatar_url  String?
 
   products Product[]
+  payment_methods PaymentMethod[]
   
+  userBookings  Booking[] @relation("BookingUser")
+  adminBookings  Booking[] @relation("BookingAdmin")
+
   @@map("users")
 }
 
@@ -56,6 +60,7 @@ model Product {
   user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade) // relation field
 
   photos     Photo[]
+  bookings   Booking[]
 
   @@map("products")
 }
@@ -69,4 +74,49 @@ model Photo {
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@map("photos")
+}
+
+model PaymentMethod {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payment_method  String
+  account_name    String
+  account_number  String
+  image_url       String
+
+  userId     String   @db.Uuid
+  user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payment_methods")
+}
+
+model Booking {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  additional_guests  Json
+  age             Int
+  agree_terms     Boolean @default(false)
+  check_period    Json
+  contact_number  String
+  name            String
+  nationality     String
+  image_payment_proof_url     String
+  payment_type    String
+  pool_access     Json
+  status          String @default("pending")
+  status_message  String?
+  image_valid_id_url    String
+  with_vehicle    Boolean @default(false)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user            Users    @relation("BookingUser", fields: [userId], references: [id])
+  userId          String   @db.Uuid
+
+  admin           Users    @relation("BookingAdmin", fields: [adminId], references: [id])
+  adminId         String   @db.Uuid
+
+  product         Product  @relation(fields: [productId], references: [id])
+  productId       String   @db.Uuid
+
+  @@map("bookings")
 }

@@ -7,7 +7,7 @@ import { generateOtp } from "../../../shared/helpers/generators/generateOtp";
 import { registreeRepository } from "../repositories/registree.repository";
 import { sendVerificationCode } from "../helpers/sendVerificationCode";
 
-export class RegistreeAuthService {
+class RegistreeAuthService {
   async verifyVCode(id: string) {
     const registree = await registreeRepository.findById(id);
 

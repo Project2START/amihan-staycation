@@ -39,6 +39,10 @@ export default function SignUpForm() {
     try {
       await signUp(rest);
       setError("");
+      localStorage.setItem(
+        "registree_client_resendCountdown",
+        JSON.stringify(new Date(Date.now() + 30 * 1000)),
+      );
       router.push("/verify-code");
     } catch (error) {
       const errMessage = errorHandler(error);
