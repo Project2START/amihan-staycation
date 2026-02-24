@@ -5,7 +5,6 @@ import { bookingService } from "../services/booking.service";
 
 export const generateBookingModel = ({ user }: { user: any }) => ({
   getAllBookingsByAdminId: async () => {
-    console.log(user);
     requireAuth(user);
     requireRole(user, ["admin"]);
 

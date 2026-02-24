@@ -2,18 +2,6 @@ import { Request } from "express";
 import { verifyToken } from "../shared/helpers/jwt";
 import { generateBookingModel } from "../modules/booking";
 
-// export interface AuthUser {
-//   user_id: string;
-//   user_role: string;
-// }
-
-// export interface MyContext {
-//   user: JwtPayload | null;
-//   models: {
-//     Booking: ReturnType<typeof generateBookingModel>;
-//   };
-// }
-
 export const createContext = ({ req }: { req: Request }) => {
   const cookieHeader = req.headers.cookie || "";
 

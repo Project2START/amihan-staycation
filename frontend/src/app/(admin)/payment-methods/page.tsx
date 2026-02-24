@@ -11,7 +11,7 @@ export default function PaymentMethodsPage() {
       <div className="flex-1 overflow-y-auto">
         <Suspense
           fallback={
-            <div className="grid gap-y-5 p-4">
+            <div className="grid gap-y-5 p-4 mt-[1.5rem]">
               <Skeleton variant="rounded" height={70} />
               <Skeleton variant="rounded" height={70} />
               <Skeleton variant="rounded" height={70} />
