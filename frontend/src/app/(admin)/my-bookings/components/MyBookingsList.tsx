@@ -15,8 +15,10 @@ export default function MyBookingsList({
     : allBookings;
 
   const statusMessages: Record<Status, string> = {
-    pending: "No pending reservations right now — the staycation calendar is clear.",
-    confirmed: "No confirmed guests at the moment — rooms are ready for arrivals.",
+    pending:
+      "No pending reservations right now — the staycation calendar is clear.",
+    confirmed:
+      "No confirmed guests at the moment — rooms are ready for arrivals.",
     checked_in: "No guests are currently checked in — the property is quiet.",
     checked_out: "No recent check-outs — there are no departures to process.",
     action_required: "No bookings need attention — everything is up to date.",
@@ -30,7 +32,9 @@ export default function MyBookingsList({
         {bookings.length === 0 ? (
           <div className="flex justify-center mb-[1rem] items-center font-bold text-center text-gray-300 py-8 h-full">
             <span>
-              {filterStatus ? statusMessages[filterStatus] : "No bookings available."}
+              {filterStatus
+                ? statusMessages[filterStatus]
+                : "No bookings available."}
             </span>
           </div>
         ) : (

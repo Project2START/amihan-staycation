@@ -11,6 +11,8 @@ import {
 
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
+import { OfflineProvider } from "./shared/components/OfflineProvider";
+import OfflineBanner from "./shared/components/OfflineBanner";
 
 const inter = Inter({
   display: "swap",
@@ -28,15 +30,18 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body className="min-h-[100dvh] flex flex-col">
-        <StoreProvider>
-          <ApolloClientProvider>
-            <MantineProvider>{children}</MantineProvider>
-            <Toaster
-              position="bottom-right"
-              containerStyle={{ bottom: "4.5rem" }}
-            />
-          </ApolloClientProvider>
-        </StoreProvider>
+        <OfflineProvider>
+          <OfflineBanner />
+          <StoreProvider>
+            <ApolloClientProvider>
+              <MantineProvider>{children}</MantineProvider>
+              <Toaster
+                position="bottom-right"
+                containerStyle={{ bottom: "4.5rem" }}
+              />
+            </ApolloClientProvider>
+          </StoreProvider>
+        </OfflineProvider>
       </body>
     </html>
   );
