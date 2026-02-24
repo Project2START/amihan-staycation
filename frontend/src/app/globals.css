@@ -11,6 +11,7 @@
   --color-secondary-opacity: rgba(11, 81, 115, 0.3);
 }
 
+/* spaces */
 @layer components {
   .input-base {
     @apply w-full border-2 border-secondary-normal/30 rounded-md px-[0.5rem] py-[0.75rem] focus:outline-none focus:ring-1 focus:ring-secondary-normal/50 transition;
@@ -86,3 +87,48 @@
     opacity: 80%;
   } */
 }
+
+/* booking */
+@layer components {
+  /* Smooth pulse animation for active filters */
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.85;
+    }
+  }
+
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Smooth scroll snap */
+  .snap-x {
+    scroll-snap-type: x mandatory;
+  }
+
+  .snap-start {
+    scroll-snap-align: start;
+  }
+}
+
+/* Smooth scroll for the filter container */
+@supports (scroll-behavior: smooth) {
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+}
+
+

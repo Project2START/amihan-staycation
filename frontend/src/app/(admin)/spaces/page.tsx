@@ -1,4 +1,4 @@
-import NavigationBottomSpaces from "@/app/(admin)/spaces/components/NavigationBottomSpaces";
+import NavigationBottomSpaces from "./components/NavigationBottomSpaces";
 import ProductList from "./components/ProductList";
 import { Suspense } from "react";
 import { Skeleton } from "@mui/material";
