@@ -86,6 +86,8 @@ model PaymentMethod {
   userId     String   @db.Uuid
   user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  bookings   Booking[]  
+
   @@map("payment_methods")
 }
 
@@ -99,7 +101,6 @@ model Booking {
   name            String
   nationality     String
   image_payment_proof_url     String
-  payment_type    String
   pool_access     Json
   status          String @default("pending")
   status_message  String?
@@ -117,6 +118,9 @@ model Booking {
 
   product         Product  @relation(fields: [productId], references: [id])
   productId       String   @db.Uuid
+
+  paymentMethod   PaymentMethod  @relation(fields: [paymentMethodId], references: [id])
+  paymentMethodId String   @db.Uuid 
 
   @@map("bookings")
 }

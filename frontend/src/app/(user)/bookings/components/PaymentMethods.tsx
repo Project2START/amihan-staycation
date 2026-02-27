@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Skeleton } from "@mantine/core";
 import NotFoundClient from "@/app/shared/components/NotFoundClient";
-import getPaymentOptions from "@/app/shared/lib/getPaymentOptions";
+import { getPaymentLogo } from "@/app/shared/lib/getPaymentLogo";
 import PhotoFullViewDialog from "@/app/shared/components/PhotoFullViewDialog";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -62,14 +62,6 @@ function PaymentMethodsSkeleton() {
   );
 }
 
-function getPaymentLogo(paymentMethod: string): string {
-  const options = getPaymentOptions();
-  const match = options.find(
-    (opt) => opt.paymentName.toLowerCase() === paymentMethod.toLowerCase(),
-  );
-  return match?.paymentImage ?? "/images/payment-logos/default.png";
-}
-
 export default function PaymentMethods() {
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
@@ -92,6 +84,7 @@ export default function PaymentMethods() {
       setValue("payment_type", selected.payment_method, {
         shouldValidate: true,
       });
+      setValue("payment_method_id", selected.id);
     }
   }, [selected, setValue]);
 
@@ -104,6 +97,7 @@ export default function PaymentMethods() {
     setValue("payment_type", items[index].payment_method, {
       shouldValidate: true,
     });
+    setValue("payment_method_id", items[index].id);
   };
 
   return (

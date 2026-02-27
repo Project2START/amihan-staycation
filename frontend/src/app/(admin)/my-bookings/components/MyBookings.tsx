@@ -11,7 +11,7 @@ import { errorHandler } from "@/app/shared/lib/errorHandler";
 import ErrorClient from "@/app/shared/components/ErrorClient";
 import MyBookingsList from "./MyBookingsList";
 import { useState } from "react";
-import { Status } from "../lib/getStatusColor";
+import { Status } from "../lib/getStatusInfo";
 
 const statuses: { name: string; status: Status }[] = [
   { name: "Pending", status: "pending" },

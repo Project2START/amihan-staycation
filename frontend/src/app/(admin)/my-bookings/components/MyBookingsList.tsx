@@ -1,4 +1,4 @@
-import { Status } from "../lib/getStatusColor";
+import { Status } from "../lib/getStatusInfo";
 import { I_GET_ADMIN_BOOKINGS } from "../lib/myBookings-queries";
 import MyBookingItem from "./MyBookingItem";
 
@@ -45,17 +45,18 @@ export default function MyBookingsList({
             const name = b?.name ?? "Unknown";
             const product_name = b?.product?.name ?? "—";
             const status = (b?.status ?? "pending") as any;
-            const key = (b as any)?.id ?? `${name}-${check_in}`;
+            const id = b?.id ?? `${name}-${check_in}`;
 
             return (
               <MyBookingItem
-                key={key}
+                key={id}
                 check_in={check_in}
                 check_out={check_out}
                 contact_number={contact_number}
                 name={name}
                 product_name={product_name}
                 status={status}
+                id={id}
               />
             );
           })

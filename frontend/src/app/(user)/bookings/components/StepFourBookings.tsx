@@ -136,7 +136,7 @@ export default function StepFourBookings() {
       </div>
       {/* ADDITIONAL GUESTS */}
 
-      {additional_guests.length === 0 ? null : (
+      {(additional_guests ?? []).length === 0 ? null : (
         <div className="flex flex-col gap-y-3 mt-[1.5rem] bg-[#efefef] rounded-lg p-[1rem]">
           <h3 className="font-bold">Additional Guests</h3>
           <div className="flex flex-col gap-y-5">

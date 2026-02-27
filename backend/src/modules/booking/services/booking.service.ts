@@ -2,11 +2,13 @@ import { uploadFileToSupabase } from "../../../shared/helpers/uploadFileToSupaba
 import { BookingDTO } from "../schemas/booking.schema";
 import {
   BadRequestError,
+  ForbiddenError,
   NotFoundError,
 } from "../../../shared/helpers/appErrors";
 import { supabase } from "../../../shared/lib/supabase";
 import { bookingRepository } from "../repositories/bookings.repository";
 import { productService } from "../../product/services/product.service";
+import { paymentMethodService } from "../../paymentMethod/services/paymentMethod.service";
 
 class BookingService {
   async create(
@@ -21,7 +23,7 @@ class BookingService {
       contact_number,
       name,
       nationality,
-      payment_type,
+      payment_method_id,
       pool_access,
       product_id,
       with_vehicle,
@@ -35,6 +37,15 @@ class BookingService {
 
     if (!product.userId) {
       throw new NotFoundError("User not found");
+    }
+
+    const paymentMethod = await paymentMethodService.get(
+      payment_method_id,
+      product.userId,
+    );
+
+    if (!paymentMethod.id) {
+      throw new NotFoundError("Payment method not found");
     }
 
     const valid_id = files.valid_id;
@@ -108,11 +119,11 @@ class BookingService {
         image_valid_id_url: valid_id_file.publicUrl,
         name,
         nationality,
-        payment_type,
         pool_access,
         agree_terms,
         with_vehicle,
         additional_guests: additional_guests_data,
+        paymentMethod: { connect: { id: paymentMethod.id } },
         user: { connect: { id: userId } },
         admin: { connect: { id: product.userId } },
         product: { connect: { id: product.id } },
@@ -126,11 +137,26 @@ class BookingService {
       throw error;
     }
   }
+  async get(bookingId: string, id: string) {
+    const booking = await bookingRepository.findById(bookingId);
+
+    if (!booking) {
+      throw new NotFoundError("Booking not found");
+    }
+
+    if (booking.adminId !== id) {
+      throw new ForbiddenError(
+        "You do not have permission to get this booking",
+      );
+    }
+
+    return booking;
+  }
   async getAllByAdmin(adminId: string) {
     const bookings = await bookingRepository.findAllByAdminId(adminId);
 
     const bookingsFormatted = bookings.map((booking) => {
-      const { updatedAt, createdAt, ...rest } = booking;
+      const { ...rest } = booking;
 
       return rest;
     });

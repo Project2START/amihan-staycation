@@ -1,8 +1,9 @@
 import { gql } from "@apollo/client";
-import { Status } from "./getStatusColor";
+import { Status } from "./getStatusInfo";
 
 export interface I_GET_ADMIN_BOOKINGS {
   bookingsByAdmin: {
+    id: string | null;
     name: string | null;
     contact_number: string | null;
     check_period: {
@@ -17,8 +18,9 @@ export interface I_GET_ADMIN_BOOKINGS {
 }
 
 export const GET_ADMIN_BOOKINGS = gql`
-  query GetAdminByBookings {
+  query GetBookingsByAdmin {
     bookingsByAdmin {
+      id
       name
       contact_number
       check_period {

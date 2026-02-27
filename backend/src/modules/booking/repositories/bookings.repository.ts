@@ -4,7 +4,7 @@ import { AppError, ConflictError } from "../../../shared/helpers/appErrors";
 const prisma = new PrismaClient();
 
 type BookingWithRelations = Prisma.BookingGetPayload<{
-  include: { user: true; product: true };
+  include: { user: true; product: true; admin: true; paymentMethod: true };
 }>;
 
 class BookingsRepository {
@@ -19,9 +19,17 @@ class BookingsRepository {
     }
   }
 
-  async findById(id: string): Promise<Booking | null> {
+  async findById(id: string): Promise<BookingWithRelations | null> {
     try {
-      return await prisma.booking.findUnique({ where: { id } });
+      return await prisma.booking.findUnique({
+        where: { id },
+        include: {
+          user: true,
+          admin: true,
+          product: true,
+          paymentMethod: true,
+        },
+      });
     } catch (error) {
       throw new AppError("Could not fetch booking. Please try again");
     }
@@ -39,7 +47,12 @@ class BookingsRepository {
     try {
       return await prisma.booking.findMany({
         where: { adminId },
-        include: { user: true, product: true },
+        include: {
+          user: true,
+          product: true,
+          admin: true,
+          paymentMethod: true,
+        },
       });
     } catch (error) {
       throw new AppError("Could not fetch bookings. Please try again");

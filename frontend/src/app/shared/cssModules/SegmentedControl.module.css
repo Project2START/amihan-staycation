@@ -1,0 +1,9 @@
+.root {
+  border: 2px solid var(--color-secondary-opacity);
+  border-radius: 1.5rem;
+  padding: 0;
+}
+
+.indicator {
+  border-radius: 1.5rem;
+}
