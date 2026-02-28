@@ -13,5 +13,8 @@ export const bookingsResolver = {
       const { id } = args;
       return contextValue.models.Booking.getBookingById(id);
     },
+    bookingsByUser: (_parent: unknown, _args: unknown, contextValue: any) => {
+      return contextValue.models.Booking.getBookingsByUserId();
+    },
   },
 };

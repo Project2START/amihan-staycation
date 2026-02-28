@@ -1,13 +1,11 @@
 "use client";
 
 import { useQuery } from "@apollo/client/react";
-import { GET_BOOKING, I_GET_BOOKING } from "../lib/myBookingsSlug-queries";
 import ErrorClient from "@/app/shared/components/ErrorClient";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import dayjs from "dayjs";
 import { endTime, startTime } from "@/app/shared/constants/standardStayTime";
 import PrimaryBackButton from "@/app/shared/components/PrimaryBackButton";
-import { getStatusColor, getStatusDisplayName } from "../../lib/getStatusInfo";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -15,11 +13,19 @@ import PhotoFullViewDialog from "@/app/shared/components/PhotoFullViewDialog";
 import Image from "next/image";
 import { v4 as uuid } from "uuid";
 import { Skeleton } from "@mui/material";
-import SecurityDeposit from "./SecurityDeposit";
+import {
+  GET_BOOKING,
+  I_GET_BOOKING,
+} from "@/app/(admin)/my-bookings/[slug]/lib/myBookingsSlug-queries";
+import {
+  getStatusColor,
+  getStatusDisplayName,
+} from "@/app/(admin)/my-bookings/lib/getStatusInfo";
+import SecurityDeposit from "@/app/(admin)/my-bookings/[slug]/components/SecurityDeposit";
 
 dayjs.extend(customParseFormat);
 
-export default function MyBookingSummary({ bookingId }: { bookingId: string }) {
+export default function BookingDetails({ bookingId }: { bookingId: string }) {
   const { loading, error, data, refetch } = useQuery<I_GET_BOOKING>(
     GET_BOOKING,
     {
@@ -62,7 +68,7 @@ export default function MyBookingSummary({ bookingId }: { bookingId: string }) {
         <span className="flex-1/3 flex items-center">
           <PrimaryBackButton
             onClick={() => {
-              router.push("/my-bookings");
+              router.back();
             }}
             style="text-xl"
           />
@@ -86,7 +92,7 @@ export default function MyBookingSummary({ bookingId }: { bookingId: string }) {
         <div className="flex justify-between items-center mt-[0.5rem]">
           <span>Unit</span>
           <Link
-            href={`/spaces/${booking.product?.id ?? bookingTextAlternate}`}
+            href={`/units/${booking.product?.id ?? bookingTextAlternate}`}
             className="font-bold underline"
           >
             <span>{booking?.product?.name ?? bookingTextAlternate}</span>

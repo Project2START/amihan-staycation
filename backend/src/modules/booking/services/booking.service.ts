@@ -9,6 +9,7 @@ import { supabase } from "../../../shared/lib/supabase";
 import { bookingRepository } from "../repositories/bookings.repository";
 import { productService } from "../../product/services/product.service";
 import { paymentMethodService } from "../../paymentMethod/services/paymentMethod.service";
+import { userRepository } from "../../user/repositories/user.repository";
 
 class BookingService {
   async create(
@@ -39,13 +40,13 @@ class BookingService {
       throw new NotFoundError("User not found");
     }
 
-    const paymentMethod = await paymentMethodService.get(
-      payment_method_id,
-      product.userId,
-    );
+    let paymentMethod;
 
-    if (!paymentMethod.id) {
-      throw new NotFoundError("Payment method not found");
+    if (payment_method_id) {
+      paymentMethod = await paymentMethodService.get(
+        payment_method_id,
+        product.userId,
+      );
     }
 
     const valid_id = files.valid_id;
@@ -111,7 +112,7 @@ class BookingService {
     }
 
     try {
-      await bookingRepository.create({
+      const payload: any = {
         age,
         check_period,
         contact_number,
@@ -123,11 +124,16 @@ class BookingService {
         agree_terms,
         with_vehicle,
         additional_guests: additional_guests_data,
-        paymentMethod: { connect: { id: paymentMethod.id } },
         user: { connect: { id: userId } },
         admin: { connect: { id: product.userId } },
         product: { connect: { id: product.id } },
-      });
+      };
+
+      if (paymentMethod && paymentMethod.id) {
+        payload.paymentMethod = { connect: { id: paymentMethod.id } };
+      }
+
+      await bookingRepository.create(payload);
 
       return;
     } catch (error) {
@@ -139,12 +145,21 @@ class BookingService {
   }
   async get(bookingId: string, id: string) {
     const booking = await bookingRepository.findById(bookingId);
+    const user = await userRepository.findById(id);
 
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
     if (!booking) {
       throw new NotFoundError("Booking not found");
     }
 
-    if (booking.adminId !== id) {
+    if (user.role === "admin" && booking.adminId !== id) {
+      throw new ForbiddenError(
+        "You do not have permission to get this booking",
+      );
+    }
+    if (user.role === "user" && booking.userId !== id) {
       throw new ForbiddenError(
         "You do not have permission to get this booking",
       );
@@ -155,13 +170,18 @@ class BookingService {
   async getAllByAdmin(adminId: string) {
     const bookings = await bookingRepository.findAllByAdminId(adminId);
 
-    const bookingsFormatted = bookings.map((booking) => {
-      const { ...rest } = booking;
+    // const bookingsFormatted = bookings.map((booking) => {
+    //   const { ...rest } = booking;
 
-      return rest;
-    });
+    //   return rest;
+    // });
 
-    return bookingsFormatted;
+    return bookings;
+  }
+  async getAllByUser(userId: string) {
+    const bookings = await bookingRepository.findAllByUserId(userId);
+
+    return bookings;
   }
 }
 

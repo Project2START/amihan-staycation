@@ -19,6 +19,7 @@ export const bookingTypeDefs = `#graphql
         account_name: String
         account_number: String
         image_url: String
+        id: String
     }
 
     type PoolAccess {
@@ -51,6 +52,11 @@ export const bookingTypeDefs = `#graphql
         id: String!
     }
 
+    type UserBookings {
+        status: String!
+        id: String!
+    }
+
     type Booking {
         id: String!
         status: String!
@@ -73,5 +79,6 @@ export const bookingTypeDefs = `#graphql
     extend type Query {
         bookingsByAdmin: [AdminBookings]
         bookingById(id: String!): Booking
+        bookingsByUser: [UserBookings]
     }
     `;

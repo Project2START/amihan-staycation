@@ -12,6 +12,7 @@ export interface I_GET_BOOKING {
       account_name?: string | null;
       account_number?: string | null;
       image_url?: string | null;
+      id?: string | null;
     } | null;
     check_period?: {
       check_in?: string | null;
@@ -68,6 +69,7 @@ export const GET_BOOKING = gql`
         account_name
         account_number
         image_url
+        id
       }
       check_period {
         check_in

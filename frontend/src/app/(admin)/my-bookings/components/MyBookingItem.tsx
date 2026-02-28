@@ -54,7 +54,7 @@ export default function MyBookingItem({
               <span className="font-bold">{product_name}</span>
               <span className="mx-[0.5rem]">/</span>
               <span>{dayjs(check_in).format("MMMM DD")}</span>
-              <span>-</span>
+              <span className="mx-[0.25rem]">-</span>
               <span>{dayjs(check_out).format("DD")}</span>
             </div>
           </div>

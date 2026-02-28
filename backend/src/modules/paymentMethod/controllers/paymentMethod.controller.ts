@@ -7,8 +7,6 @@ interface RequestWithFiles extends Request {
 
 class PaymentMethodController {
   async createPaymentMethod(req: RequestWithFiles, res: Response) {
-    console.log(req.body, req.file);
-
     const user = (req as any).user;
 
     await paymentMethodService.create(req.body, req.file, user.user_id);

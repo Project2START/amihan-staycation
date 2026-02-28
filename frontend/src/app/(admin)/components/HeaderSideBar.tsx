@@ -36,7 +36,6 @@ export default function HeaderSideBar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const router = useRouter();
-
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.users.data);
 

@@ -11,6 +11,7 @@ export interface ISecurityDeposit {
   payment_method: string;
   account_name: string;
   account_number: string;
+  id: string;
 }
 
 export default function SecurityDeposit({
@@ -19,6 +20,7 @@ export default function SecurityDeposit({
   payment_method,
   account_name,
   account_number,
+  id,
 }: ISecurityDeposit) {
   const [destination, setDestination] = useState("from");
 
@@ -61,15 +63,15 @@ export default function SecurityDeposit({
             </PhotoFullViewDialog>
           ) : (
             <div className="p-[0.5rem] flex justify-center items-center w-full h-[10rem] rounded-lg border-2 border-secondary-normal/30">
-              <div className="w-full relative rounded-lg h-full">
-                <p>Photo not available</p>
+              <div className="w-full relative rounded-lg h-full flex items-center justify-center opacity-50 text-center">
+                <p>There is no security deposit attached to this booking</p>
               </div>
             </div>
           )
         ) : image_to_url ? (
-          <PhotoFullViewDialog url={image_to_url}>
-            <div className="relative p-[0.5rem] flex flex-col justify-center items-center w-full h-[10rem] rounded-lg border-2 border-secondary-normal/30">
-              <div className="w-full relative rounded-lg h-full">
+          <div className="relative p-[0.5rem] flex flex-col justify-center items-center w-full h-[10rem] rounded-lg border-2 border-secondary-normal/30">
+            <PhotoFullViewDialog url={image_to_url}>
+              <div className="w-full relative rounded-lg h-[6rem]">
                 <Image
                   src={image_to_url}
                   fill
@@ -78,26 +80,26 @@ export default function SecurityDeposit({
                   sizes="100%"
                 />
               </div>
-              <div className="absolute top-1 right-1 h-[2rem] w-[2rem]">
-                <Image
-                  src={getPaymentLogo(payment_method)}
-                  fill
-                  alt={payment_method}
-                  className="object-contain object-center p-1"
-                />
-              </div>
-              <div className="mt-2 text-center">
-                <p className="text-xs">{payment_method}</p>
-                <p className="text-sm font-bold">
-                  {account_name} &middot; {account_number}
-                </p>
-              </div>
+            </PhotoFullViewDialog>
+            <div className="mt-2 text-center">
+              <p className="text-xs">{payment_method}</p>
+              <p className="text-sm font-bold">
+                {account_name} &middot; <span>{account_number}</span>
+              </p>
             </div>
-          </PhotoFullViewDialog>
+            <div className="absolute top-1 right-1 h-[2.5rem] w-[2.5rem]">
+              <Image
+                src={getPaymentLogo(payment_method)}
+                fill
+                alt={payment_method}
+                className="object-contain object-center p-1"
+              />
+            </div>
+          </div>
         ) : (
           <div className="p-[0.5rem] flex justify-center items-center w-full h-[10rem] rounded-lg border-2 border-secondary-normal/30">
-            <div className="w-full relative rounded-lg h-full">
-              <p>Photo not available</p>
+            <div className="text-center w-full relative rounded-lg h-full flex items-center justify-center opacity-50">
+              <p>No destination payment method is attached to this booking.</p>
             </div>
           </div>
         )}

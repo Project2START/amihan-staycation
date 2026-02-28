@@ -43,6 +43,21 @@ class BookingsRepository {
     }
   }
 
+  async findAllByUserId(userId: string): Promise<BookingWithRelations[]> {
+    try {
+      return await prisma.booking.findMany({
+        where: { userId },
+        include: {
+          user: true,
+          product: true,
+          admin: true,
+          paymentMethod: true,
+        },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch bookings. Please try again");
+    }
+  }
   async findAllByAdminId(adminId: string): Promise<BookingWithRelations[]> {
     try {
       return await prisma.booking.findMany({

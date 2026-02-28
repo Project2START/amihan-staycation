@@ -10,8 +10,6 @@ export const NATIONALITY_MAX_LENGTH = 50;
 export const CONTACT_NUMBER_MIN_LENGTH = 8;
 export const CONTACT_NUMBER_MAX_LENGTH = 15;
 export const ADDITIONAL_GUESTS_MAX = 10;
-// export const PAYMENT_TYPE_MIN_LENGTH = 2;
-// export const PAYMENT_TYPE_MAX_LENGTH = 50;
 export const STATUS_MIN_LENGTH = 2;
 export const STATUS_MAX_LENGTH = 20;
 export const STANDARD_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -292,7 +290,8 @@ export const bookingSchema = z.object({
     .max(UUID_MAX, `Product ID must be at most ${UUID_MAX} characters.`),
   payment_method_id: z
     .string()
-    .max(UUID_MAX, `Payment method ID must be at most ${UUID_MAX} characters.`),
+    .max(UUID_MAX, `Payment method ID must be at most ${UUID_MAX} characters.`)
+    .optional(),
   //   status: z
   //     .string()
   //     .min(STATUS_MIN_LENGTH, "Status cannot be empty.")

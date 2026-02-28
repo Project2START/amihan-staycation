@@ -25,7 +25,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
   },
   getBookingById: async (id: string) => {
     requireAuth(user);
-    requireRole(user, ["admin"]);
+    requireRole(user, ["admin", "user"]);
 
     const booking = await bookingService.get(id, user.user_id);
 
@@ -47,10 +47,10 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
       paymentMethod,
     } = booking;
 
-    return {
+    const payload: any = {
       id,
       status,
-      createdAt,
+      createdAt: createdAt.toISOString(),
       product: { name: product.name, id: product.id },
       check_period,
       name,
@@ -63,12 +63,25 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
       additional_guests,
       image_payment_proof_url,
       userId,
-      paymentMethod: {
+    };
+
+    if (paymentMethod) {
+      payload.paymentMethod = {
+        id: paymentMethod.id,
         payment_method: paymentMethod.payment_method,
         account_name: paymentMethod.account_name,
         account_number: paymentMethod.account_number,
         image_url: paymentMethod.image_url,
-      },
-    };
+      };
+    }
+    return payload;
+  },
+  getBookingsByUserId: async function () {
+    const bookings = await bookingService.getAllByUser(user.user_id);
+
+    const bookingsByUserId = await Promise.all(
+      bookings.map((b) => this.getBookingById(b.id)),
+    );
+    return bookingsByUserId;
   },
 });

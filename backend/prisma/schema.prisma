@@ -119,8 +119,8 @@ model Booking {
   product         Product  @relation(fields: [productId], references: [id])
   productId       String   @db.Uuid
 
-  paymentMethod   PaymentMethod  @relation(fields: [paymentMethodId], references: [id])
-  paymentMethodId String   @db.Uuid 
+  paymentMethod   PaymentMethod?  @relation(fields: [paymentMethodId], references: [id], onDelete: SetNull)
+  paymentMethodId String?   @db.Uuid 
 
   @@map("bookings")
 }

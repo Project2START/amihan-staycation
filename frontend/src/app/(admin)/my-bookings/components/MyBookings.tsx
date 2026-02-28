@@ -30,8 +30,10 @@ export default function MyBookings() {
     setFilterStatus(status);
   };
 
-  const { loading, error, data, refetch } =
-    useQuery<I_GET_ADMIN_BOOKINGS>(GET_ADMIN_BOOKINGS);
+  const { loading, error, data, refetch } = useQuery<I_GET_ADMIN_BOOKINGS>(
+    GET_ADMIN_BOOKINGS,
+    { fetchPolicy: "network-only" },
+  );
 
   if (loading)
     return (
@@ -53,15 +55,15 @@ export default function MyBookings() {
       />
     );
 
-  if (data?.bookingsByAdmin && data.bookingsByAdmin.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-[60vh]">
-        <p className="text-center font-bold text-lg text-gray-300">
-          You currently have no bookings.
-        </p>
-      </div>
-    );
-  }
+  // if (data?.bookingsByAdmin && data.bookingsByAdmin.length === 0) {
+  //   return (
+  //     <div className="flex items-center justify-center h-[60vh]">
+  //       <p className="text-center font-bold text-lg text-gray-300">
+  //         You currently have no bookings.
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
   // build status counts in a single pass (O(n))
   const counts: Partial<Record<Status, number>> = {};
