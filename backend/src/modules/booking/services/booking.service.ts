@@ -247,10 +247,105 @@ class BookingService {
     const bookingHistories =
       await bookingRepository.findHistoryByBookingId(bookingId);
     const formattedBookingHistories = bookingHistories.map((bookingHistory) => {
-      const { createdAt, updatedAt, valid_id_url, ...rest } = bookingHistory;
+      const { updatedAt, ...rest } = bookingHistory;
       return rest;
     });
-    return formattedBookingHistories;
+    return {
+      history: formattedBookingHistories,
+      bookingStatus: booking.status,
+    };
+  }
+
+  async respondToHistory(
+    historyId: string,
+    userId: string,
+    files: Record<string, Express.Multer.File[]>,
+  ) {
+    const history = await bookingRepository.findHistoryById(historyId);
+
+    if (!history) {
+      throw new NotFoundError("Booking history not found");
+    }
+
+    if (history.hasUserResponded) {
+      throw new BadRequestError("You have already responded to this history");
+    }
+
+    const booking = await bookingRepository.findById(history.bookingId);
+
+    if (!booking) {
+      throw new NotFoundError("Booking not found");
+    }
+
+    if (booking.userId !== userId) {
+      throw new ForbiddenError(
+        "You do not have permission to respond to this booking history",
+      );
+    }
+
+    if (booking.status !== "action_required" && booking.status !== "pending") {
+      throw new BadRequestError(
+        "This booking is not currently requiring action",
+      );
+    }
+
+    const actionItems = (history.action_items as string[]) || [];
+
+    const responseData: Record<string, any> = {};
+    const uploadedFiles: { filePath: string }[] = [];
+
+    try {
+      if (actionItems.includes("valid_id")) {
+        const validIdFile = files.valid_id;
+        if (!validIdFile || validIdFile.length === 0) {
+          throw new BadRequestError("Valid ID file is required.");
+        }
+        const uploaded = await uploadFileToSupabase(validIdFile[0], "userIds");
+        uploadedFiles.push(uploaded);
+        responseData.valid_id_url = uploaded.publicUrl;
+      }
+
+      if (actionItems.includes("security_deposit")) {
+        const paymentProofFile = files.security_deposit;
+        if (!paymentProofFile || paymentProofFile.length === 0) {
+          throw new BadRequestError("Security deposit proof file is required.");
+        }
+        const uploaded = await uploadFileToSupabase(
+          paymentProofFile[0],
+          "paymentProofs",
+        );
+        uploadedFiles.push(uploaded);
+        responseData.payment_proof_url = uploaded.publicUrl;
+      }
+
+      // Create a new history entry with the user's uploaded files
+      await bookingRepository.createBookingHistory({
+        userName: `${booking.user.first_name} ${booking.user.last_name}`,
+        ownerName: `${booking.admin.first_name} ${booking.admin.last_name}`,
+        booking: { connect: { id: booking.id } },
+        hasUserResponded: true,
+        action_items: [],
+        ...responseData,
+      });
+
+      // Mark the original history item as responded
+      await bookingRepository.updateBookingHistory(historyId, {
+        hasUserResponded: true,
+      });
+
+      if (booking.status === "action_required") {
+        await bookingRepository.update(booking.id, { status: "pending" });
+      }
+
+      return;
+    } catch (error) {
+      if (uploadedFiles.length > 0) {
+        await supabase.storage
+          .from("images")
+          .remove(uploadedFiles.map((f) => f.filePath));
+      }
+      throw error;
+    }
   }
 }
 

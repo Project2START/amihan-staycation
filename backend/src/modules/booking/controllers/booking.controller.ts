@@ -43,14 +43,29 @@ class BookingController {
     const user = (req as any).user;
     const bookingId = req.params.id;
 
-    const history = await bookingService.getHistoryByBookingId(
-      bookingId,
+    const { history, bookingStatus } =
+      await bookingService.getHistoryByBookingId(bookingId, user.user_id);
+
+    res.status(200).json({
+      message: "Booking history successfully fetched",
+      history,
+      bookingStatus,
+    });
+  }
+
+  async respondToHistory(req: Request, res: Response) {
+    const user = (req as any).user;
+    const { historyId } = req.body;
+
+    await bookingService.respondToHistory(
+      historyId,
       user.user_id,
+      req.files as Record<string, Express.Multer.File[]>,
     );
 
-    res
-      .status(200)
-      .json({ message: "Booking history successfully fetched", history });
+    res.status(200).json({
+      message: "Response submitted successfully",
+    });
   }
 }
 

@@ -63,6 +63,7 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
   const bookingTextAlternate = "Not define";
 
   const latestBookingHistory = booking?.history?.[booking?.history.length - 1];
+
   return (
     <div className="h-full flex flex-col px-[1rem] py-[1.5rem] text-sm text-secondary-normal">
       <div className="flex items-center justify-between border-b-3 border-secondary-normal/50 pb-[1rem]">

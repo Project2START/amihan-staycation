@@ -6,8 +6,7 @@ export interface IBookingHistory {
   message: string | null;
   action_items: string[];
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
   valid_id_url: string | null;
   payment_proof_url: string | null;
   hasUserResponded: boolean;
@@ -32,12 +31,15 @@ export default async function HistorySlugPage({
     return notFound();
   }
 
-  const parsed: { message: string; history: IBookingHistory[] } =
-    await result.json();
+  const parsed: {
+    message: string;
+    history: IBookingHistory[];
+    bookingStatus: string;
+  } = await result.json();
 
   return (
     <>
-      <History history={parsed.history} />
+      <History history={parsed.history} bookingStatus={parsed.bookingStatus} />
     </>
   );
 }

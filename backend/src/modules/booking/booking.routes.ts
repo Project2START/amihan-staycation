@@ -20,6 +20,17 @@ router.get(
 );
 
 router.post(
+  "/history/respond",
+  checkAuth,
+  checkRole(["user"]),
+  upload.fields([
+    { name: "valid_id", maxCount: 1 },
+    { name: "security_deposit", maxCount: 1 },
+  ]),
+  asyncHandler(bookingController.respondToHistory),
+);
+
+router.post(
   "/",
   checkAuth,
   checkRole(["user", "agent"]),

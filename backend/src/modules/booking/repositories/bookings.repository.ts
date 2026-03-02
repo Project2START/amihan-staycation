@@ -127,6 +127,25 @@ class BookingsRepository {
       throw new AppError("Could not fetch booking history. Please try again");
     }
   }
+
+  async findHistoryById(id: string): Promise<BookingHistory | null> {
+    try {
+      return await prisma.bookingHistory.findUnique({ where: { id } });
+    } catch (error) {
+      throw new AppError("Could not fetch booking history. Please try again");
+    }
+  }
+
+  async updateBookingHistory(
+    id: string,
+    data: Prisma.BookingHistoryUpdateInput,
+  ): Promise<BookingHistory> {
+    try {
+      return await prisma.bookingHistory.update({ where: { id }, data });
+    } catch (error) {
+      throw new AppError("Could not update booking history. Please try again");
+    }
+  }
 }
 
 export const bookingRepository = new BookingsRepository();
