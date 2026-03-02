@@ -1,7 +1,8 @@
 # Polymorphism usage
 
-This file captures the current polymorphism examples across the repo since it
-is the only documentation file in the project today.
+This backend README doubles as a repo-wide note for polymorphism usage because
+it is currently the only documentation file in the project. If a root-level
+README is added later, this section should move there.
 
 ## Backend
 
