@@ -3,6 +3,8 @@ import FooterMain from "@/app/shared/components/FooterMain";
 import RoleGuard from "./guard/RoleGuard";
 import { cookies } from "next/headers";
 import UserHeader from "./components/UserHeader";
+import { BookingStatusProvider } from "./components/BookingStatusContext";
+import ClientLayout from "./components/ClientLayout";
 
 export default async function UserLayout({
   children,
@@ -13,12 +15,12 @@ export default async function UserLayout({
   const userId = cookieStore.get("user_id")?.value;
 
   return (
-    <>
-      <RoleGuard userId={userId}>
+    <RoleGuard userId={userId}>
+      <ClientLayout userId={userId}>
         <UserHeader />
         <main>{children}</main>
         <FooterMain />
-      </RoleGuard>
-    </>
+      </ClientLayout>
+    </RoleGuard>
   );
 }

@@ -8,9 +8,7 @@ export default function UnitsPage() {
   return (
     <div className="px-[1.5rem] py-[2rem]">
       <BookingStatus />
-
       <GreetUser />
-
       <Suspense
         fallback={
           <div className="my-[1rem] grid gap-y-8">

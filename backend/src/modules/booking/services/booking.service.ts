@@ -10,8 +10,47 @@ import { bookingRepository } from "../repositories/bookings.repository";
 import { productService } from "../../product/services/product.service";
 import { paymentMethodService } from "../../paymentMethod/services/paymentMethod.service";
 import { userRepository } from "../../user/repositories/user.repository";
+import { BookingUpdateDTO } from "../schemas/bookingUpdate.schema";
 
 class BookingService {
+  async update(
+    bookingId: string,
+    adminId: string,
+    updateData: BookingUpdateDTO,
+  ) {
+    const { action_items, status, status_message } = updateData;
+
+    const booking = await bookingRepository.findById(bookingId);
+
+    if (!booking) {
+      throw new NotFoundError("Booking not found");
+    }
+    if (booking.adminId !== adminId) {
+      throw new ForbiddenError("You do not own this booking");
+    }
+
+    if (updateData.status === "action_required") {
+      const newHistory = await bookingRepository.createBookingHistory({
+        userName: `${booking.user.first_name} ${booking.user.last_name}`,
+        ownerName: `${booking.admin.first_name} ${booking.admin.last_name}`,
+        booking: { connect: { id: bookingId } },
+        hasUserResponded: false,
+        action_items,
+        message: status_message,
+      });
+
+      try {
+        await bookingRepository.update(bookingId, { status, status_message });
+      } catch (error) {
+        await bookingRepository.deleteBookingHistory(newHistory.id);
+        throw error;
+      }
+    }
+    await bookingRepository.update(bookingId, { status, status_message });
+
+    return;
+  }
+
   async create(
     booking: BookingDTO,
     files: Record<string, Express.Multer.File[]>,
@@ -182,6 +221,36 @@ class BookingService {
     const bookings = await bookingRepository.findAllByUserId(userId);
 
     return bookings;
+  }
+
+  async getHistoryByBookingId(bookingId: string, userId: string) {
+    const booking = await bookingRepository.findById(bookingId);
+    const user = await userRepository.findById(userId);
+
+    if (!booking) {
+      throw new NotFoundError("Booking not found");
+    }
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    if (user.role === "admin" && booking.adminId !== userId) {
+      throw new ForbiddenError(
+        "You do not have permission to view this booking history",
+      );
+    }
+    if (user.role === "user" && booking.userId !== userId) {
+      throw new ForbiddenError(
+        "You do not have permission to view this booking history",
+      );
+    }
+    const bookingHistories =
+      await bookingRepository.findHistoryByBookingId(bookingId);
+    const formattedBookingHistories = bookingHistories.map((bookingHistory) => {
+      const { createdAt, updatedAt, valid_id_url, ...rest } = bookingHistory;
+      return rest;
+    });
+    return formattedBookingHistories;
   }
 }
 

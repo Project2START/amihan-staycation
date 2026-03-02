@@ -62,6 +62,7 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
 
   const bookingTextAlternate = "Not define";
 
+  const latestBookingHistory = booking?.history?.[booking?.history.length - 1];
   return (
     <div className="h-full flex flex-col px-[1rem] py-[1.5rem] text-sm text-secondary-normal">
       <div className="flex items-center justify-between border-b-3 border-secondary-normal/50 pb-[1rem]">
@@ -81,6 +82,36 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
           {statusDisplayName ?? bookingTextAlternate}
         </span>
       </div>
+      {latestBookingHistory?.hasUserResponded ? (
+        <div className="mt-[0.5rem]">
+          <p>
+            Thank you for responding. Allow us to review your submitted
+            information
+          </p>
+          <Link
+            href={`/units/booking/history/${booking.id}`}
+            className="underline"
+          >
+            <span>View History</span>
+          </Link>
+        </div>
+      ) : (
+        <div
+          className="flex mt-[1rem] text-white rounded-lg p-[0.5rem]"
+          style={statusColor ? { backgroundColor: statusColor } : undefined}
+        >
+          <p>
+            Some information is required to proceed with your booking. Click{" "}
+            <Link
+              href={`/units/booking/history/${booking.id}`}
+              className="underline font-bold"
+            >
+              <span>here</span>
+            </Link>{" "}
+            to continue.
+          </p>
+        </div>
+      )}
       <div className="flex-1 overflow-auto grid gap-y-3 px-[0.5rem]">
         <div className="flex justify-between items-center mt-[1.5rem] text-xs text-gray-500">
           <span>Request date</span>

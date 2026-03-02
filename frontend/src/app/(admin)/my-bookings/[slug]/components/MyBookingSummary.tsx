@@ -16,6 +16,7 @@ import Image from "next/image";
 import { v4 as uuid } from "uuid";
 import { Skeleton } from "@mui/material";
 import SecurityDeposit from "./SecurityDeposit";
+import UpdateBookingStatus from "./UpdateBookingStatus";
 
 dayjs.extend(customParseFormat);
 
@@ -314,8 +315,18 @@ export default function MyBookingSummary({ bookingId }: { bookingId: string }) {
             </div>
           </div>
         )}
+
+        <div className="bg-[#efefef] p-[1rem] rounded-lg mt-[1rem]">
+          <UpdateBookingStatus
+            bookingId={booking.id}
+            bookingStatus={booking.status}
+            refetch={refetch}
+          />
+        </div>
       </div>
-      <div>a</div>
+      {/* <div className="h-[5rem]">
+        <UpdateBookingStatus bookingStatus={booking.status} />
+      </div> */}
     </div>
   );
 }

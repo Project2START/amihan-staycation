@@ -12,6 +12,13 @@ const router = Router();
 
 const upload = createUpload();
 
+router.get(
+  "/:id/history",
+  checkAuth,
+  checkRole(["user", "admin"]),
+  asyncHandler(bookingController.getBookingHistory),
+);
+
 router.post(
   "/",
   checkAuth,
@@ -23,6 +30,16 @@ router.post(
   ]),
   validateSchema(bookingSchema),
   asyncHandler(bookingController.createBooking),
+);
+
+import { bookingUpdateSchema } from "./schemas/bookingUpdate.schema";
+
+router.patch(
+  "/:id",
+  checkAuth,
+  checkRole(["admin"]),
+  validateSchema(bookingUpdateSchema),
+  asyncHandler(bookingController.updateBooking),
 );
 
 export default router;

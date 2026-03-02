@@ -51,6 +51,11 @@ export interface I_GET_BOOKING {
       | null;
     image_payment_proof_url?: string | null;
     userId?: string | null;
+    history?: {
+      message?: string | null;
+      ownerName?: string | null;
+      hasUserResponded: boolean;
+    }[];
   } | null;
 }
 
@@ -106,6 +111,11 @@ export const GET_BOOKING = gql`
       }
       image_payment_proof_url
       userId
+      history {
+        message
+        ownerName
+        hasUserResponded
+      }
     }
   }
 `;

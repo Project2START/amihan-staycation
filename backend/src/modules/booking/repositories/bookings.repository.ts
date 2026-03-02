@@ -1,10 +1,16 @@
-import { Prisma, PrismaClient, Booking } from "@prisma/client";
+import { Prisma, PrismaClient, Booking, BookingHistory } from "@prisma/client";
 import { AppError, ConflictError } from "../../../shared/helpers/appErrors";
 
 const prisma = new PrismaClient();
 
 type BookingWithRelations = Prisma.BookingGetPayload<{
-  include: { user: true; product: true; admin: true; paymentMethod: true };
+  include: {
+    user: true;
+    product: true;
+    admin: true;
+    paymentMethod: true;
+    history: true;
+  };
 }>;
 
 class BookingsRepository {
@@ -19,6 +25,16 @@ class BookingsRepository {
     }
   }
 
+  async createBookingHistory(
+    data: Prisma.BookingHistoryCreateInput,
+  ): Promise<BookingHistory> {
+    try {
+      return await prisma.bookingHistory.create({ data });
+    } catch (error) {
+      throw new AppError("Could not create booking history. Please try again");
+    }
+  }
+
   async findById(id: string): Promise<BookingWithRelations | null> {
     try {
       return await prisma.booking.findUnique({
@@ -28,6 +44,7 @@ class BookingsRepository {
           admin: true,
           product: true,
           paymentMethod: true,
+          history: { orderBy: { createdAt: "asc" } },
         },
       });
     } catch (error) {
@@ -52,6 +69,7 @@ class BookingsRepository {
           product: true,
           admin: true,
           paymentMethod: true,
+          history: true,
         },
       });
     } catch (error) {
@@ -67,6 +85,7 @@ class BookingsRepository {
           product: true,
           admin: true,
           paymentMethod: true,
+          history: true,
         },
       });
     } catch (error) {
@@ -87,6 +106,25 @@ class BookingsRepository {
       return await prisma.booking.delete({ where: { id } });
     } catch (error) {
       throw new AppError("Could not delete booking. Please try again");
+    }
+  }
+
+  async deleteBookingHistory(id: string): Promise<BookingHistory> {
+    try {
+      return await prisma.bookingHistory.delete({ where: { id } });
+    } catch (error) {
+      throw new AppError("Could not delete booking history. Please try again");
+    }
+  }
+
+  async findHistoryByBookingId(bookingId: string): Promise<BookingHistory[]> {
+    try {
+      return await prisma.bookingHistory.findMany({
+        where: { bookingId },
+        orderBy: { createdAt: "asc" },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch booking history. Please try again");
     }
   }
 }

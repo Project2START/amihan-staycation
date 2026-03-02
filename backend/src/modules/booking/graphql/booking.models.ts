@@ -45,6 +45,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
       with_vehicle,
       userId,
       paymentMethod,
+      history,
     } = booking;
 
     const payload: any = {
@@ -58,6 +59,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
       nationality,
       contact_number,
       pool_access,
+      history,
       with_vehicle,
       image_valid_id_url,
       additional_guests,

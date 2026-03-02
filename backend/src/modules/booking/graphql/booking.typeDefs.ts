@@ -57,6 +57,12 @@ export const bookingTypeDefs = `#graphql
         id: String!
     }
 
+    type BookingHistory {
+    message: String
+    hasUserResponded: Boolean!
+    ownerName: String
+    }
+
     type Booking {
         id: String!
         status: String!
@@ -74,6 +80,7 @@ export const bookingTypeDefs = `#graphql
         image_payment_proof_url: String
         userId: String
         paymentMethod: PaymentMethod
+        history: [BookingHistory]
     }
 
     extend type Query {

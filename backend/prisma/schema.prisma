@@ -57,7 +57,7 @@ model Product {
   updatedAt  DateTime @updatedAt
 
   userId     String   @db.Uuid   // ← foreign key
-  user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade) // relation field
+  user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   photos     Photo[]
   bookings   Booking[]
@@ -122,5 +122,24 @@ model Booking {
   paymentMethod   PaymentMethod?  @relation(fields: [paymentMethodId], references: [id], onDelete: SetNull)
   paymentMethodId String?   @db.Uuid 
 
+  history BookingHistory[]
   @@map("bookings")
+}
+
+model BookingHistory {
+  id  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  message String?
+  valid_id_url String?
+  payment_proof_url String?
+  action_items   Json?
+  hasUserResponded  Boolean
+  userName  String
+  ownerName String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  bookingId  String   @db.Uuid
+  booking    Booking    @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("bookings_history")
 }

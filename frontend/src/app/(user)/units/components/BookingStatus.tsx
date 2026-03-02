@@ -1,10 +1,6 @@
 "use client";
 
-import { useQuery } from "@apollo/client/react";
-import {
-  GET_USER_BOOKINGS,
-  I_GET_USER_BOOKINGS,
-} from "../lib/bookingStatus-queries";
+import { useBookingStatus } from "../../components/BookingStatusContext";
 import { getBookingStatusText } from "../lib/getBookingStatusText";
 import { getStatusColor } from "@/app/(admin)/my-bookings/lib/getStatusInfo";
 import Link from "next/link";
@@ -12,28 +8,16 @@ import { useInView } from "react-intersection-observer";
 import { AnimatePresence, motion } from "motion/react";
 
 export default function BookingStatus() {
-  const { data, loading, error } = useQuery<I_GET_USER_BOOKINGS>(
-    GET_USER_BOOKINGS,
-    {
-      fetchPolicy: "network-only",
-    },
-  );
-
+  const { booking, loading, error } = useBookingStatus();
   const { ref, inView } = useInView({
     threshold: 0,
     triggerOnce: false,
     initialInView: true,
   });
 
-  if (loading || error) {
+  if (loading || error || !booking) {
     return null;
   }
-
-  if (data?.bookingsByUser.length !== 1) {
-    return null;
-  }
-
-  const booking = data.bookingsByUser[0];
 
   const bookingStatusText = getBookingStatusText(booking.status);
   const bookingStatusColor = getStatusColor(booking.status);
