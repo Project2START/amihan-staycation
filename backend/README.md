@@ -17,6 +17,6 @@
   `ToastOptions` to reuse the base toast configuration while adding app-specific
   fields.
 - `src/app/(user)/units/[slug]/components/Product.tsx` and
-  `src/app/(admin)/spaces/[slug]/components/Product.tsx`: the `Product` interface
-  extends `IProductItemProps`, reusing the base product fields with additional
-  attributes.
+  `src/app/(admin)/spaces/[slug]/components/Product.tsx`: each file defines a
+  local `Product` interface that extends `IProductItemProps`, reusing the base
+  product fields with additional attributes.
