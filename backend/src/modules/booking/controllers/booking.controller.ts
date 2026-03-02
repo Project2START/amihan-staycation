@@ -7,7 +7,6 @@ class BookingController {
     const bookingId = req.params.id;
     const updateData = req.body;
 
-    console.log(updateData);
 
     await bookingService.update(bookingId, admin.user_id, updateData);
 

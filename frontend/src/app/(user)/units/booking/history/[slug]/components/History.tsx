@@ -183,84 +183,104 @@ export default function History({ history, bookingStatus }: HistoryProps) {
               return (
                 <div key={item.id} className="flex flex-col gap-y-2">
                   {/* Date */}
-                  <div className="flex items-center gap-x-1.5 text-[0.65rem] text-secondary-normal/50">
+                  {/* <div className="flex items-center gap-x-1.5 text-[0.65rem] text-secondary-normal/50">
                     <MdAccessTime />
                     <span>
                       {dayjs(item.createdAt).format("MMM DD, YYYY - hh:mm A")}
                     </span>
-                  </div>
+                  </div> */}
 
                   {/* Owner message bubble - only for admin-created entries */}
                   {isOwnerEntry && (
-                    <div className="bg-[#f0f4f8] rounded-xl rounded-tl-none p-[0.75rem] max-w-[85%]">
-                      <span className="font-bold text-xs text-primary-normal block mb-[0.25rem]">
-                        {item.ownerName}
-                      </span>
-                      {item.message && (
-                        <p className="text-xs leading-relaxed">
-                          {item.message}
-                        </p>
-                      )}
-                      {item.action_items && item.action_items.length > 0 && (
-                        <div className="mt-[0.5rem] text-[0.65rem] text-secondary-normal/60">
-                          <span>Requested: </span>
-                          {item.action_items
-                            .map((ai) => ACTION_ITEM_CONFIG[ai]?.label ?? ai)
-                            .join(", ")}
-                        </div>
-                      )}
+                    <div className="flex items-start flex-col gap-y-2 ">
+                      <div className="flex items-center gap-x-1.5 text-[0.65rem] text-secondary-normal/50">
+                        <MdAccessTime />
+                        <span>
+                          {dayjs(item.createdAt).format(
+                            "MMM DD, YYYY - hh:mm A",
+                          )}
+                        </span>
+                      </div>
+                      <div className="bg-[#f0f4f8] rounded-xl rounded-tl-none p-[0.75rem] max-w-[85%]">
+                        <span className="font-bold text-xs text-primary-normal block mb-[0.25rem]">
+                          {item.ownerName}
+                        </span>
+                        {item.message && (
+                          <p className="text-xs leading-relaxed">
+                            {item.message}
+                          </p>
+                        )}
+                        {item.action_items && item.action_items.length > 0 && (
+                          <div className="mt-[0.5rem] text-[0.65rem] text-secondary-normal/60">
+                            <span>Requested: </span>
+                            {item.action_items
+                              .map((ai) => ACTION_ITEM_CONFIG[ai]?.label ?? ai)
+                              .join(", ")}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
 
                   {/* User's uploaded responses - only for entries that have actual URLs */}
                   {isUserResponse && (
-                    <div className="flex flex-col gap-y-3 self-end max-w-[85%]">
-                      <div className="bg-[#e8f5e9] rounded-xl rounded-tr-none p-[0.75rem]">
-                        <span className="font-bold text-xs text-green-800 block mb-[0.25rem]">
-                          Your Response
+                    <div className="flex items-end flex-col gap-y-2">
+                      <div className="flex items-center gap-x-1.5 text-[0.65rem] text-secondary-normal/50">
+                        <MdAccessTime />
+                        <span>
+                          {dayjs(item.createdAt).format(
+                            "MMM DD, YYYY - hh:mm A",
+                          )}
                         </span>
+                      </div>
+                      <div className="flex flex-col gap-y-3 max-w-[85%] min-w-[60%]">
+                        <div className="bg-[#e8f5e9] rounded-xl rounded-tr-none p-[0.75rem]">
+                          <span className="font-bold text-xs text-green-800 block mb-[0.25rem]">
+                            Your Response
+                          </span>
 
-                        {item.valid_id_url && (
-                          <div className="flex flex-col gap-y-1 mt-[0.5rem]">
-                            <span className="text-[0.65rem] text-secondary-normal/60">
-                              Valid ID
-                            </span>
-                            <PhotoFullViewDialog url={item.valid_id_url}>
-                              <div className="p-[0.25rem] flex justify-center items-center w-full h-[8rem] rounded-lg border-2 border-secondary-normal/20">
-                                <div className="w-full relative rounded-lg h-full">
-                                  <Image
-                                    src={item.valid_id_url}
-                                    fill
-                                    className="object-contain object-center"
-                                    alt="Valid ID submission"
-                                    sizes="100%"
-                                  />
+                          {item.valid_id_url && (
+                            <div className="flex flex-col gap-y-1 mt-[0.5rem]">
+                              <span className="text-[0.65rem] text-secondary-normal/60">
+                                Valid ID
+                              </span>
+                              <PhotoFullViewDialog url={item.valid_id_url}>
+                                <div className="p-[0.25rem] flex justify-center items-center w-full h-[8rem] rounded-lg border-2 border-secondary-normal/20">
+                                  <div className="w-full relative rounded-lg h-full">
+                                    <Image
+                                      src={item.valid_id_url}
+                                      fill
+                                      className="object-contain object-center"
+                                      alt="Valid ID submission"
+                                      sizes="100%"
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                            </PhotoFullViewDialog>
-                          </div>
-                        )}
+                              </PhotoFullViewDialog>
+                            </div>
+                          )}
 
-                        {item.payment_proof_url && (
-                          <div className="flex flex-col gap-y-1 mt-[0.5rem]">
-                            <span className="text-[0.65rem] text-secondary-normal/60">
-                              Security Deposit Proof
-                            </span>
-                            <PhotoFullViewDialog url={item.payment_proof_url}>
-                              <div className="p-[0.25rem] flex justify-center items-center w-full h-[8rem] rounded-lg border-2 border-secondary-normal/20">
-                                <div className="w-full relative rounded-lg h-full">
-                                  <Image
-                                    src={item.payment_proof_url}
-                                    fill
-                                    className="object-contain object-center"
-                                    alt="Security deposit submission"
-                                    sizes="100%"
-                                  />
+                          {item.payment_proof_url && (
+                            <div className="flex flex-col gap-y-1 mt-[0.5rem]">
+                              <span className="text-[0.65rem] text-secondary-normal/60">
+                                Security Deposit Proof
+                              </span>
+                              <PhotoFullViewDialog url={item.payment_proof_url}>
+                                <div className="p-[0.25rem] flex justify-center items-center w-full h-[8rem] rounded-lg border-2 border-secondary-normal/20">
+                                  <div className="w-full relative rounded-lg h-full">
+                                    <Image
+                                      src={item.payment_proof_url}
+                                      fill
+                                      className="object-contain object-center"
+                                      alt="Security deposit submission"
+                                      sizes="100%"
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                            </PhotoFullViewDialog>
-                          </div>
-                        )}
+                              </PhotoFullViewDialog>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}

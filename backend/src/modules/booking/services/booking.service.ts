@@ -209,12 +209,6 @@ class BookingService {
   async getAllByAdmin(adminId: string) {
     const bookings = await bookingRepository.findAllByAdminId(adminId);
 
-    // const bookingsFormatted = bookings.map((booking) => {
-    //   const { ...rest } = booking;
-
-    //   return rest;
-    // });
-
     return bookings;
   }
   async getAllByUser(userId: string) {

@@ -30,6 +30,7 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
     GET_BOOKING,
     {
       variables: { id: bookingId },
+      fetchPolicy: "network-only",
     },
   );
 
@@ -83,22 +84,23 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
           {statusDisplayName ?? bookingTextAlternate}
         </span>
       </div>
-      {latestBookingHistory?.hasUserResponded ? (
-        <div className="mt-[0.5rem]">
+      {latestBookingHistory?.hasUserResponded ||
+      booking.status !== "action_required" ? (
+        <div className="mt-[1rem] text-white rounded-lg p-[0.5rem] bg-success-normal">
           <p>
             Thank you for responding. Allow us to review your submitted
-            information
+            information.{" "}
+            <Link
+              href={`/units/booking/history/${booking.id}`}
+              className="underline"
+            >
+              <span className="font-bold">View History</span>
+            </Link>
           </p>
-          <Link
-            href={`/units/booking/history/${booking.id}`}
-            className="underline"
-          >
-            <span>View History</span>
-          </Link>
         </div>
       ) : (
         <div
-          className="flex mt-[1rem] text-white rounded-lg p-[0.5rem]"
+          className="mt-[1rem] text-white rounded-lg p-[0.5rem]"
           style={statusColor ? { backgroundColor: statusColor } : undefined}
         >
           <p>
