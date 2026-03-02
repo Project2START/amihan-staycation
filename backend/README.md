@@ -1,5 +1,8 @@
 # Polymorphism usage
 
+This file captures the current polymorphism examples across the repo since it
+is the only documentation file in the project today.
+
 ## Backend
 
 - `src/shared/helpers/appErrors.ts`: `AppError` extends the built-in `Error`, and
