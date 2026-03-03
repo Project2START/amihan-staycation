@@ -10,6 +10,7 @@ interface BookingStatusContextValue {
   booking: I_GET_USER_BOOKINGS["bookingsByUser"][0] | null;
   loading: boolean;
   error: any;
+  refetch: () => void;
 }
 
 const BookingStatusContext = createContext<
@@ -25,7 +26,7 @@ export function BookingStatusProvider({
 }) {
   // Only call useQuery if userId exists
   const shouldFetch = Boolean(userId);
-  const { data, loading, error } = useQuery<I_GET_USER_BOOKINGS>(
+  const { data, loading, error, refetch } = useQuery<I_GET_USER_BOOKINGS>(
     GET_USER_BOOKINGS,
     {
       fetchPolicy: "network-only",
@@ -38,7 +39,7 @@ export function BookingStatusProvider({
     data?.bookingsByUser?.length === 1 ? data.bookingsByUser[0] : null;
 
   return (
-    <BookingStatusContext.Provider value={{ booking, loading, error }}>
+    <BookingStatusContext.Provider value={{ booking, loading, error, refetch }}>
       {children}
     </BookingStatusContext.Provider>
   );

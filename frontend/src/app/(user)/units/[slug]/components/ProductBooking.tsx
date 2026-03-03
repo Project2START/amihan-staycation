@@ -9,7 +9,6 @@ export default function ProductBooking({ productId }: { productId: string }) {
 
   const user = useAppSelector((state) => state.users.data);
 
-  console.log(booking);
   return (
     <div className="mt-[2.5rem] flex justify-center">
       {booking ? (

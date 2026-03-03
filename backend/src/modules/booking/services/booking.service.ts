@@ -240,6 +240,7 @@ class BookingService {
     }
     const bookingHistories =
       await bookingRepository.findHistoryByBookingId(bookingId);
+
     const formattedBookingHistories = bookingHistories.map((bookingHistory) => {
       const { updatedAt, ...rest } = bookingHistory;
       return rest;

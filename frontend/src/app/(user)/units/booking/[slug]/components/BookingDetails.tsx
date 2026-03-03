@@ -84,37 +84,77 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
           {statusDisplayName ?? bookingTextAlternate}
         </span>
       </div>
-      {latestBookingHistory?.hasUserResponded ||
-      booking.status !== "action_required" ? (
-        <div className="mt-[1rem] text-white rounded-lg p-[0.5rem] bg-success-normal">
-          <p>
-            Thank you for responding. Allow us to review your submitted
-            information.{" "}
-            <Link
-              href={`/units/booking/history/${booking.id}`}
-              className="underline"
+
+      {latestBookingHistory?.hasUserResponded &&
+        booking.status === "pending" && (
+          <div className="mt-[1rem] text-white rounded-lg p-[0.5rem] bg-success-normal">
+            <p>
+              Thank you for responding. Allow us to review your submitted
+              information.{" "}
+              <Link
+                href={`/units/booking/history/${booking.id}`}
+                className="underline"
+              >
+                <span className="font-bold">View History</span>
+              </Link>
+            </p>
+          </div>
+        )}
+
+      {!latestBookingHistory?.hasUserResponded &&
+        booking.status === "action_required" && (
+          <div
+            className="mt-[1rem] text-white rounded-lg p-[0.5rem]"
+            style={statusColor ? { backgroundColor: statusColor } : undefined}
+          >
+            <p>
+              Some information is required to proceed with your booking. Click{" "}
+              <Link
+                href={`/units/booking/history/${booking.id}`}
+                className="underline font-bold"
+              >
+                <span>here</span>
+              </Link>{" "}
+              to continue.
+            </p>
+          </div>
+        )}
+      {/* 
+      {booking.status !== "action_required" && (
+        <>
+          {latestBookingHistory?.hasUserResponded ? (
+            <div className="mt-[1rem] text-white rounded-lg p-[0.5rem] bg-success-normal">
+              <p>
+                Thank you for responding. Allow us to review your submitted
+                information.{" "}
+                <Link
+                  href={`/units/booking/history/${booking.id}`}
+                  className="underline"
+                >
+                  <span className="font-bold">View History</span>
+                </Link>
+              </p>
+            </div>
+          ) : (
+            <div
+              className="mt-[1rem] text-white rounded-lg p-[0.5rem]"
+              style={statusColor ? { backgroundColor: statusColor } : undefined}
             >
-              <span className="font-bold">View History</span>
-            </Link>
-          </p>
-        </div>
-      ) : (
-        <div
-          className="mt-[1rem] text-white rounded-lg p-[0.5rem]"
-          style={statusColor ? { backgroundColor: statusColor } : undefined}
-        >
-          <p>
-            Some information is required to proceed with your booking. Click{" "}
-            <Link
-              href={`/units/booking/history/${booking.id}`}
-              className="underline font-bold"
-            >
-              <span>here</span>
-            </Link>{" "}
-            to continue.
-          </p>
-        </div>
-      )}
+              <p>
+                Some information is required to proceed with your booking. Click{" "}
+                <Link
+                  href={`/units/booking/history/${booking.id}`}
+                  className="underline font-bold"
+                >
+                  <span>here</span>
+                </Link>{" "}
+                to continue.
+              </p>
+            </div>
+          )}
+        </>
+      )} */}
+
       <div className="flex-1 overflow-auto grid gap-y-3 px-[0.5rem]">
         <div className="flex justify-between items-center mt-[1.5rem] text-xs text-gray-500">
           <span>Request date</span>

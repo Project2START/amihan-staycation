@@ -15,7 +15,6 @@ class UserRepository {
       if (error.code === "P2002") {
         throw new ConflictError("Email already exists");
       }
-      console.log(error);
       throw new AppError("Could not create user. Please try again.");
     }
   }
@@ -31,7 +30,6 @@ class UserRepository {
     try {
       return await prisma.users.findUnique({ where: { google_id: googleId } });
     } catch (error) {
-      console.log(error);
       throw new AppError(
         "Could not fetch user by Google ID. Please try again.",
       );

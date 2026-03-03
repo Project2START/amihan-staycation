@@ -17,6 +17,7 @@ import { v4 as uuid } from "uuid";
 import { Skeleton } from "@mui/material";
 import SecurityDeposit from "./SecurityDeposit";
 import UpdateBookingStatus from "./UpdateBookingStatus";
+import History from "./History";
 
 dayjs.extend(customParseFormat);
 
@@ -77,7 +78,8 @@ export default function MyBookingSummary({ bookingId }: { bookingId: string }) {
         </span>
       </div>
       <div className="flex-1 overflow-auto grid gap-y-3 px-[0.5rem]">
-        <div className="flex justify-between items-center mt-[1.5rem] text-xs text-gray-500">
+        <History bookingId={bookingId} />
+        <div className="flex justify-between items-center text-xs text-gray-500">
           <span>Request date</span>
 
           <span>
