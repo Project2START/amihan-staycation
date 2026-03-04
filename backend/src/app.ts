@@ -8,13 +8,13 @@ import productRoutes from "./modules/product/product.routes";
 import registreeRoutes from "./modules/registree/registree.routes";
 import paymentMethodRoutes from "./modules/paymentMethod/paymentMethod.routes";
 import bookingRoutes from "./modules/booking/booking.routes";
+import agentRoutes from "./modules/agents/agents.routes";
 import { ApolloServer } from "@apollo/server";
 import cookieParser from "cookie-parser";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import session from "express-session";
 import { resolvers, typeDefs } from "./graphql/schema";
 import http from "http";
-// import { MyContext } from "./graphql/context";
 
 const app = express();
 
@@ -36,6 +36,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/paymentMethods", paymentMethodRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/agents", agentRoutes);
 
 export const httpServer = http.createServer(app);
 

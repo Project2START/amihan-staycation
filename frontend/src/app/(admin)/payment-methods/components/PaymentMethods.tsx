@@ -1,5 +1,3 @@
-import { HOST } from "@/app/shared/constants/config";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import PaymentMethodList from "./PaymentMethodList";
 import type { IPaymentMethod } from "../types/paymentMethod.types";
