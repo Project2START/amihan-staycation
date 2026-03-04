@@ -25,17 +25,14 @@ export default function BookingStatus() {
   return (
     <>
       <div
+        style={
+          bookingStatusColor
+            ? { backgroundColor: bookingStatusColor }
+            : undefined
+        }
         ref={ref}
         className="text-sm mb-[1rem] gap-x-3 flex items-center bg-primary-normal px-[0.5rem] py-[1rem] rounded-lg text-white font-bold"
       >
-        <div
-          className="w-[1rem] h-[1rem] rounded-full"
-          style={
-            bookingStatusColor
-              ? { backgroundColor: bookingStatusColor }
-              : undefined
-          }
-        ></div>
         <Link href={`/units/booking/${booking.id}`}>
           <p className="underline">{bookingStatusText}</p>
         </Link>
@@ -48,16 +45,13 @@ export default function BookingStatus() {
             animate={{ translateY: "0%" }}
             exit={{ translateY: "-100%" }}
             transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
-            className="fixed top-3 z-999 shadow-md/30 text-sm mb-[1rem] gap-x-3 flex items-center bg-primary-normal px-[0.5rem] py-[1rem] rounded-lg text-white font-bold"
+            style={
+              bookingStatusColor
+                ? { backgroundColor: bookingStatusColor }
+                : undefined
+            }
+            className="fixed top-3 z-999 shadow-md/30 text-sm mb-[1rem] gap-x-3 flex items-center px-[0.5rem] py-[1rem] rounded-lg text-white font-bold"
           >
-            <div
-              className="w-[1rem] h-[1rem] rounded-full"
-              style={
-                bookingStatusColor
-                  ? { backgroundColor: bookingStatusColor }
-                  : undefined
-              }
-            ></div>
             <Link href={`/units/booking/${booking.id}`}>
               <p className="underline">{bookingStatusText}</p>
             </Link>

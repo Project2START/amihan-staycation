@@ -8,7 +8,7 @@ export function getBookingStatusText(status: Status): string {
     checked_out: "You have checked out. Thank you for staying!",
     action_required: "Action is required for your booking.",
     expired: "Your booking has expired. You can create a new one!",
-    cancelled: "This booking was cancelled. You can create a new one!",
+    cancelled: "Your booking has been cancelled. Tap here for more details",
   };
 
   return messages[status] ?? "Booking status unavailable.";

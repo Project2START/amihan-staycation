@@ -11,7 +11,7 @@ export default function ProductBooking({ productId }: { productId: string }) {
 
   return (
     <div className="mt-[2.5rem] flex justify-center">
-      {booking ? (
+      {booking && booking.status !== "cancelled" ? (
         <p className="text-reject-normal text-xs text-center">
           You’ve already got a booking in place, so another reservation isn’t
           available at the moment.

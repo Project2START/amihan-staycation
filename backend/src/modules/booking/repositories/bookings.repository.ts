@@ -64,6 +64,7 @@ class BookingsRepository {
     try {
       return await prisma.booking.findMany({
         where: { userId },
+        orderBy: { createdAt: "desc" },
         include: {
           user: true,
           product: true,

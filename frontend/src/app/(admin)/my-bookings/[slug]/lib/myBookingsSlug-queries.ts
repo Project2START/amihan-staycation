@@ -5,6 +5,7 @@ export interface I_GET_BOOKING {
   bookingById: {
     id: string;
     status: Status;
+    status_message: string;
     createdAt?: string | null;
     product?: { name?: string | null; id?: string | null } | null;
     paymentMethod?: {
@@ -64,6 +65,7 @@ export const GET_BOOKING = gql`
     bookingById(id: $id) {
       id
       status
+      status_message
       createdAt
       product {
         name

@@ -3,6 +3,7 @@ import verifyRegistree from "./proxyModules/verifyRegistree";
 import verifyAdmin from "./proxyModules/verifyAdmin";
 import verifyGuest from "./proxyModules/verifyGuest";
 import verifyUser from "./proxyModules/verifyUser";
+import verifyAuthenticated from "./proxyModules/verifyAuthenticated";
 
 export async function proxy(req: NextRequest) {
   const currentPath = req.nextUrl.pathname;
@@ -15,8 +16,12 @@ export async function proxy(req: NextRequest) {
     return await verifyAdmin(req);
   }
 
-  if (["/bookings"].includes(currentPath)) {
+  if (["/bookings", "/my-bookings-history"].includes(currentPath)) {
     return await verifyUser(req);
+  }
+
+  if (["/profile"].includes(currentPath)) {
+    return await verifyAuthenticated(req);
   }
 
   if (["/auth", "/sign-in", "/sign-up", "/"].includes(currentPath)) {
@@ -33,5 +38,7 @@ export const config = {
     "/sign-in",
     "/sign-up",
     "/bookings",
+    "/my-bookings-history",
+    "/profile",
   ],
 };

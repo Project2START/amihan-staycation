@@ -13,6 +13,13 @@ const router = Router();
 const upload = createUpload();
 
 router.get(
+  "/user/all",
+  checkAuth,
+  checkRole(["user"]),
+  asyncHandler(bookingController.getAllBookingsUser),
+);
+
+router.get(
   "/:id/history",
   checkAuth,
   checkRole(["user", "admin"]),

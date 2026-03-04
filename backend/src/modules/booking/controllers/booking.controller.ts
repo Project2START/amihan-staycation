@@ -7,7 +7,6 @@ class BookingController {
     const bookingId = req.params.id;
     const updateData = req.body;
 
-
     await bookingService.update(bookingId, admin.user_id, updateData);
 
     res.status(200).json({
@@ -36,6 +35,26 @@ class BookingController {
     res
       .status(200)
       .json({ message: "Bookings successfully fetched", bookings });
+  }
+
+  async getAllBookingsUser(req: Request, res: Response) {
+    const user = (req as any).user;
+
+    const bookings = await bookingService.getAllByUser(user.user_id);
+
+    const mapped = bookings.map((b) => ({
+      id: b.id,
+      name: b.name,
+      contact_number: b.contact_number,
+      check_period: b.check_period,
+      status: b.status,
+      product: { name: b.product.name },
+      createdAt: b.createdAt,
+    }));
+
+    res
+      .status(200)
+      .json({ message: "Bookings successfully fetched", bookings: mapped });
   }
 
   async getBookingHistory(req: Request, res: Response) {

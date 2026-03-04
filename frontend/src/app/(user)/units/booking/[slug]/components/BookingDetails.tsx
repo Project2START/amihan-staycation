@@ -22,6 +22,7 @@ import {
   getStatusDisplayName,
 } from "@/app/(admin)/my-bookings/lib/getStatusInfo";
 import SecurityDeposit from "@/app/(admin)/my-bookings/[slug]/components/SecurityDeposit";
+import ClampedParagraph from "@/app/shared/components/ClampedParagraph";
 
 dayjs.extend(customParseFormat);
 
@@ -85,6 +86,27 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
         </span>
       </div>
 
+      {booking.status === "cancelled" && (
+        <div
+          className="mt-[1rem] text-white rounded-lg p-[0.5rem]"
+          style={statusColor ? { backgroundColor: statusColor } : undefined}
+        >
+          <ClampedParagraph
+            text={`Your booking has been cancelled due to the following reason: ${booking.status_message}`}
+          />
+        </div>
+      )}
+      {booking.status === "confirmed" && (
+        <div className="mt-[1rem] text-white rounded-lg p-[0.5rem] bg-success-normal">
+          <p>
+            🎉Congratulations!{" "}
+            <strong>Your booking has been successfully confirmed.</strong> You
+            may proceed to your unit at your scheduled check-in date and time.
+            Enjoy your stay 😊
+          </p>
+        </div>
+      )}
+
       {latestBookingHistory?.hasUserResponded &&
         booking.status === "pending" && (
           <div className="mt-[1rem] text-white rounded-lg p-[0.5rem] bg-success-normal">
@@ -119,41 +141,6 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
             </p>
           </div>
         )}
-      {/* 
-      {booking.status !== "action_required" && (
-        <>
-          {latestBookingHistory?.hasUserResponded ? (
-            <div className="mt-[1rem] text-white rounded-lg p-[0.5rem] bg-success-normal">
-              <p>
-                Thank you for responding. Allow us to review your submitted
-                information.{" "}
-                <Link
-                  href={`/units/booking/history/${booking.id}`}
-                  className="underline"
-                >
-                  <span className="font-bold">View History</span>
-                </Link>
-              </p>
-            </div>
-          ) : (
-            <div
-              className="mt-[1rem] text-white rounded-lg p-[0.5rem]"
-              style={statusColor ? { backgroundColor: statusColor } : undefined}
-            >
-              <p>
-                Some information is required to proceed with your booking. Click{" "}
-                <Link
-                  href={`/units/booking/history/${booking.id}`}
-                  className="underline font-bold"
-                >
-                  <span>here</span>
-                </Link>{" "}
-                to continue.
-              </p>
-            </div>
-          )}
-        </>
-      )} */}
 
       <div className="flex-1 overflow-auto grid gap-y-3 px-[0.5rem]">
         <div className="flex justify-between items-center mt-[1.5rem] text-xs text-gray-500">
@@ -395,7 +382,6 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
           </div>
         )}
       </div>
-      <div>a</div>
     </div>
   );
 }

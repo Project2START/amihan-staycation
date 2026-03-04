@@ -1,4 +1,3 @@
-import { UnauthorizedError } from "../../../shared/helpers/appErrors";
 import { requireAuth } from "../../../shared/helpers/requireAuth";
 import { requireRole } from "../../../shared/helpers/requireRole";
 import { bookingService } from "../services/booking.service";
@@ -46,6 +45,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
       userId,
       paymentMethod,
       history,
+      status_message,
     } = booking;
 
     const payload: any = {
@@ -65,6 +65,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
       additional_guests,
       image_payment_proof_url,
       userId,
+      status_message,
     };
 
     if (paymentMethod) {
