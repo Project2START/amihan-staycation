@@ -11,6 +11,17 @@ class AgentsController {
       message: "Agent successfully created",
     });
   }
+  async getAgentById(req: Request, res: Response) {
+    const user = (req as any).user;
+    const agentId = req.params.id;
+
+    const agent = await agentsService.get(agentId, user.user_id);
+
+    res.status(200).json({
+      message: "Agent successfully retrieved",
+      agent,
+    });
+  }
   async getAgentsByAdminId(req: Request, res: Response) {
     const admin = (req as any).user;
 

@@ -1,5 +1,9 @@
-import { NotFoundError } from "../../../shared/helpers/appErrors";
+import {
+  ForbiddenError,
+  NotFoundError,
+} from "../../../shared/helpers/appErrors";
 import { userRepository } from "../../user/repositories/user.repository";
+import { userService } from "../../user/services/user.service";
 import { agentsRepository } from "../repositories/agents.repository";
 import { AgentsDTO } from "../schemas/agents.schema";
 
@@ -25,6 +29,39 @@ class AgentsService {
       await agentsRepository.deleteAgent(newAgent.id);
       throw error;
     }
+  }
+  async get(agentId: string, adminId: string) {
+    const agent = await agentsRepository.findAgentById(agentId);
+
+    if (!agent) {
+      throw new NotFoundError("Agent not found");
+    }
+
+    if (agent.adminId !== adminId) {
+      throw new ForbiddenError(
+        "You do not have permission to access this agent's data",
+      );
+    }
+
+    const user = await userRepository.findById(agent.userId);
+
+    if (!user) {
+      throw new NotFoundError("Agent not found");
+    }
+
+    return {
+      first_name: user.first_name,
+      last_name: user.last_name,
+      avatar_url: user.avatar_url,
+      email: user.email,
+      nationality: user.nationality,
+      id: user.id,
+    };
+  }
+  async getAgentByUserId(userId: string) {
+    const agent = await agentsRepository.findAgentByUserId(userId);
+
+    return agent;
   }
   async getAgentsByAdminId(adminId: string) {
     const agents = await agentsRepository.findAgentsByAdminId(adminId);

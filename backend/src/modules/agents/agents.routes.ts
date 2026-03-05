@@ -9,11 +9,25 @@ import { agentsController } from "./controllers/agents.controller";
 const router = Router();
 
 router.get(
+  "/:id",
+  checkAuth,
+  checkRole(["admin"]),
+  asyncHandler(agentsController.getAgentById),
+);
+
+router.get(
   "/",
   checkAuth,
   checkRole(["admin"]),
   asyncHandler(agentsController.getAgentsByAdminId),
 );
+
+// router.get(
+//   "/",
+//   checkAuth,
+//   checkRole(["admin"]),
+//   asyncHandler(agentsController.getAgentsByAdminId),
+// );
 
 router.post(
   "/",

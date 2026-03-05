@@ -8,7 +8,7 @@ export default async function HistoryLayout({
 }) {
   return (
     <div className="flex flex-col h-[calc(100vh-72px)]">
-      <Suspense fallback={<HistoryLoading />}>{children};</Suspense>
+      <Suspense fallback={<HistoryLoading />}>{children}</Suspense>
     </div>
   );
 }

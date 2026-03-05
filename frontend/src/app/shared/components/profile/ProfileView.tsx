@@ -101,7 +101,7 @@ export default function ProfileView() {
   );
 }
 
-function ProfileField({
+export function ProfileField({
   label,
   value,
   capitalize = false,

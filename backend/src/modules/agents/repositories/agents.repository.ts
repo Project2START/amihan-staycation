@@ -16,6 +16,13 @@ class AgentsRepository {
     }
   }
 
+  async findAgentByUserId(userId: string) {
+    try {
+      return await prisma.agent.findUnique({ where: { userId } });
+    } catch (error: any) {
+      throw new AppError("Failed to find agent by user id");
+    }
+  }
   async findAgentById(id: string) {
     try {
       return await prisma.agent.findUnique({ where: { id } });

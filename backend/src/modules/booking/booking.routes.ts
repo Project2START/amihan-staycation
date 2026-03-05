@@ -15,21 +15,21 @@ const upload = createUpload();
 router.get(
   "/user/all",
   checkAuth,
-  checkRole(["user"]),
+  checkRole(["user", "agent"]),
   asyncHandler(bookingController.getAllBookingsUser),
 );
 
 router.get(
   "/:id/history",
   checkAuth,
-  checkRole(["user", "admin"]),
+  checkRole(["user", "admin", "agent"]),
   asyncHandler(bookingController.getBookingHistory),
 );
 
 router.post(
   "/history/respond",
   checkAuth,
-  checkRole(["user"]),
+  checkRole(["user", "agent"]),
   upload.fields([
     { name: "valid_id", maxCount: 1 },
     { name: "security_deposit", maxCount: 1 },

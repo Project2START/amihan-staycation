@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../shared/helpers/jwt";
 
-export function checkAuth(req: Request, res: Response, next: NextFunction) {
+export function authAttacher(req: Request, res: Response, next: NextFunction) {
   try {
     const token = req.cookies?.auth_token;
 
     if (!token) {
-      return res.status(401).json({ message: "No token provided" });
+      return next();
     }
 
     const decoded = verifyToken(token);

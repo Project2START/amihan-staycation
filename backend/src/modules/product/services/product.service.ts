@@ -8,6 +8,7 @@ import {
 } from "../../../shared/helpers/appErrors";
 import { generateFilePath } from "../../../shared/helpers/generators/generateFilePath";
 import { getSupabaseImagesPath } from "../../../shared/helpers/getters/getSupabaseImagesPath";
+import { agentsService } from "../../agents/services/agents.service";
 
 class ProductService {
   async create(
@@ -91,7 +92,22 @@ class ProductService {
 
     return rest;
   }
-  async getAll() {
+  async getAll(role: string, userId: string) {
+    if (role === "agent") {
+      const agent = await agentsService.getAgentByUserId(userId);
+
+      if (!agent) {
+        throw new NotFoundError("User agent not found");
+      }
+
+      const adminProducts = await productRepository.findAllById(agent.adminId);
+
+      return adminProducts.map((adminProduct) => {
+        const { createdAt, updatedAt, ...rest } = adminProduct;
+        return rest;
+      });
+    }
+
     const products = await productRepository.findAll();
 
     return products.map((product) => {

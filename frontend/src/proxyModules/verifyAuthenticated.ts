@@ -14,7 +14,7 @@ export default async function verifyAuthenticated(req: NextRequest) {
 
     const role = payload.user_role;
 
-    if (role === "user" || role === "admin") {
+    if (role === "user" || role === "admin" || role === "agent") {
       return NextResponse.next();
     } else {
       return NextResponse.rewrite(notForYouPage);

@@ -34,14 +34,14 @@ router.get(
 router.get(
   "/:id",
   checkAuth,
-  checkRole(["user", "admin"]),
+  checkRole(["user", "admin", "agent"]),
   asyncHandler(userController.getUser),
 );
 
 router.patch(
   "/:id",
   checkAuth,
-  checkRole(["user", "admin"]),
+  checkRole(["user", "admin", "agent"]),
   validateSchema(userUpdateSchema),
   asyncHandler(userController.updateUser),
 );
@@ -49,7 +49,7 @@ router.patch(
 router.patch(
   "/:id/avatar",
   checkAuth,
-  checkRole(["user", "admin"]),
+  checkRole(["user", "admin", "agent"]),
   upload.single("avatar"),
   asyncHandler(userController.updateAvatar),
 );
@@ -57,7 +57,7 @@ router.patch(
 router.delete(
   "/:id",
   checkAuth,
-  checkRole(["user", "admin"]),
+  checkRole(["user", "admin", "agent"]),
   asyncHandler(userController.deleteUser),
 );
 

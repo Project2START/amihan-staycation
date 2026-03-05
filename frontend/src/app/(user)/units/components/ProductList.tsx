@@ -2,11 +2,16 @@ import ProductItem, {
   IProductItemProps,
 } from "@/app/shared/components/ProductItem";
 import { HOST } from "@/app/shared/constants/config";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 export default async function ProductList() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("auth_token")?.value;
+
   const result = await fetch(`${HOST}/api/products`, {
     cache: "no-cache",
+    headers: token ? { Cookie: `auth_token=${token}` } : {},
   });
 
   if (!result.ok) {

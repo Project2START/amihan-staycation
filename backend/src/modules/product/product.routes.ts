@@ -10,6 +10,7 @@ import { PHOTOS_MAX } from "../../shared/constants/productFormValidation";
 import { checkAuth } from "../../middleware/checkAuth";
 import { checkRole } from "../../middleware/checkRole";
 import { createUpload } from "../../middleware/upload";
+import { authAttacher } from "../../middleware/authAttacher";
 
 const router = Router();
 
@@ -24,7 +25,7 @@ router.post(
   asyncHandler(productController.createProduct),
 );
 
-router.get("/", asyncHandler(productController.getProducts));
+router.get("/", authAttacher, asyncHandler(productController.getProducts));
 
 router.get(
   "/admin",

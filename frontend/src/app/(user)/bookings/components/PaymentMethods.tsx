@@ -94,7 +94,7 @@ export default function PaymentMethods() {
     }
   }, [selected, setValue]);
 
-  if (error) return <NotFoundClient />;
+  if (error) return null;
   if (isLoading) return <PaymentMethodsSkeleton />;
   if (items.length === 0) return null;
 

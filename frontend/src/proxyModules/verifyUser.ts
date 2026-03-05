@@ -14,7 +14,7 @@ export default async function verifyUser(req: NextRequest) {
 
     const role = payload.user_role;
 
-    if (role === "user") {
+    if (role === "user" || role === "agent") {
       return NextResponse.next();
     } else {
       return NextResponse.rewrite(notForYouPage);

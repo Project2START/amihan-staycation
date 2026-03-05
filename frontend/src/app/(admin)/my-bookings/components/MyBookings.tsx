@@ -17,10 +17,7 @@ const statuses: { name: string; status: Status }[] = [
   { name: "Pending", status: "pending" },
   { name: "Confirmed", status: "confirmed" },
   { name: "Checked-In", status: "checked_in" },
-  // { name: "Checked Out", status: "checked_out" },
   { name: "Action Required", status: "action_required" },
-  // { name: "Expired", status: "expired" },
-  // { name: "Cancelled", status: "cancelled" },
 ];
 
 export default function MyBookings() {
@@ -55,17 +52,6 @@ export default function MyBookings() {
       />
     );
 
-  // if (data?.bookingsByAdmin && data.bookingsByAdmin.length === 0) {
-  //   return (
-  //     <div className="flex items-center justify-center h-[60vh]">
-  //       <p className="text-center font-bold text-lg text-gray-300">
-  //         You currently have no bookings.
-  //       </p>
-  //     </div>
-  //   );
-  // }
-
-  // build status counts in a single pass (O(n))
   const counts: Partial<Record<Status, number>> = {};
   (data?.bookingsByAdmin ?? []).forEach((b) => {
     const st = ((b as any)?.status ?? "pending") as Status;

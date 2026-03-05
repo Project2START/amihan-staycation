@@ -27,7 +27,7 @@ export default function AgentsItem({ agent }: { agent: IAgent }) {
       </div>
       <div className="flex flex-col">
         <span className="font-bold text-base">{agent.name}</span>
-        <span className="text-xs text-gray-500">{agent.email}</span>
+        <span className="text-xs opacity-70">{agent.email}</span>
       </div>
     </Link>
   );

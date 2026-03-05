@@ -1,8 +1,6 @@
 "use client";
 import { BookingStatusProvider } from "./BookingStatusContext";
 
-import { useEffect, useState } from "react";
-
 export default function ClientLayout({
   children,
   userId,

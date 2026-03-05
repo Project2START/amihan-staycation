@@ -31,8 +31,13 @@ class ProductController {
     });
   }
 
-  async getProducts(_: Request, res: Response) {
-    const products = await productService.getAll();
+  async getProducts(req: Request, res: Response) {
+    const user = (req as any).user;
+
+    const products = await productService.getAll(
+      user?.user_role,
+      user?.user_id,
+    );
 
     res.status(200).json({
       message: "Products successfully fetched",

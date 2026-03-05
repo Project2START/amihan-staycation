@@ -24,7 +24,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
   },
   getBookingById: async (id: string) => {
     requireAuth(user);
-    requireRole(user, ["admin", "user"]);
+    requireRole(user, ["admin", "user", "agent"]);
 
     const booking = await bookingService.get(id, user.user_id);
 
