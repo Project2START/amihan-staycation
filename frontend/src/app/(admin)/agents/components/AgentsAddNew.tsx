@@ -65,6 +65,7 @@ export default function AgentsAddNew() {
       CustomToast.show(agentResult.data.message, { indicator: "success" });
       handleCloseDialog();
       revalidatePathAgents();
+      setEmail("");
     } catch (error) {
       setFormError(errorHandler(error).message);
     } finally {

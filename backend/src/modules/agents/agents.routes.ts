@@ -37,4 +37,11 @@ router.post(
   asyncHandler(agentsController.createAgent),
 );
 
+router.delete(
+  "/:id",
+  checkAuth,
+  checkRole(["admin"]),
+  asyncHandler(agentsController.remove),
+);
+
 export default router;

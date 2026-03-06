@@ -1,6 +1,7 @@
 import { requireAuth } from "../../../shared/helpers/requireAuth";
 import { requireRole } from "../../../shared/helpers/requireRole";
 import { bookingService } from "../services/booking.service";
+import { agentsRepository } from "../../agents/repositories/agents.repository";
 
 export const generateBookingModel = ({ user }: { user: any }) => ({
   getAllBookingsByAdminId: async () => {
@@ -8,6 +9,30 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
     requireRole(user, ["admin"]);
 
     const bookings = await bookingService.getAllByAdmin(user.user_id);
+
+    return bookings.map((booking) => {
+      const { contact_number, name, check_period, status, product, id } =
+        booking;
+      return {
+        contact_number,
+        name,
+        check_period,
+        status,
+        product: { name: product.name },
+        id,
+      };
+    });
+  },
+  getAllBookingsByAgent: async (agentId: string) => {
+    requireAuth(user);
+    requireRole(user, ["admin"]);
+
+    const agent = await agentsRepository.findAgentById(agentId);
+    if (!agent || agent.adminId !== user.user_id) {
+      return [];
+    }
+
+    const bookings = await bookingService.getAllByUser(agent.userId);
 
     return bookings.map((booking) => {
       const { contact_number, name, check_period, status, product, id } =

@@ -86,6 +86,7 @@ export const bookingTypeDefs = `#graphql
 
     extend type Query {
         bookingsByAdmin: [AdminBookings]
+        bookingsByAgent(agentId: String!): [AdminBookings]
         bookingById(id: String!): Booking
         bookingsByUser: [UserBookings]
     }

@@ -1,8 +1,13 @@
-import { Prisma, PrismaClient, Agent } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 import { AppError, ConflictError } from "../../../shared/helpers/appErrors";
+
+export type PrismaTx = Omit<
+  PrismaClient,
+  "$connect" | "$disconnect" | "$transaction" | "$extends" | "$on"
+>;
 
 class AgentsRepository {
   async createAgent(data: Prisma.AgentUncheckedCreateInput) {
@@ -42,7 +47,7 @@ class AgentsRepository {
   async findAgentsByAdminId(adminId: string) {
     try {
       return await prisma.agent.findMany({
-        where: { adminId },
+        where: { adminId, isDeleted: false },
         include: { user: true },
       });
     } catch (error: any) {
@@ -50,10 +55,13 @@ class AgentsRepository {
     }
   }
 
-  async updateAgent(id: string, data: Prisma.AgentUpdateInput) {
+  async updateAgent(id: string, data: Prisma.AgentUpdateInput, tx?: PrismaTx) {
+    const db = tx ?? prisma;
+
     try {
-      return await prisma.agent.update({ where: { id }, data });
+      return await db.agent.update({ where: { id }, data });
     } catch (error: any) {
+      console.log(error);
       throw new AppError("Failed to update agent");
     }
   }

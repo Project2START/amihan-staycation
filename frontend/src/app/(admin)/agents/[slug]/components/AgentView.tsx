@@ -7,6 +7,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { IoMdPerson } from "react-icons/io";
 import AgentViewHeader from "./AgentViewHeader";
+import AgentRemove from "./AgentRemove";
+import AgentBookings from "./AgentBookings";
 
 export interface IAgent {
   id: string;
@@ -32,7 +34,8 @@ export default async function AgentView({ agentId }: { agentId: string }) {
       <AgentViewHeader />
 
       {/* Info Card */}
-      <div className="bg-white rounded-xl border-2 border-secondary-normal/30 p-6 space-y-4">
+      <div className="bg-white rounded-xl border-2 border-secondary-normal/30 p-6 space-y-4 relative">
+        <AgentRemove agentId={agentId} />
         {/* Avatar */}
         <div className="flex justify-center">
           {agent.avatar_url ? (
@@ -55,6 +58,9 @@ export default async function AgentView({ agentId }: { agentId: string }) {
         <ProfileField label="Email" value={agent.email} />
         <ProfileField label="Nationality" value={agent.nationality} />
       </div>
+
+      {/* Agent's Booking */}
+      <AgentBookings agentId={agentId} />
     </div>
   );
 }

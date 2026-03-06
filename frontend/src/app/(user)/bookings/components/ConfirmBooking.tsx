@@ -20,7 +20,6 @@ export default function ConfirmBooking({
 
   const agree_terms = useWatch({ control, name: "agree_terms" });
 
-  console.log(errors);
   return (
     <div className="px-[0.25rem]">
       <div className="flex items-start gap-x-2">

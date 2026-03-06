@@ -5,6 +5,7 @@ import {
   GET_USER_BOOKINGS,
   I_GET_USER_BOOKINGS,
 } from "../units/lib/bookingStatus-queries";
+import { useAppSelector } from "@/lib/hooks";
 
 interface BookingStatusContextValue {
   booking: I_GET_USER_BOOKINGS["bookingsByUser"][0] | null;
@@ -24,19 +25,24 @@ export function BookingStatusProvider({
   children: React.ReactNode;
   userId?: string;
 }) {
+  const user = useAppSelector((state) => state.users.data);
+
   // Only call useQuery if userId exists
   const shouldFetch = Boolean(userId);
+
   const { data, loading, error, refetch } = useQuery<I_GET_USER_BOOKINGS>(
     GET_USER_BOOKINGS,
     {
       fetchPolicy: "network-only",
-      skip: !shouldFetch,
+      skip: !shouldFetch && user?.role !== "agent",
       variables: { userId },
     },
   );
 
   const booking =
-    data?.bookingsByUser?.length === 1 ? data.bookingsByUser[0] : null;
+    user?.role !== "agent" && data?.bookingsByUser?.length === 1
+      ? data.bookingsByUser[0]
+      : null;
 
   return (
     <BookingStatusContext.Provider value={{ booking, loading, error, refetch }}>

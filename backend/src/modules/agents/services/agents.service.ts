@@ -1,4 +1,6 @@
+import { PrismaClient } from "@prisma/client";
 import {
+  AppError,
   ForbiddenError,
   NotFoundError,
 } from "../../../shared/helpers/appErrors";
@@ -6,6 +8,9 @@ import { userRepository } from "../../user/repositories/user.repository";
 import { userService } from "../../user/services/user.service";
 import { agentsRepository } from "../repositories/agents.repository";
 import { AgentsDTO } from "../schemas/agents.schema";
+import { bookingRepository } from "../../booking/repositories/bookings.repository";
+
+const prisma = new PrismaClient();
 
 class AgentsService {
   async create(agents: AgentsDTO, adminId: string) {
@@ -14,20 +19,29 @@ class AgentsService {
     const user = await userRepository.findByEmail(email);
 
     if (!user) {
-      throw new NotFoundError("Couldn't find email");
+      throw new NotFoundError("User email does not exist");
     }
 
-    const newAgent = await agentsRepository.createAgent({
-      adminId,
-      userId: user.id,
-    });
+    const agent = await agentsRepository.findAgentByUserId(user.id);
 
-    try {
-      await userRepository.update(user.id, { role: "agent" });
-      return newAgent;
-    } catch (error) {
-      await agentsRepository.deleteAgent(newAgent.id);
-      throw error;
+    if (agent && agent.isDeleted) {
+      await prisma.$transaction(async (tx) => {
+        await userRepository.update(agent.userId, { role: "agent" }, tx);
+        await agentsRepository.updateAgent(agent.id, { isDeleted: false }, tx);
+      });
+    } else {
+      const newAgent = await agentsRepository.createAgent({
+        adminId,
+        userId: user.id,
+      });
+
+      try {
+        await userRepository.update(user.id, { role: "agent" });
+        return newAgent;
+      } catch (error) {
+        await agentsRepository.deleteAgent(newAgent.id);
+        throw error;
+      }
     }
   }
   async get(agentId: string, adminId: string) {
@@ -55,7 +69,8 @@ class AgentsService {
       avatar_url: user.avatar_url,
       email: user.email,
       nationality: user.nationality,
-      id: user.id,
+      id: agent.id,
+      userId: agent.userId,
     };
   }
   async getAgentByUserId(userId: string) {
@@ -78,6 +93,24 @@ class AgentsService {
     });
 
     return formattedAgent;
+  }
+  async removeAgent(agentId: string, adminId: string) {
+    const agent = await this.get(agentId, adminId);
+
+    try {
+      await prisma.$transaction(async (tx) => {
+        await bookingRepository.updateManyByUserId(
+          agent.userId,
+          { status: "cancelled" },
+          tx,
+        );
+        await userRepository.update(agent.userId, { role: "user" }, tx);
+        await agentsRepository.updateAgent(agent.id, { isDeleted: true }, tx);
+      });
+    } catch (error: any) {
+      console.log(error);
+      throw new AppError("Failed to remove agent. Please try again later.");
+    }
   }
 }
 

@@ -59,7 +59,7 @@ model Product {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  userId     String   @db.Uuid   // ← foreign key
+  userId     String   @db.Uuid 
   user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   photos     Photo[]
@@ -113,14 +113,14 @@ model Booking {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  user            Users    @relation("BookingUser", fields: [userId], references: [id])
-  userId          String   @db.Uuid
+  user            Users?    @relation("BookingUser", fields: [userId], references: [id], onDelete: SetNull)
+  userId          String?   @db.Uuid
 
-  admin           Users    @relation("BookingAdmin", fields: [adminId], references: [id])
-  adminId         String   @db.Uuid
+  admin           Users?    @relation("BookingAdmin", fields: [adminId], references: [id], onDelete: SetNull)
+  adminId         String?   @db.Uuid
 
-  product         Product  @relation(fields: [productId], references: [id])
-  productId       String   @db.Uuid
+  product         Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId       String?   @db.Uuid
 
   paymentMethod   PaymentMethod?  @relation(fields: [paymentMethodId], references: [id], onDelete: SetNull)
   paymentMethodId String?   @db.Uuid 
@@ -156,10 +156,10 @@ model Agent {
 
   isDeleted Boolean @default(false)
 
-  user     Users  @relation("AgentUser", fields: [userId], references: [id])
+  user     Users  @relation("AgentUser", fields: [userId], references: [id], onDelete: Cascade)
   userId   String @db.Uuid @unique
 
-  admin    Users  @relation("AgentAdmin", fields: [adminId], references: [id])
+  admin    Users  @relation("AgentAdmin", fields: [adminId], references: [id], onDelete: Cascade)
   adminId  String @db.Uuid
 
   @@map("agents")

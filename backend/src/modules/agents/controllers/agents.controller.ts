@@ -32,6 +32,14 @@ class AgentsController {
       agents,
     });
   }
+  async remove(req: Request, res: Response) {
+    const agentId = req.params.id;
+    const user = (req as any).user;
+
+    await agentsService.removeAgent(agentId, user.user_id);
+
+    res.status(200).json({ message: "Agent successfully removed" });
+  }
 }
 
 export const agentsController = new AgentsController();

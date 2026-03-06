@@ -64,7 +64,7 @@ export default function MyBookingSummary({ bookingId }: { bookingId: string }) {
         <span className="flex-1/3 flex items-center">
           <PrimaryBackButton
             onClick={() => {
-              router.push("/my-bookings");
+              router.back();
             }}
             style="text-xl"
           />

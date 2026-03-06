@@ -7,6 +7,11 @@ import {
 
 const prisma = new PrismaClient();
 
+export type PrismaTx = Omit<
+  PrismaClient,
+  "$connect" | "$disconnect" | "$transaction" | "$extends" | "$on"
+>;
+
 class UserRepository {
   async create(data: Prisma.UsersCreateInput): Promise<Users> {
     try {
@@ -43,9 +48,14 @@ class UserRepository {
     }
   }
 
-  async update(id: string, data: Prisma.UsersUpdateInput): Promise<Users> {
+  async update(
+    id: string,
+    data: Prisma.UsersUpdateInput,
+    tx?: PrismaTx,
+  ): Promise<Users> {
+    const db = tx ?? prisma;
     try {
-      return await prisma.users.update({ where: { id }, data });
+      return await db.users.update({ where: { id }, data });
     } catch (error: any) {
       if (error.code === "P2025") {
         throw new NotFoundError("User not found");
@@ -58,6 +68,7 @@ class UserRepository {
     try {
       return await prisma.users.delete({ where: { id } });
     } catch (error: any) {
+      console.log(error);
       if (error.code === "P2025") {
         throw new NotFoundError("User not found");
       }

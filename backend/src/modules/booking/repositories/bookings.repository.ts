@@ -3,6 +3,11 @@ import { AppError, ConflictError } from "../../../shared/helpers/appErrors";
 
 const prisma = new PrismaClient();
 
+export type PrismaTx = Omit<
+  PrismaClient,
+  "$connect" | "$disconnect" | "$transaction" | "$extends" | "$on"
+>;
+
 type BookingWithRelations = Prisma.BookingGetPayload<{
   include: {
     user: true;
@@ -99,6 +104,19 @@ class BookingsRepository {
       return await prisma.booking.update({ where: { id }, data });
     } catch (error) {
       throw new AppError("Could not update booking. Please try again");
+    }
+  }
+
+  async updateManyByUserId(
+    userId: string,
+    data: Prisma.BookingUpdateInput,
+    tx?: PrismaTx,
+  ) {
+    const db = tx ?? prisma;
+    try {
+      return await db.booking.updateMany({ where: { userId }, data });
+    } catch (error) {
+      throw new AppError("Could not update bookings. Please try again");
     }
   }
 
