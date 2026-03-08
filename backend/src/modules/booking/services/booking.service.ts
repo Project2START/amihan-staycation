@@ -11,6 +11,8 @@ import { productService } from "../../product/services/product.service";
 import { paymentMethodService } from "../../paymentMethod/services/paymentMethod.service";
 import { userRepository } from "../../user/repositories/user.repository";
 import { BookingUpdateDTO } from "../schemas/bookingUpdate.schema";
+import { notificationRepository } from "../../notification/repositories/notification.repository";
+import { io } from "../../../app";
 
 class BookingService {
   async update(
@@ -30,9 +32,31 @@ class BookingService {
     }
 
     if (updateData.status === "action_required") {
+      const userFirstName = booking.user?.first_name;
+      const userLastName = booking.user?.last_name;
+
+      const userName = userFirstName && userLastName;
+
+      const ownerFirstName = booking.admin?.first_name;
+      const ownerLastName = booking.admin?.last_name;
+
+      const ownerName = ownerFirstName && ownerLastName;
+
       const newHistory = await bookingRepository.createBookingHistory({
-        userName: `${booking.user.first_name} ${booking.user.last_name}`,
-        ownerName: `${booking.admin.first_name} ${booking.admin.last_name}`,
+        userName: userName
+          ? `${userFirstName} ${userLastName}`
+          : userFirstName
+            ? userFirstName
+            : userLastName
+              ? userLastName
+              : "Deleted user",
+        ownerName: ownerName
+          ? `${ownerFirstName} ${ownerLastName}`
+          : ownerFirstName
+            ? ownerFirstName
+            : ownerLastName
+              ? ownerLastName
+              : "Deleted user",
         booking: { connect: { id: bookingId } },
         hasUserResponded: false,
         action_items,
@@ -172,7 +196,30 @@ class BookingService {
         payload.paymentMethod = { connect: { id: paymentMethod.id } };
       }
 
-      await bookingRepository.create(payload);
+      const newBooking = await bookingRepository.create(payload);
+
+      await notificationRepository.create({
+        hasRead: false,
+        isPublic: false,
+        title: "Booking Request Sent",
+        message: "Your reservation has been created and is pending approval.",
+        pathId: newBooking.id,
+        pathType: "booking",
+        userDestinationId: newBooking.userId,
+        userOwnerId: newBooking.adminId,
+      });
+
+      const unreadNotifCount =
+        await notificationRepository.countUnreadByDestination(
+          newBooking.userId ?? "",
+        );
+
+      console.log(`notifications:${newBooking.userId}`, unreadNotifCount);
+
+      io.to(`notifications:${newBooking.userId}`).emit(
+        "notification:unread-count",
+        { count: unreadNotifCount },
+      );
 
       return;
     } catch (error) {
@@ -313,10 +360,34 @@ class BookingService {
         responseData.payment_proof_url = uploaded.publicUrl;
       }
 
+      const userFirstName = booking.user?.first_name;
+      const userLastName = booking.user?.last_name;
+
+      const userName = userFirstName && userLastName;
+
+      const ownerFirstName = booking.admin?.first_name;
+      const ownerLastName = booking.admin?.last_name;
+
+      const ownerName = ownerFirstName && ownerLastName;
+
       // Create a new history entry with the user's uploaded files
       await bookingRepository.createBookingHistory({
-        userName: `${booking.user.first_name} ${booking.user.last_name}`,
-        ownerName: `${booking.admin.first_name} ${booking.admin.last_name}`,
+        userName: userName
+          ? `${userFirstName} ${userLastName}`
+          : userFirstName
+            ? userFirstName
+            : userLastName
+              ? userLastName
+              : "Deleted user",
+        ownerName: ownerName
+          ? `${ownerFirstName} ${ownerLastName}`
+          : ownerFirstName
+            ? ownerFirstName
+            : ownerLastName
+              ? ownerLastName
+              : "Deleted user",
+        // userName: `${booking?.user?.first_name} ${booking?.user?.last_name}`,
+        // ownerName: `${booking?.admin?.first_name} ${booking.admin.last_name}`,
         booking: { connect: { id: booking.id } },
         hasUserResponded: true,
         action_items: [],

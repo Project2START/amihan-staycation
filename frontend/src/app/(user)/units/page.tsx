@@ -2,12 +2,12 @@ import { Suspense } from "react";
 import GreetUser from "../components/GreetUser";
 import ProductList from "./components/ProductList";
 import { Skeleton } from "@mui/material";
-import BookingStatus from "./components/BookingStatus";
+// import BookingStatus from "./components/BookingStatus";
 
 export default function UnitsPage() {
   return (
     <div className="px-[1.5rem] py-[2rem]">
-      <BookingStatus />
+      {/* <BookingStatus /> */}
       <GreetUser />
       <Suspense
         fallback={

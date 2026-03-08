@@ -29,6 +29,8 @@ model Users {
 
   agentAdmin Agent[] @relation("AgentAdmin")
   agentUser Agent? @relation("AgentUser")
+
+  notifications Notification[]
   
   @@map("users")
 }
@@ -126,6 +128,7 @@ model Booking {
   paymentMethodId String?   @db.Uuid 
 
   history BookingHistory[]
+
   @@map("bookings")
 }
 
@@ -163,4 +166,26 @@ model Agent {
   adminId  String @db.Uuid
 
   @@map("agents")
+}
+
+model Notification {
+  id       String @id @default(uuid()) @db.Uuid
+  title String
+  message String
+
+  createdAt  DateTime @default(now())
+
+  userOwner     Users?  @relation(fields: [userOwnerId], references: [id], onDelete: SetNull)
+  userOwnerId   String? @db.Uuid
+
+  userDestinationId   String? @db.Uuid
+
+  isPublic  Boolean
+
+  pathId  String
+  pathType  String
+
+  hasRead Boolean
+
+  @@map("notifications")
 }
