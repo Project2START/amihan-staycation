@@ -292,10 +292,6 @@ export const bookingSchema = z.object({
     .string()
     .max(UUID_MAX, `Payment method ID must be at most ${UUID_MAX} characters.`)
     .optional(),
-  //   status: z
-  //     .string()
-  //     .min(STATUS_MIN_LENGTH, "Status cannot be empty.")
-  //     .max(STATUS_MAX_LENGTH, "Status is too long."),
 });
 
 export type BookingDTO = z.infer<typeof bookingSchema>;

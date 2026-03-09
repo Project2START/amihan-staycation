@@ -9,6 +9,7 @@ import registreeRoutes from "./modules/registree/registree.routes";
 import paymentMethodRoutes from "./modules/paymentMethod/paymentMethod.routes";
 import bookingRoutes from "./modules/booking/booking.routes";
 import agentRoutes from "./modules/agents/agents.routes";
+import notificationRoutes from "./modules/notification/notification.routes";
 import { ApolloServer } from "@apollo/server";
 import cookieParser from "cookie-parser";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -16,7 +17,6 @@ import session from "express-session";
 import { resolvers, typeDefs } from "./graphql/schema";
 import http from "http";
 import { Server, Socket } from "socket.io";
-import { parse } from "cookie";
 import { getVerifiedUserFromSocket } from "./shared/helpers/getVerifiedUserFromSocket";
 import { notificationRepository } from "./modules/notification/repositories/notification.repository";
 const app = express();
@@ -41,6 +41,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/paymentMethods", paymentMethodRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/agents", agentRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 export const httpServer = http.createServer(app);
 

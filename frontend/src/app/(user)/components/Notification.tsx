@@ -1,11 +1,22 @@
 "use client";
 
 import { HOST } from "@/app/shared/constants/config";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { io, Socket } from "socket.io-client";
+import NotificationContent from "./NotificationContent";
+import ClickOutside from "@/app/shared/ui/ClickOutside";
 export default function Notification() {
   const [unreadCount, setUnreadCount] = useState(0);
+  const [openNotif, setOpenNotif] = useState(false);
+
+  const handleOpenNotif = () => {
+    setOpenNotif(true);
+  };
+  const handleCloseNotif = () => {
+    setOpenNotif(false);
+  };
 
   useEffect(() => {
     const socket: Socket = io(`${HOST}`, { withCredentials: true });
@@ -14,7 +25,6 @@ export default function Notification() {
 
     socket.on("notification:unread-count", (data) => {
       setUnreadCount(data.count);
-      console.log(data.count);
     });
 
     return () => {
@@ -23,8 +33,8 @@ export default function Notification() {
   }, []);
 
   return (
-    <div>
-      <button className="relative">
+    <div className="relative">
+      <button onClick={handleOpenNotif}>
         <span className="text-2xl text-gray-500">
           <IoNotificationsOutline />
         </span>
@@ -34,6 +44,21 @@ export default function Notification() {
           </div>
         ) : null}
       </button>
+
+      <AnimatePresence initial={false}>
+        {openNotif ? (
+          <motion.div
+            initial={{ opacity: 0, translateY: "-5%" }}
+            animate={{ opacity: 1, translateY: "0%" }}
+            exit={{ opacity: 0, translateY: "-5%" }}
+            className="z-999 absolute right-0 top-[120%]"
+          >
+            <ClickOutside onClickOutside={handleCloseNotif}>
+              <NotificationContent />
+            </ClickOutside>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
