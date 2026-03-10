@@ -51,7 +51,7 @@ export default function Notification() {
             initial={{ opacity: 0, translateY: "-5%" }}
             animate={{ opacity: 1, translateY: "0%" }}
             exit={{ opacity: 0, translateY: "-5%" }}
-            className="z-999 absolute right-0 top-[120%]"
+            className="z-999 absolute right-0 top-[170%]"
           >
             <ClickOutside onClickOutside={handleCloseNotif}>
               <NotificationContent />

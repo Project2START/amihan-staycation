@@ -5,7 +5,6 @@ import {
   NotificationUpdateIdentifierDTO,
 } from "../schemas/notification.schema";
 import { ForbiddenError } from "../../../shared/helpers/appErrors";
-import { Notification } from "@prisma/client";
 
 class NotificationService {
   async updateMany(
@@ -57,7 +56,11 @@ class NotificationService {
         options,
       );
 
-      return notifications;
+      return notifications.map((notification) => {
+        const { isPublic, ...rest } = notification;
+
+        return rest;
+      });
     }
   }
 }

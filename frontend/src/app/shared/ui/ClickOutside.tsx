@@ -14,8 +14,13 @@ const ClickOutside: React.FC<ClickOutsideProps> = ({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOrFocus = (event: MouseEvent | FocusEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
+    const handlePointerDownOutside = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+
+      // Ignore events from detached nodes during rerenders/unmounts.
+      if (!target || !(target as HTMLElement).isConnected) return;
+
+      if (ref.current && !ref.current.contains(target)) {
         onClickOutside();
       }
     };
@@ -26,20 +31,14 @@ const ClickOutside: React.FC<ClickOutsideProps> = ({
       }
     };
 
-    // Mouse events
-    document.addEventListener("mousedown", handleClickOrFocus);
-    document.addEventListener("click", handleClickOrFocus); // handles Enter/Space keyboard activation
-
-    // Keyboard focus events
-    document.addEventListener("focusin", handleClickOrFocus);
+    // Close only on pointer down outside to avoid close-on-rerender issues.
+    document.addEventListener("mousedown", handlePointerDownOutside);
 
     // Escape key
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOrFocus);
-      document.removeEventListener("click", handleClickOrFocus);
-      document.removeEventListener("focusin", handleClickOrFocus);
+      document.removeEventListener("mousedown", handlePointerDownOutside);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [onClickOutside]);

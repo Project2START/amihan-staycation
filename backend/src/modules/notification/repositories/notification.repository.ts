@@ -128,6 +128,7 @@ class NotificationRepository {
         where,
         ...options,
         include: { userOwner: { select: userOwnerSelect } },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error) {
       throw new AppError("Could not fetch notifications. Please try again");
