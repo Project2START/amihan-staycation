@@ -84,10 +84,18 @@ export const bookingTypeDefs = `#graphql
         history: [BookingHistory]
     }
 
+    type UnitOption {
+        id: String!
+        name: String!
+    }
+
     extend type Query {
         bookingsByAdmin: [AdminBookings]
         bookingsByAgent(agentId: String!): [AdminBookings]
         bookingById(id: String!): Booking
         bookingsByUser: [UserBookings]
+        bookedDatesByProduct(productId: String!): [String]
+        unitsByRole: [UnitOption]
+        bookedDatesByAllProducts: [String]
     }
     `;

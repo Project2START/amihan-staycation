@@ -24,5 +24,24 @@ export const bookingsResolver = {
     bookingsByUser: (_parent: unknown, _args: unknown, contextValue: any) => {
       return contextValue.models.Booking.getBookingsByUserId();
     },
+    bookedDatesByProduct: (
+      _parent: unknown,
+      args: { productId: string },
+      contextValue: any,
+    ) => {
+      return contextValue.models.Booking.getBookedDatesByProduct(
+        args.productId,
+      );
+    },
+    unitsByRole: (_parent: unknown, _args: unknown, contextValue: any) => {
+      return contextValue.models.Booking.getUnitsByRole();
+    },
+    bookedDatesByAllProducts: (
+      _parent: unknown,
+      _args: unknown,
+      contextValue: any,
+    ) => {
+      return contextValue.models.Booking.getBookedDatesByAllProducts();
+    },
   },
 };

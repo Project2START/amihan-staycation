@@ -306,6 +306,32 @@ class BookingService {
     return bookings;
   }
 
+  async getBookedDatesByProduct(productId: string): Promise<string[]> {
+    const bookings = await bookingRepository.findActiveByProductId(productId);
+
+    const dates: Set<string> = new Set();
+    for (const booking of bookings) {
+      const checkPeriod = booking.check_period as {
+        check_in: string;
+        check_out: string;
+      };
+      if (!checkPeriod?.check_in || !checkPeriod?.check_out) continue;
+
+      let current = new Date(checkPeriod.check_in);
+      const end = new Date(checkPeriod.check_out);
+
+      while (current < end) {
+        const yyyy = current.getFullYear();
+        const mm = String(current.getMonth() + 1).padStart(2, "0");
+        const dd = String(current.getDate()).padStart(2, "0");
+        dates.add(`${yyyy}-${mm}-${dd}`);
+        current.setDate(current.getDate() + 1);
+      }
+    }
+
+    return Array.from(dates);
+  }
+
   async getHistoryByBookingId(bookingId: string, userId: string) {
     const booking = await bookingRepository.findById(bookingId);
     const user = await userRepository.findById(userId);

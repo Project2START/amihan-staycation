@@ -16,6 +16,7 @@ interface ICalendarProps {
   disabledDates?: Date[];
   defaultValue: [string | null, string | null];
   hasPresets: boolean;
+  readOnly?: boolean;
 }
 
 export default function CalendarBooking({
@@ -23,6 +24,7 @@ export default function CalendarBooking({
   disabledDates,
   defaultValue,
   hasPresets,
+  readOnly = false,
 }: ICalendarProps) {
   const [calendarValue, setCalendarValue] = useState<
     [string | null, string | null]
@@ -34,6 +36,22 @@ export default function CalendarBooking({
   useEffect(() => {
     setCalendarValue(defaultValue);
   }, [defaultValue]);
+
+  const hasDisabledDateBetween = (
+    startDate: string,
+    endDate: string,
+    blockedDates: Date[],
+  ) => {
+    const start = dayjs(startDate).startOf("day");
+    const end = dayjs(endDate).startOf("day");
+
+    return blockedDates.some((blockedDate) => {
+      const blocked = dayjs(blockedDate).startOf("day");
+
+      // check_in is inclusive while check_out is exclusive.
+      return blocked.isAfter(start) && blocked.isBefore(end);
+    });
+  };
 
   return (
     <div className="bg-white p-[1.5rem] rounded-lg overflow-hidden min-w-0 flex justify-center shadow-xl/30">
@@ -49,6 +67,23 @@ export default function CalendarBooking({
           type="range"
           value={calendarValue}
           onChange={(value) => {
+            if (readOnly) return;
+
+            if (value[0] && value[1] && disabledDates?.length) {
+              const containsDisabledDate = hasDisabledDateBetween(
+                value[0],
+                value[1],
+                disabledDates,
+              );
+
+              if (containsDisabledDate) {
+                const adjustedValue: DatesRangeValue<string> = [value[1], null];
+                setCalendarValue(adjustedValue);
+                onCalendarChange(adjustedValue);
+                return;
+              }
+            }
+
             setCalendarValue(value);
             onCalendarChange(value);
           }}

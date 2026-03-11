@@ -2,6 +2,7 @@ import { requireAuth } from "../../../shared/helpers/requireAuth";
 import { requireRole } from "../../../shared/helpers/requireRole";
 import { bookingService } from "../services/booking.service";
 import { agentsRepository } from "../../agents/repositories/agents.repository";
+import { productService } from "../../product/services/product.service";
 
 export const generateBookingModel = ({ user }: { user: any }) => ({
   getAllBookingsByAdminId: async () => {
@@ -18,7 +19,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
         name,
         check_period,
         status,
-        product: { name: product.name },
+        product: { name: product?.name },
         id,
       };
     });
@@ -42,7 +43,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
         name,
         check_period,
         status,
-        product: { name: product.name },
+        product: { name: product?.name },
         id,
       };
     });
@@ -77,7 +78,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
       id,
       status,
       createdAt: createdAt.toISOString(),
-      product: { name: product.name, id: product.id },
+      product: { name: product?.name, id: product?.id },
       check_period,
       name,
       age,
@@ -111,5 +112,29 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
       bookings.map((b) => this.getBookingById(b.id)),
     );
     return bookingsByUserId;
+  },
+  getBookedDatesByProduct: async (productId: string) => {
+    return bookingService.getBookedDatesByProduct(productId);
+  },
+  getUnitsByRole: async () => {
+    requireAuth(user);
+    requireRole(user, ["admin", "agent"]);
+
+    const products = await productService.getAll(user.user_role, user.user_id);
+    return products.map((p: any) => ({ id: p.id, name: p.name }));
+  },
+  getBookedDatesByAllProducts: async () => {
+    requireAuth(user);
+    requireRole(user, ["admin", "agent"]);
+
+    const products = await productService.getAll(user.user_role, user.user_id);
+    const allDates: Set<string> = new Set();
+
+    for (const product of products) {
+      const dates = await bookingService.getBookedDatesByProduct(product.id);
+      dates.forEach((d: string) => allDates.add(d));
+    }
+
+    return Array.from(allDates);
   },
 });

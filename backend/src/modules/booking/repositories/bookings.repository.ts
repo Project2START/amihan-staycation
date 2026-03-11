@@ -157,6 +157,43 @@ class BookingsRepository {
     }
   }
 
+  async findActiveByProductId(productId: string): Promise<Booking[]> {
+    try {
+      return (await prisma.booking.findMany({
+        where: {
+          productId,
+          status: {
+            in: ["pending", "confirmed", "checked_in", "action_required"],
+          },
+        },
+        select: {
+          id: true,
+          check_period: true,
+          additional_guests: true,
+          age: true,
+          agree_terms: true,
+          contact_number: true,
+          name: true,
+          nationality: true,
+          image_payment_proof_url: true,
+          pool_access: true,
+          status: true,
+          status_message: true,
+          image_valid_id_url: true,
+          with_vehicle: true,
+          createdAt: true,
+          updatedAt: true,
+          userId: true,
+          adminId: true,
+          productId: true,
+          paymentMethodId: true,
+        },
+      })) as Booking[];
+    } catch (error) {
+      throw new AppError("Could not fetch bookings. Please try again");
+    }
+  }
+
   async findHistoryByBookingId(bookingId: string): Promise<BookingHistory[]> {
     try {
       return await prisma.bookingHistory.findMany({
