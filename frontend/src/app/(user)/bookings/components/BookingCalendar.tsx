@@ -90,6 +90,11 @@ export default function BookingCalendar() {
                   >
                     <ClickOutside onClickOutside={handleCloseCalendar}>
                       <CalendarBooking
+                        hasPresets={false}
+                        // disabledDates={[
+                        //   new Date("2026-03-12"),
+                        //   new Date("2026-03-14"),
+                        // ]}
                         defaultValue={[
                           checkPeriod?.check_in ?? null,
                           checkPeriod?.check_out ?? null,

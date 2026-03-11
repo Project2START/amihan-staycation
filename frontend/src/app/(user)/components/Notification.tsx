@@ -54,7 +54,7 @@ export default function Notification() {
             className="z-999 absolute right-0 top-[170%]"
           >
             <ClickOutside onClickOutside={handleCloseNotif}>
-              <NotificationContent />
+              <NotificationContent handleCloseNotif={handleCloseNotif} />
             </ClickOutside>
           </motion.div>
         ) : null}

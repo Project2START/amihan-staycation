@@ -7,7 +7,11 @@ import axios from "axios";
 import { HOST } from "@/app/shared/constants/config";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 
-export default function NotificationList() {
+export default function NotificationList({
+  handleCloseNotif,
+}: {
+  handleCloseNotif: () => void;
+}) {
   const [notifications, setNotifications] = useState<INotificationItem[]>([]);
   const [moreLoading, setMoreLoading] = useState(false);
   const [noMoreView, setNoMoreView] = useState(false);
@@ -96,14 +100,28 @@ export default function NotificationList() {
     );
   }
 
+  if (notifications.length === 0 && !moreLoading) {
+    return (
+      <div className="flex items-center justify-center h-full ">
+        <p className="text-sm font-bold text-gray-300">
+          No notifications as of the moment
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="divide-y divide-gray-100">
       {notifications.map((notification) => (
-        <NotificationItem key={notification.id} notification={notification} />
+        <NotificationItem
+          key={notification.id}
+          notification={notification}
+          handleCloseNotif={handleCloseNotif}
+        />
       ))}
 
       <div className="flex justify-center">
-        {moreLoading ? (
+        {moreLoading && !noMoreView && (
           <div className="mt-[0.5rem]">
             <span>
               <CircularProgress
@@ -112,19 +130,25 @@ export default function NotificationList() {
               />
             </span>
           </div>
-        ) : (
-          !noMoreView && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setSkip((skip) => skip + 10);
-              }}
-            >
-              <span className="text-secondary-normal font-bold text-xs underline">
-                View more
-              </span>
-            </button>
-          )
+        )}
+
+        {!noMoreView && notifications.length >= 10 && !moreLoading && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setSkip((skip) => skip + 10);
+            }}
+          >
+            <span className="text-secondary-normal font-bold text-xs underline">
+              View more
+            </span>
+          </button>
+        )}
+
+        {noMoreView && (
+          <p className="text-xs font-bold text-gray-300 text-center  pt-[0.5rem] mt-[0.5rem]">
+            You reach the end
+          </p>
         )}
       </div>
 

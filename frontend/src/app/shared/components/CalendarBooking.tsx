@@ -15,12 +15,14 @@ interface ICalendarProps {
   onCalendarChange: (value: DatesRangeValue<string>) => void;
   disabledDates?: Date[];
   defaultValue: [string | null, string | null];
+  hasPresets: boolean;
 }
 
 export default function CalendarBooking({
   onCalendarChange,
   disabledDates,
   defaultValue,
+  hasPresets,
 }: ICalendarProps) {
   const [calendarValue, setCalendarValue] = useState<
     [string | null, string | null]
@@ -40,7 +42,7 @@ export default function CalendarBooking({
           classNames={{
             day: classes.day,
             datePickerRoot: classes.datePickerRoot,
-            presetsList: classes.presetsList,
+            presetsList: hasPresets ? classes.presetsList : undefined,
             levelsGroup: classes.levelsGroup,
             presetButton: classes.presetButton,
           }}
@@ -52,36 +54,40 @@ export default function CalendarBooking({
           }}
           minDate={phToday.toDate()}
           maxDate={getDateOffsetFromToday(6, "months", "Asia/Manila")}
-          presets={[
-            {
-              value: [
-                phToday.format("YYYY-MM-DD"),
-                phToday.add(1, "day").format("YYYY-MM-DD"),
-              ],
-              label: "1-night stay",
-            },
-            {
-              value: [
-                phToday.format("YYYY-MM-DD"),
-                phToday.add(3, "day").format("YYYY-MM-DD"),
-              ],
-              label: "3-night stay",
-            },
-            {
-              value: [
-                phToday.format("YYYY-MM-DD"),
-                phToday.add(1, "week").format("YYYY-MM-DD"),
-              ],
-              label: "1-week stay",
-            },
-            {
-              value: [
-                phToday.format("YYYY-MM-DD"),
-                phToday.add(1, "month").format("YYYY-MM-DD"),
-              ],
-              label: "1-month stay",
-            },
-          ]}
+          presets={
+            hasPresets
+              ? [
+                  {
+                    value: [
+                      phToday.format("YYYY-MM-DD"),
+                      phToday.add(1, "day").format("YYYY-MM-DD"),
+                    ],
+                    label: "1-night stay",
+                  },
+                  {
+                    value: [
+                      phToday.format("YYYY-MM-DD"),
+                      phToday.add(3, "day").format("YYYY-MM-DD"),
+                    ],
+                    label: "3-night stay",
+                  },
+                  {
+                    value: [
+                      phToday.format("YYYY-MM-DD"),
+                      phToday.add(1, "week").format("YYYY-MM-DD"),
+                    ],
+                    label: "1-week stay",
+                  },
+                  {
+                    value: [
+                      phToday.format("YYYY-MM-DD"),
+                      phToday.add(1, "month").format("YYYY-MM-DD"),
+                    ],
+                    label: "1-month stay",
+                  },
+                ]
+              : []
+          }
           excludeDate={
             disabledDates
               ? (date) => {

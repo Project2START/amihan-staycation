@@ -2,6 +2,17 @@
 
 import Link from "next/link";
 
+export const paths = [
+  {
+    pathType: "booking",
+    path: "/units/booking",
+  },
+  {
+    pathType: "notification",
+    path: "/notifications",
+  },
+];
+
 interface NotificationUserOwner {
   avatar_url: string;
   first_name: string;
@@ -24,19 +35,25 @@ export interface INotificationItem {
 
 export default function NotificationItem({
   notification,
+  handleCloseNotif,
 }: {
   notification: INotificationItem;
+  handleCloseNotif: () => void;
 }) {
-  const { title, message, createdAt, hasRead, userOwner } = notification;
+  const { title, message, createdAt, hasRead, userOwner, pathType } =
+    notification;
   const fullName = `${userOwner.first_name} ${userOwner.last_name}`;
   const timeAgo = formatTimeAgo(createdAt);
 
+  const path = paths.find((path) => path.pathType === pathType);
+
   return (
     <Link
-      href="#"
+      href={path ? `${path.path}/${notification.pathId}` : "#"}
       className={`flex items-start gap-3 px-4 py-3 transition-colors hover:bg-gray-100 ${
         !hasRead ? "bg-blue-50" : ""
       }`}
+      onClick={handleCloseNotif}
     >
       <img
         src={userOwner.avatar_url}

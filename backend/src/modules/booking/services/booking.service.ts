@@ -31,6 +31,15 @@ class BookingService {
       throw new ForbiddenError("You do not own this booking");
     }
 
+    const notifyUser = async (id: string | null) => {
+      const unreadNotifCount =
+        await notificationRepository.countUnreadByDestination(id ?? "");
+
+      io.to(`notifications:${id}`).emit("notification:unread-count", {
+        count: unreadNotifCount,
+      });
+    };
+
     if (updateData.status === "action_required") {
       const userFirstName = booking.user?.first_name;
       const userLastName = booking.user?.last_name;
@@ -64,14 +73,49 @@ class BookingService {
       });
 
       try {
-        await bookingRepository.update(bookingId, { status, status_message });
+        const updatedBooking = await bookingRepository.update(bookingId, {
+          status,
+          status_message,
+        });
+
+        await notificationRepository.create({
+          hasRead: false,
+          isPublic: false,
+          title: "Booking Action Required",
+          message:
+            "Action is required for your booking. Please review your reservation details and wait for approval updates.",
+          pathId: updatedBooking.id,
+          pathType: "booking",
+          userDestinationId: updatedBooking.userId,
+          userOwnerId: updatedBooking.adminId,
+        });
+
+        await notifyUser(updatedBooking.userId);
+        return;
       } catch (error) {
         await bookingRepository.deleteBookingHistory(newHistory.id);
         throw error;
       }
     }
-    await bookingRepository.update(bookingId, { status, status_message });
 
+    const updatedBooking = await bookingRepository.update(bookingId, {
+      status,
+      status_message,
+    });
+
+    await notificationRepository.create({
+      hasRead: false,
+      isPublic: false,
+      title: "Booking Cancelled",
+      message:
+        "Your reservation has been cancelled. If this was a mistake, you may create a new booking anytime.",
+      pathId: updatedBooking.id,
+      pathType: "booking",
+      userDestinationId: updatedBooking.userId,
+      userOwnerId: updatedBooking.adminId,
+    });
+
+    await notifyUser(updatedBooking.userId);
     return;
   }
 
@@ -213,8 +257,6 @@ class BookingService {
         await notificationRepository.countUnreadByDestination(
           newBooking.userId ?? "",
         );
-
-      console.log(`notifications:${newBooking.userId}`, unreadNotifCount);
 
       io.to(`notifications:${newBooking.userId}`).emit(
         "notification:unread-count",
@@ -412,6 +454,27 @@ class BookingService {
       }
       throw error;
     }
+  }
+
+  async getMyExistingBooking(userId: string) {
+    const booking = await bookingRepository.findFirst({
+      userId,
+      status: { in: ["confirmed", "checked_in", "pending", "action_required"] },
+    });
+
+    if (!booking) {
+      return null;
+    }
+
+    return {
+      status: booking?.status ? booking.status : null,
+      id: booking?.id ? booking.id : null,
+    };
+  }
+
+  async getMyBookings(filter: {}, userId: string) {
+    const bookings = await bookingRepository.findMany({ ...filter, userId });
+    return bookings.map((booking) => booking.id);
   }
 }
 

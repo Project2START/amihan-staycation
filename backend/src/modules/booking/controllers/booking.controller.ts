@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
 import { bookingService } from "../services/booking.service";
+import {
+  AppError,
+  ForbiddenError,
+  NotFoundError,
+} from "../../../shared/helpers/appErrors";
 
 class BookingController {
   async updateBooking(req: Request, res: Response) {
@@ -48,7 +53,7 @@ class BookingController {
       contact_number: b.contact_number,
       check_period: b.check_period,
       status: b.status,
-      product: { name: b.product.name },
+      product: { name: b?.product?.name },
       createdAt: b.createdAt,
     }));
 
@@ -84,6 +89,28 @@ class BookingController {
     res.status(200).json({
       message: "Response submitted successfully",
     });
+  }
+
+  async getMyBookings(req: Request, res: Response) {
+    const user = (req as any).user;
+
+    const { service } = req.query;
+
+    if (service === "existingBooking") {
+      const booking = await bookingService.getMyExistingBooking(user.user_id);
+
+      res.status(200).json({
+        booking,
+      });
+
+      return;
+    }
+
+    const bookings = await bookingService.getMyBookings({}, user.user_id);
+
+    res
+      .status(200)
+      .json({ message: "Bookings successfully fetched", bookings });
   }
 }
 

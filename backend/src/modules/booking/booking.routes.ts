@@ -7,6 +7,7 @@ import { validateSchema } from "../../middleware/validateSchema";
 import { bookingSchema } from "./schemas/booking.schema";
 import { asyncHandler } from "../../shared/helpers/asyncHandler";
 import { bookingController } from "./controllers/booking.controller";
+import { bookingUpdateSchema } from "./schemas/bookingUpdate.schema";
 
 const router = Router();
 
@@ -24,6 +25,13 @@ router.get(
   checkAuth,
   checkRole(["user", "admin", "agent"]),
   asyncHandler(bookingController.getBookingHistory),
+);
+
+router.get(
+  "/me",
+  checkAuth,
+  checkRole(["user", "agent"]),
+  asyncHandler(bookingController.getMyBookings),
 );
 
 router.post(
@@ -49,8 +57,6 @@ router.post(
   validateSchema(bookingSchema),
   asyncHandler(bookingController.createBooking),
 );
-
-import { bookingUpdateSchema } from "./schemas/bookingUpdate.schema";
 
 router.patch(
   "/:id",

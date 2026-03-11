@@ -1,5 +1,9 @@
 import { Prisma, PrismaClient, Booking, BookingHistory } from "@prisma/client";
-import { AppError, ConflictError } from "../../../shared/helpers/appErrors";
+import {
+  AppError,
+  ConflictError,
+  NotFoundError,
+} from "../../../shared/helpers/appErrors";
 
 const prisma = new PrismaClient();
 
@@ -94,6 +98,23 @@ class BookingsRepository {
           history: true,
         },
       });
+    } catch (error) {
+      throw new AppError("Could not fetch bookings. Please try again");
+    }
+  }
+
+  async findFirst(where: Partial<Prisma.BookingWhereInput>) {
+    try {
+      return await prisma.booking.findFirst({ where: { ...where } });
+    } catch (error) {
+      console.error(error);
+      throw new NotFoundError("Could not find booking.");
+    }
+  }
+
+  async findMany(where: Partial<Prisma.BookingWhereInput>) {
+    try {
+      return prisma.booking.findMany({ where });
     } catch (error) {
       throw new AppError("Could not fetch bookings. Please try again");
     }
