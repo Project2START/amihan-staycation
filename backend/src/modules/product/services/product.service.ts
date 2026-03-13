@@ -107,6 +107,14 @@ class ProductService {
         return rest;
       });
     }
+    if (role === "admin") {
+      const adminProducts = await productRepository.findAllById(userId);
+
+      return adminProducts.map((adminProduct) => {
+        const { createdAt, updatedAt, ...rest } = adminProduct;
+        return rest;
+      });
+    }
 
     const products = await productRepository.findAll();
 
