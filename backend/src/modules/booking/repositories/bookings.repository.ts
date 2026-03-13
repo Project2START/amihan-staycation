@@ -194,6 +194,20 @@ class BookingsRepository {
     }
   }
 
+  async findForStatusAutomation(): Promise<Booking[]> {
+    try {
+      return await prisma.booking.findMany({
+        where: {
+          status: {
+            in: ["pending", "action_required", "confirmed", "checked_in"],
+          },
+        },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch bookings. Please try again");
+    }
+  }
+
   async findHistoryByBookingId(bookingId: string): Promise<BookingHistory[]> {
     try {
       return await prisma.bookingHistory.findMany({

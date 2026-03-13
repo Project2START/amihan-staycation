@@ -13,8 +13,81 @@ import { userRepository } from "../../user/repositories/user.repository";
 import { BookingUpdateDTO } from "../schemas/bookingUpdate.schema";
 import { notificationRepository } from "../../notification/repositories/notification.repository";
 import { io } from "../../../app";
+import {
+  BOOKING_CHECK_IN_TIME,
+  BOOKING_CHECK_OUT_TIME,
+  BOOKING_EXPIRY_HOURS,
+} from "../../../shared/constants/bookingTimes";
+
+type BookingCheckPeriod = {
+  check_in?: string;
+  check_out?: string;
+};
+
+const buildDateTime = (date: string, time: string): Date => {
+  return new Date(`${date}T${time}`);
+};
 
 class BookingService {
+  async runAutomatedStatusTransitions(now: Date = new Date()) {
+    const bookings = await bookingRepository.findForStatusAutomation();
+
+    let expired = 0;
+    let checkedIn = 0;
+    let checkedOut = 0;
+
+    for (const booking of bookings) {
+      const checkPeriod = booking.check_period as BookingCheckPeriod;
+      const checkInDateTime = checkPeriod?.check_in
+        ? buildDateTime(checkPeriod.check_in, BOOKING_CHECK_IN_TIME)
+        : null;
+      const checkOutDateTime = checkPeriod?.check_out
+        ? buildDateTime(checkPeriod.check_out, BOOKING_CHECK_OUT_TIME)
+        : null;
+
+      if (
+        booking.status === "pending" ||
+        booking.status === "action_required"
+      ) {
+        const isOlderThanExpiry =
+          now.getTime() - booking.createdAt.getTime() >=
+          BOOKING_EXPIRY_HOURS * 60 * 60 * 1000;
+
+        const hasCheckInPassed = checkInDateTime
+          ? now >= checkInDateTime
+          : false;
+
+        if (isOlderThanExpiry || hasCheckInPassed) {
+          await bookingRepository.update(booking.id, { status: "expired" });
+          expired++;
+        }
+        continue;
+      }
+
+      if (booking.status === "confirmed") {
+        if (checkInDateTime && now >= checkInDateTime) {
+          await bookingRepository.update(booking.id, { status: "checked_in" });
+          checkedIn++;
+        }
+        continue;
+      }
+
+      if (booking.status === "checked_in") {
+        if (checkOutDateTime && now >= checkOutDateTime) {
+          await bookingRepository.update(booking.id, { status: "checked_out" });
+          checkedOut++;
+        }
+      }
+    }
+
+    return {
+      expired,
+      checkedIn,
+      checkedOut,
+      totalProcessed: bookings.length,
+    };
+  }
+
   async update(
     bookingId: string,
     adminId: string,
