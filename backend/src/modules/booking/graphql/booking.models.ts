@@ -12,14 +12,30 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
     const bookings = await bookingService.getAllByAdmin(user.user_id);
 
     return bookings.map((booking) => {
-      const { contact_number, name, check_period, status, product, id } =
-        booking;
+      const {
+        contact_number,
+        name,
+        check_period,
+        status,
+        product,
+        id,
+        additional_guests,
+      } = booking;
+      const guestCount =
+        1 + (Array.isArray(additional_guests) ? additional_guests.length : 0);
+
       return {
         contact_number,
         name,
         check_period,
         status,
-        product: { name: product?.name },
+        guest_count: guestCount,
+        product: {
+          name: product?.name,
+          id: product?.id,
+          price: product?.price,
+          maxPersons: product?.maxPersons,
+        },
         id,
       };
     });
@@ -36,14 +52,30 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
     const bookings = await bookingService.getAllByUser(agent.userId);
 
     return bookings.map((booking) => {
-      const { contact_number, name, check_period, status, product, id } =
-        booking;
+      const {
+        contact_number,
+        name,
+        check_period,
+        status,
+        product,
+        id,
+        additional_guests,
+      } = booking;
+      const guestCount =
+        1 + (Array.isArray(additional_guests) ? additional_guests.length : 0);
+
       return {
         contact_number,
         name,
         check_period,
         status,
-        product: { name: product?.name },
+        guest_count: guestCount,
+        product: {
+          name: product?.name,
+          id: product?.id,
+          price: product?.price,
+          maxPersons: product?.maxPersons,
+        },
         id,
       };
     });
@@ -78,7 +110,12 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
       id,
       status,
       createdAt: createdAt.toISOString(),
-      product: { name: product?.name, id: product?.id },
+      product: {
+        name: product?.name,
+        id: product?.id,
+        price: product?.price,
+        maxPersons: product?.maxPersons,
+      },
       check_period,
       name,
       age,

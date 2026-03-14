@@ -100,7 +100,7 @@ export default function NotificationList({
     );
   }
 
-  if (notifications.length === 0 && !moreLoading) {
+  if (notifications.length === 0) {
     return (
       <div className="flex items-center justify-center h-full ">
         <p className="text-sm font-bold text-gray-300">

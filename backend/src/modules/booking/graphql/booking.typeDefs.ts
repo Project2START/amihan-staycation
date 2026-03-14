@@ -12,6 +12,8 @@ export const bookingTypeDefs = `#graphql
     type Product {
         name: String
         id: String
+        price: Float
+        maxPersons: Int
     }
 
     type PaymentMethod {
@@ -47,6 +49,7 @@ export const bookingTypeDefs = `#graphql
         name: String
         check_period: CheckPeriod
         status: String!
+        guest_count: Int
         user: User
         product: Product
         id: String!

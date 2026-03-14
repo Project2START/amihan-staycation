@@ -113,6 +113,8 @@ class BookingService {
       });
     };
 
+    let title, message;
+
     if (updateData.status === "action_required") {
       const userFirstName = booking.user?.first_name;
       const userLastName = booking.user?.last_name;
@@ -171,6 +173,23 @@ class BookingService {
       }
     }
 
+    if (updateData.status === "cancelled") {
+      title = "Booking Cancelled";
+      message =
+        "Your booking has been cancelled. If this was a mistake, you may create a new booking anytime.";
+    }
+
+    if (updateData.status === "confirmed") {
+      title = "Booking Confirmed";
+      message =
+        "Your booking is confirmed. Please arrive on time, and we look forward to serving you.";
+    }
+
+    if (updateData.status === "pending") {
+      title = "Booking Update Pending";
+      message = "Your booking has been updated and is pending approval.";
+    }
+
     const updatedBooking = await bookingRepository.update(bookingId, {
       status,
       status_message,
@@ -179,9 +198,8 @@ class BookingService {
     await notificationRepository.create({
       hasRead: false,
       isPublic: false,
-      title: "Booking Cancelled",
-      message:
-        "Your reservation has been cancelled. If this was a mistake, you may create a new booking anytime.",
+      title: title ?? "A notification was made for you",
+      message: message ?? "Click here for more details",
       pathId: updatedBooking.id,
       pathType: "booking",
       userDestinationId: updatedBooking.userId,

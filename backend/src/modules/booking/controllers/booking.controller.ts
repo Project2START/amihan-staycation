@@ -1,10 +1,5 @@
 import { Request, Response } from "express";
 import { bookingService } from "../services/booking.service";
-import {
-  AppError,
-  ForbiddenError,
-  NotFoundError,
-} from "../../../shared/helpers/appErrors";
 
 class BookingController {
   async updateBooking(req: Request, res: Response) {
