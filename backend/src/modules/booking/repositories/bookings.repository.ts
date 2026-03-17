@@ -208,6 +208,32 @@ class BookingsRepository {
     }
   }
 
+  async findBlockingByProductIds(
+    productIds: string[],
+  ): Promise<Pick<Booking, "productId" | "check_period" | "status">[]> {
+    if (productIds.length === 0) {
+      return [];
+    }
+
+    try {
+      return await prisma.booking.findMany({
+        where: {
+          productId: { in: productIds },
+          status: {
+            in: ["pending", "action_required", "confirmed", "checked_in"],
+          },
+        },
+        select: {
+          productId: true,
+          check_period: true,
+          status: true,
+        },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch bookings. Please try again");
+    }
+  }
+
   async findHistoryByBookingId(bookingId: string): Promise<BookingHistory[]> {
     try {
       return await prisma.bookingHistory.findMany({

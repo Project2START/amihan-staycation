@@ -32,6 +32,9 @@ model Users {
 
   notifications Notification[]
   
+  reviews Review[]
+  importedReviews Review[] @relation("ImportedByUser")
+
   @@map("users")
 }
 
@@ -129,6 +132,8 @@ model Booking {
 
   history BookingHistory[]
 
+  reviews Review[]
+
   @@map("bookings")
 }
 
@@ -188,4 +193,43 @@ model Notification {
   hasRead Boolean
 
   @@map("notifications")
+}
+
+enum ReviewSource {
+  GOOGLE
+  FACEBOOK
+  DIRECT_MESSAGE
+  GUESTBOOK
+  OTHER
+}
+
+model Review {
+  id       String @id @default(uuid()) @db.Uuid
+
+  // In-app review fields
+  bookingId      String? @db.Uuid
+  booking        Booking?      @relation(fields: [bookingId], references: [id])
+  userId         String? @db.Uuid
+  user           Users?         @relation(fields: [userId], references: [id])
+
+  // Imported review fields
+  reviewerName   String?
+  source         ReviewSource?
+  originalDate   DateTime?
+  importedBy     String? @db.Uuid
+  importedByUser Users?         @relation("ImportedByUser", fields: [importedBy], references: [id])
+
+  // Shared fields
+  rating         Int           // 1–5
+  comment        String?
+  isImported     Boolean       @default(false)
+  isHidden       Boolean       @default(false)  // for admin moderation
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([bookingId])
+  @@index([userId])
+  @@index([isImported])
+  @@index([source])
 }

@@ -12,7 +12,7 @@ interface IOccupancyProps {
 interface IOccupancyState {
   adults: number;
   children: number;
-  rooms: number;
+  // rooms: number;
 }
 
 type OccupancyType = keyof IOccupancyState;
@@ -25,16 +25,16 @@ export default function Occupancy({
   const [occupancy, setOccupancy] = useState<IOccupancyState>({
     adults: 0,
     children: 0,
-    rooms: 0,
+    // rooms: 0,
   });
 
   useEffect(() => {
     setOccupancy({
       adults: search.adults,
       children: search.children,
-      rooms: search.rooms,
+      // rooms: search.rooms,
     });
-  }, [search.adults, search.children, search.rooms]);
+  }, [search.adults, search.children]);
 
   const handleIncreaseOccupancy = (field: OccupancyType) => {
     setOccupancy((occ) => ({ ...occ, [field]: occ[field] + 1 }));
@@ -60,7 +60,7 @@ export default function Occupancy({
           </button>
           <span className="text-md font-bold">{occupancy.adults}</span>
           <button
-            disabled={occupancy.adults >= 4}
+            disabled={occupancy.adults >= 10}
             onClick={() => handleIncreaseOccupancy("adults")}
             className="disabled:opacity-50"
           >
@@ -83,7 +83,7 @@ export default function Occupancy({
           </button>
           <span className="text-md font-bold">{occupancy.children}</span>
           <button
-            disabled={occupancy.children >= 7}
+            disabled={occupancy.children >= 10}
             onClick={() => handleIncreaseOccupancy("children")}
             className="disabled:opacity-50"
           >
@@ -91,7 +91,7 @@ export default function Occupancy({
           </button>
         </div>
       </div>
-      <div className="flex justify-between items-center">
+      {/* <div className="flex justify-between items-center">
         <div>
           <span className="font-bold">Rooms</span>
         </div>
@@ -113,14 +113,14 @@ export default function Occupancy({
             <span className="text-secondary-normal text-xl">+</span>
           </button>
         </div>
-      </div>
+      </div> */}
       <div className="mt-[1rem]">
         <PrimaryButton
           onClick={() => {
             onSetSearch({
               children: occupancy.children,
               adults: occupancy.adults,
-              rooms: occupancy.rooms,
+              // rooms: occupancy.rooms,
             });
             onSetOccupancy(false);
           }}

@@ -11,7 +11,7 @@ export default function ReadyPromptSection() {
         </p>
         <div className="flex justify-center">
           <Link
-            href={"/dashboard"}
+            href={"/units"}
             className="primary-button-link py-[1rem] lg:px-[7.5rem] lg:py-[1.25rem] lg:text-base"
           >
             Browse Units

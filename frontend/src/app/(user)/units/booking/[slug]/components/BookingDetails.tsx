@@ -91,9 +91,17 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
           className="mt-[1rem] text-white rounded-lg p-[0.5rem]"
           style={statusColor ? { backgroundColor: statusColor } : undefined}
         >
-          <ClampedParagraph
-            text={`Your booking has been cancelled due to the following reason: ${booking.status_message}`}
-          />
+          {booking.status_message && booking.status_message.trim() ? (
+            <ClampedParagraph
+              text={`Your booking has been cancelled due to the following reason: ${booking.status_message}`}
+            />
+          ) : (
+            <ClampedParagraph
+              text={
+                "Your booking has been cancelled. If you have questions, please contact support."
+              }
+            />
+          )}
         </div>
       )}
       {booking.status === "confirmed" && (

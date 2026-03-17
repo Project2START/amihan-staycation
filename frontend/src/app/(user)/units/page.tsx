@@ -2,13 +2,22 @@ import { Suspense } from "react";
 import GreetUser from "../components/GreetUser";
 import ProductList from "./components/ProductList";
 import { Skeleton } from "@mui/material";
+import SearchUnit from "@/app/shared/components/search-unit/SearchUnit";
 // import BookingStatus from "./components/BookingStatus";
 
-export default function UnitsPage() {
+interface UnitsPageProps {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export default async function UnitsPage({ searchParams }: UnitsPageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+
   return (
     <div className="px-[1.5rem] py-[2rem]">
-      {/* <BookingStatus /> */}
       <GreetUser />
+      <div className="mt-[1.5rem]">
+        <SearchUnit />
+      </div>
       <Suspense
         fallback={
           <div className="my-[1rem] grid gap-y-8">
@@ -22,7 +31,7 @@ export default function UnitsPage() {
           </div>
         }
       >
-        <ProductList />
+        <ProductList searchParams={resolvedSearchParams} />
       </Suspense>
     </div>
   );

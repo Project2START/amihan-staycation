@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { IoMdPerson } from "react-icons/io";
 
 export const paths = [
   {
@@ -55,11 +56,17 @@ export default function NotificationItem({
       }`}
       onClick={handleCloseNotif}
     >
-      <img
-        src={userOwner.avatar_url}
-        alt={fullName}
-        className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-      />
+      {userOwner.avatar_url ? (
+        <img
+          src={userOwner.avatar_url}
+          alt={fullName}
+          className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+        />
+      ) : (
+        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 flex-shrink-0">
+          <IoMdPerson className="text-gray-400 text-xl" />
+        </div>
+      )}
       <div className="flex-1 min-w-0">
         <p
           className={`text-sm leading-snug ${

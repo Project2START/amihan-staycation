@@ -9,6 +9,41 @@ import {
 import { generateFilePath } from "../../../shared/helpers/generators/generateFilePath";
 import { getSupabaseImagesPath } from "../../../shared/helpers/getters/getSupabaseImagesPath";
 import { agentsService } from "../../agents/services/agents.service";
+import { bookingRepository } from "../../booking/repositories/bookings.repository";
+import { Prisma } from "@prisma/client";
+
+interface ProductSearchFilters {
+  checkIn?: string;
+  checkOut?: string;
+  adults?: number;
+  children?: number;
+}
+
+type BookingCheckPeriod = {
+  check_in?: string;
+  check_out?: string;
+};
+
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+const hasDateOverlap = (
+  searchCheckIn: string,
+  searchCheckOut: string,
+  bookingPeriod: Prisma.JsonValue,
+) => {
+  if (!bookingPeriod || typeof bookingPeriod !== "object") {
+    return false;
+  }
+
+  const { check_in, check_out } = bookingPeriod as BookingCheckPeriod;
+
+  if (!check_in || !check_out) {
+    return false;
+  }
+
+  // Conflict rule: searchCheckIn < bookingCheckOut AND searchCheckOut > bookingCheckIn
+  return searchCheckIn < check_out && searchCheckOut > check_in;
+};
 
 class ProductService {
   async create(
@@ -92,33 +127,96 @@ class ProductService {
 
     return rest;
   }
-  async getAll(role: string, userId: string) {
+  async getAll(role?: string, userId?: string, filters?: ProductSearchFilters) {
+    const hasCheckIn = Boolean(filters?.checkIn);
+    const hasCheckOut = Boolean(filters?.checkOut);
+
+    if (hasCheckIn !== hasCheckOut) {
+      throw new BadRequestError(
+        "Both checkIn and checkOut are required for date filtering",
+      );
+    }
+
+    if (filters?.checkIn && !DATE_ONLY_PATTERN.test(filters.checkIn)) {
+      throw new BadRequestError("checkIn must use YYYY-MM-DD format");
+    }
+
+    if (filters?.checkOut && !DATE_ONLY_PATTERN.test(filters.checkOut)) {
+      throw new BadRequestError("checkOut must use YYYY-MM-DD format");
+    }
+
+    if (
+      filters?.checkIn &&
+      filters?.checkOut &&
+      filters.checkIn >= filters.checkOut
+    ) {
+      throw new BadRequestError("checkOut must be after checkIn");
+    }
+
+    const minAdults =
+      typeof filters?.adults === "number" && filters.adults > 0
+        ? Math.floor(filters.adults)
+        : null;
+
+    const shouldFilterByDate = Boolean(filters?.checkIn && filters?.checkOut);
+
+    let baseProducts;
+
     if (role === "agent") {
+      if (!userId) {
+        throw new ForbiddenError("Unauthorized access");
+      }
+
       const agent = await agentsService.getAgentByUserId(userId);
 
       if (!agent) {
         throw new NotFoundError("User agent not found");
       }
 
-      const adminProducts = await productRepository.findAllById(agent.adminId);
+      baseProducts = await productRepository.findAllByOwnerIds([agent.adminId]);
+    } else if (role === "admin") {
+      if (!userId) {
+        throw new ForbiddenError("Unauthorized access");
+      }
 
-      return adminProducts.map((adminProduct) => {
-        const { createdAt, updatedAt, ...rest } = adminProduct;
-        return rest;
-      });
-    }
-    if (role === "admin") {
-      const adminProducts = await productRepository.findAllById(userId);
-
-      return adminProducts.map((adminProduct) => {
-        const { createdAt, updatedAt, ...rest } = adminProduct;
-        return rest;
-      });
+      baseProducts = await productRepository.findAllById(userId);
+    } else {
+      baseProducts = await productRepository.findAll();
     }
 
-    const products = await productRepository.findAll();
+    let filteredProducts = baseProducts;
 
-    return products.map((product) => {
+    if (minAdults !== null) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.maxPersons >= minAdults,
+      );
+    }
+
+    if (shouldFilterByDate) {
+      const productIds = filteredProducts.map((product) => product.id);
+
+      const blockingBookings =
+        await bookingRepository.findBlockingByProductIds(productIds);
+
+      const blockingProductIds = new Set(
+        blockingBookings
+          .filter((booking) => {
+            return hasDateOverlap(
+              filters!.checkIn!,
+              filters!.checkOut!,
+              booking.check_period,
+            );
+          })
+          .map((booking) => booking.productId)
+          .filter((productId): productId is string => Boolean(productId)),
+      );
+
+      filteredProducts = filteredProducts.filter(
+        (product) => !blockingProductIds.has(product.id),
+      );
+    }
+
+    return filteredProducts.map((product) => {
       const { createdAt, updatedAt, ...rest } = product;
       return rest;
     });

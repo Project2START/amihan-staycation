@@ -58,6 +58,21 @@ class ProductRepository {
     }
   }
 
+  async findAllByOwnerIds(ownerIds: string[]): Promise<ProductWithPhotos[]> {
+    if (ownerIds.length === 0) {
+      return [];
+    }
+
+    try {
+      return await prisma.product.findMany({
+        where: { userId: { in: ownerIds } },
+        include: { photos: { orderBy: { order_index: "asc" } } },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch products. Please try again");
+    }
+  }
+
   async update(id: string, data: Prisma.ProductUpdateInput): Promise<Product> {
     try {
       return await prisma.product.update({ where: { id }, data });

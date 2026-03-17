@@ -1,9 +1,9 @@
 import HeroSection from "./components/hero-section/HeroSection";
 import HeaderPromptAuth from "../shared/components/HeaderPromptAuth";
 import ValuePropSection from "./components/value-section/ValuePropSection";
-import ReadyPrompt from "./components/ReadyPromptSection";
 import TestimonialSection from "./components/testimonial-section/TestimonialsSection";
 import ExploreUnitsSection from "./components/ExploreUnitsSection";
+import ReadyPromptSection from "./components/ReadyPromptSection";
 
 export default function HomePage() {
   return (
@@ -15,7 +15,7 @@ export default function HomePage() {
           <ValuePropSection />
           <ExploreUnitsSection />
           <TestimonialSection />
-          <ReadyPrompt />
+          <ReadyPromptSection />
         </div>
       </div>
     </div>
