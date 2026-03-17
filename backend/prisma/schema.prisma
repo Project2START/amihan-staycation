@@ -69,6 +69,7 @@ model Product {
 
   photos     Photo[]
   bookings   Booking[]
+  reviews    Review[]
 
   @@map("products")
 }
@@ -112,6 +113,7 @@ model Booking {
   pool_access     Json
   status          String @default("pending")
   status_message  String?
+  checkedOutAt    DateTime?
   image_valid_id_url    String
   with_vehicle    Boolean @default(false)
 
@@ -209,6 +211,8 @@ model Review {
   // In-app review fields
   bookingId      String? @db.Uuid
   booking        Booking?      @relation(fields: [bookingId], references: [id])
+  productId      String? @db.Uuid
+  product        Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
   userId         String? @db.Uuid
   user           Users?         @relation(fields: [userId], references: [id])
 
@@ -229,6 +233,7 @@ model Review {
   updatedAt      DateTime      @updatedAt
 
   @@index([bookingId])
+  @@index([productId])
   @@index([userId])
   @@index([isImported])
   @@index([source])

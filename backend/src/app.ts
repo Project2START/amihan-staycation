@@ -10,6 +10,7 @@ import paymentMethodRoutes from "./modules/paymentMethod/paymentMethod.routes";
 import bookingRoutes from "./modules/booking/booking.routes";
 import agentRoutes from "./modules/agents/agents.routes";
 import notificationRoutes from "./modules/notification/notification.routes";
+import reviewRoutes from "./modules/review/review.routes";
 import { ApolloServer } from "@apollo/server";
 import cookieParser from "cookie-parser";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -42,6 +43,7 @@ app.use("/api/paymentMethods", paymentMethodRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/agents", agentRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 export const httpServer = http.createServer(app);
 

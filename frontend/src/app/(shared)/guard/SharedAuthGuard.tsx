@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { fetchUser } from "@/lib/features/users/usersThunks";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Skeleton from "@mui/material/Skeleton";
-import NotFoundClient from "@/app/shared/components/NotFoundClient";
 import { setLoading } from "@/lib/features/users/usersSlice";
 
 export default function SharedAuthGuard({
@@ -16,6 +15,11 @@ export default function SharedAuthGuard({
 }) {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.users);
+
+  // Shared pages should remain visible to guests.
+  if (!userId) {
+    return <>{children}</>;
+  }
 
   useEffect(() => {
     if (!userId) {
@@ -40,7 +44,7 @@ export default function SharedAuthGuard({
   }
 
   if (user.error || !user.data) {
-    return <NotFoundClient />;
+    return <>{children}</>;
   }
 
   return <>{children}</>;

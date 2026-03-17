@@ -41,6 +41,7 @@ export default async function Product({ spaceId }: { spaceId: string }) {
         </div>
         <div>
           <ProductDetails
+            id={product.id}
             about={product.about}
             attributes={product.attributes}
             maxPersons={product.maxPersons}

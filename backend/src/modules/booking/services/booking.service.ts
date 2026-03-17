@@ -74,7 +74,10 @@ class BookingService {
 
       if (booking.status === "checked_in") {
         if (checkOutDateTime && now >= checkOutDateTime) {
-          await bookingRepository.update(booking.id, { status: "checked_out" });
+          await bookingRepository.update(booking.id, {
+            status: "checked_out",
+            checkedOutAt: now,
+          } as any);
           checkedOut++;
         }
       }

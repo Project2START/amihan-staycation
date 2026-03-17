@@ -4,7 +4,6 @@ import RoleGuard from "./guard/RoleGuard";
 import { cookies } from "next/headers";
 import UserHeader from "./components/UserHeader";
 import UserAvailabilityCalendar from "./components/UserAvailabilityCalendar";
-// import ClientLayout from "./components/ClientLayout";
 
 export default async function UserLayout({
   children,
@@ -16,12 +15,10 @@ export default async function UserLayout({
 
   return (
     <RoleGuard userId={userId}>
-      {/* <ClientLayout userId={userId}> */}
       <UserHeader />
       <main>{children}</main>
       <UserAvailabilityCalendar />
       <FooterMain />
-      {/* </ClientLayout> */}
     </RoleGuard>
   );
 }

@@ -120,6 +120,32 @@ class BookingsRepository {
     }
   }
 
+  async findLatestCheckedOutByUserAndProduct(
+    userId: string,
+    productId: string,
+  ) {
+    try {
+      return await prisma.booking.findFirst({
+        where: {
+          userId,
+          productId,
+          status: "checked_out",
+          checkedOutAt: { not: null },
+        },
+        orderBy: { checkedOutAt: "desc" },
+        include: {
+          product: {
+            include: {
+              photos: { orderBy: { order_index: "asc" } },
+            },
+          },
+        },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch booking. Please try again");
+    }
+  }
+
   async update(id: string, data: Prisma.BookingUpdateInput): Promise<Booking> {
     try {
       return await prisma.booking.update({ where: { id }, data });

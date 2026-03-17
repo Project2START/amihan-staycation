@@ -3,22 +3,26 @@ import { Product } from "../../(admin)/spaces/[slug]/components/Product";
 import { formatMoney } from "@/app/shared/lib/formatMoney";
 import IconLabel from "@/app/shared/components/IconLabel";
 import ClampedParagraph from "@/app/shared/components/ClampedParagraph";
+import Link from "next/link";
 
 export default function ProductDetails({
   price,
   about,
   attributes,
   maxPersons,
-}: Pick<Product, "about" | "attributes" | "maxPersons" | "price">) {
+  id,
+}: Pick<Product, "about" | "attributes" | "maxPersons" | "price" | "id">) {
   return (
     <div className="text-xs grid gap-y-7 my-[1rem]">
       <div className="flex items-start justify-between">
-        <div className="flex items-center mt-[0.5rem]">
-          <Rating value={4.5} textColor="font-bold" />
-          <button className="underline ml-[0.5rem]">
-            <span>Based on 5 reviews</span>
-          </button>
-        </div>
+        <Link href={`/reviews?productId=${id}`}>
+          <div className="flex items-center mt-[0.5rem]">
+            <Rating value={4.5} textColor="font-bold" />
+            <button className="underline ml-[0.5rem]">
+              <span>Based on 5 reviews</span>
+            </button>
+          </div>
+        </Link>
         <div className="flex flex-col">
           <span className="text-lg font-bold">
             {formatMoney(price, { decimals: 2, symbol: "₱" })}

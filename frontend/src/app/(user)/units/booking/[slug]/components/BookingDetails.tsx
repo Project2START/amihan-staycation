@@ -8,6 +8,7 @@ import { endTime, startTime } from "@/app/shared/constants/standardStayTime";
 import PrimaryBackButton from "@/app/shared/components/PrimaryBackButton";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { FaCommentDots } from "react-icons/fa6";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import PhotoFullViewDialog from "@/app/shared/components/PhotoFullViewDialog";
 import Image from "next/image";
@@ -149,6 +150,15 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
             </p>
           </div>
         )}
+
+      {booking.status === "checked_out" && (
+        <Link href={`/units/${booking.product?.id}/reviews/create`}>
+          <button className="w-full mt-[1rem] py-2 px-4 text-white bg-primary-normal rounded-lg hover:opacity-85 transition flex items-center justify-center gap-2 font-semibold">
+            <FaCommentDots size={16} />
+            Write a Review
+          </button>
+        </Link>
+      )}
 
       <div className="flex-1 overflow-auto grid gap-y-3 px-[0.5rem]">
         <div className="flex justify-between items-center mt-[1.5rem] text-xs text-gray-500">
