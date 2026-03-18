@@ -5,6 +5,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@mui/material";
+import { FaStar } from "react-icons/fa6";
 import { HOST } from "@/app/shared/constants/config";
 import PrimaryBackButton from "@/app/shared/components/PrimaryBackButton";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
@@ -37,6 +38,7 @@ export default function SharedReviewsContent({
   const [eligibility, setEligibility] = useState<EligibilityData | null>(null);
   const [eligibilityLoading, setEligibilityLoading] = useState(false);
   const [updatingReviewId, setUpdatingReviewId] = useState<string | null>(null);
+  const [expandedReviewIds, setExpandedReviewIds] = useState<string[]>([]);
 
   const isAdmin = user?.role === "admin";
   const isGuest = !user;
@@ -120,6 +122,15 @@ export default function SharedReviewsContent({
     });
   }, [reviewsData.reviews]);
 
+  const averageRating = useMemo(() => {
+    if (!sortedReviews.length) return 0;
+
+    const total = sortedReviews.reduce((sum, review) => sum + review.rating, 0);
+    return total / sortedReviews.length;
+  }, [sortedReviews]);
+
+  const roundedAverageRating = Math.round(averageRating);
+
   const showSubmitButton =
     isAdmin || (!!eligibility?.canSubmit && !eligibilityLoading);
   const submitHref = isAdmin
@@ -129,6 +140,14 @@ export default function SharedReviewsContent({
     : productId
       ? `/units/${productId}/reviews/create`
       : "";
+
+  const onToggleExpanded = (reviewId: string) => {
+    setExpandedReviewIds((prev) =>
+      prev.includes(reviewId)
+        ? prev.filter((id) => id !== reviewId)
+        : [...prev, reviewId],
+    );
+  };
 
   if (loading) {
     return (
@@ -145,7 +164,7 @@ export default function SharedReviewsContent({
   }
 
   return (
-    <div className="px-[1rem] py-[1.5rem] text-secondary-normal h-[calc(100dvh-5.5rem)] flex flex-col">
+    <div className="px-[1rem] py-[1.5rem] text-secondary-normal h-[100vh] flex flex-col overflow-hidden">
       <div className="flex items-center justify-between border-b-3 border-secondary-normal/50 pb-[1rem]">
         <span className="flex-1/3 flex items-center">
           <PrimaryBackButton onClick={() => router.back()} style="text-xl" />
@@ -157,19 +176,34 @@ export default function SharedReviewsContent({
       </div>
 
       {productId && (
-        //   (
-        //     <div className="mt-[1rem] rounded-lg border border-reject-normal/40 bg-white p-3 text-sm text-reject-normal font-semibold">
-        //       Missing product id. Use query like ?productId=&lt;unit-id&gt;.
-        //     </div>
-        //   )
-        //   : (
-        <>
+        <div className="flex-1 min-h-0 flex flex-col">
           <ReviewProductCard unit={reviewsData.unit} />
 
-          <div className="mt-[1rem] flex-1 min-h-0 rounded-xl border border-secondary-normal/20 bg-[#fafafa] p-3 flex flex-col">
-            <div className="mb-2 text-xs text-gray-500">
-              {sortedReviews.length} review
-              {sortedReviews.length === 1 ? "" : "s"}
+          <div className="mt-[1rem] flex-1 min-h-0 rounded-xl border border-secondary-normal/20 bg-[#fafafa] p-3 flex flex-col overflow-hidden">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <div className="text-xs text-gray-500">
+                {sortedReviews.length} review
+                {sortedReviews.length === 1 ? "" : "s"}
+              </div>
+              <div className="flex items-center gap-1 text-[11px] text-gray-600">
+                <span>Overall</span>
+                <div className="flex items-center gap-0.5">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <FaStar
+                      key={`overall-star-${index}`}
+                      className={
+                        index < roundedAverageRating
+                          ? "text-yellow-400"
+                          : "text-gray-300"
+                      }
+                      size={12}
+                    />
+                  ))}
+                </div>
+                <span className="font-semibold">
+                  {averageRating.toFixed(1)}
+                </span>
+              </div>
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto grid gap-y-2 pr-1">
@@ -184,26 +218,27 @@ export default function SharedReviewsContent({
                     review={review}
                     isAdmin={isAdmin}
                     onToggleVisibility={onToggleVisibility}
+                    expanded={expandedReviewIds.includes(review.id)}
+                    onToggleExpanded={onToggleExpanded}
                     updating={updatingReviewId === review.id}
                   />
                 ))
               )}
             </div>
           </div>
-
-          {showSubmitButton && (
-            <div className="mt-3">
-              <Link href={submitHref}>
-                <button
-                  type="button"
-                  className="w-full py-2 rounded-lg bg-primary-normal text-white font-bold disabled:opacity-60"
-                >
-                  Submit Review
-                </button>
-              </Link>
-            </div>
-          )}
-        </>
+        </div>
+      )}
+      {showSubmitButton && (
+        <div className="mt-3 shrink-0">
+          <Link href={submitHref}>
+            <button
+              type="button"
+              className="w-full py-2 rounded-lg bg-primary-normal text-white font-bold disabled:opacity-60"
+            >
+              <span className="text-sm font-bold">Submit Review</span>
+            </button>
+          </Link>
+        </div>
       )}
     </div>
   );

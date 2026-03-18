@@ -5,7 +5,7 @@ import { HOST } from "@/app/shared/constants/config";
 import { formatMoney } from "@/app/shared/lib/formatMoney";
 import UnitImage from "@/app/shared/components/UnitImage";
 
-const PREVIEW_LIMIT = 3;
+const PREVIEW_LIMIT = 2;
 
 export default async function ExploreUnitsSection() {
   let products: IProductItemProps[] = [];

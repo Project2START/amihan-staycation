@@ -8,13 +8,21 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Button from "@mui/material/Button";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import AlternativeSeparator from "@/app/shared/components/AlternativeSeparator";
 import ButtonLoadingStopper from "@/app/shared/components/ButtonLoadingStopper";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import GoogleSignOption from "../../../shared/components/GoogleSignOption";
 import { SignupSchema, signupSchema } from "../lib/signUpSchema";
 import { signUp } from "../api/signUp";
+
+const getSafeRedirectPath = (path: string | null) => {
+  if (!path) return null;
+  if (!path.startsWith("/")) return null;
+  if (path.startsWith("//")) return null;
+
+  return path;
+};
 
 export default function SignUpForm() {
   const {
@@ -30,6 +38,14 @@ export default function SignUpForm() {
   const [error, setError] = useState<string>("");
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectPath = getSafeRedirectPath(searchParams.get("redirect"));
+  const verifyCodeHref = redirectPath
+    ? `/verify-code?redirect=${encodeURIComponent(redirectPath)}`
+    : "/verify-code";
+  const signInHref = redirectPath
+    ? `/sign-in?redirect=${encodeURIComponent(redirectPath)}`
+    : "/sign-in";
 
   const onSubmit = async (data: SignupSchema) => {
     const { confirmPassword, ...rest } = data;
@@ -43,7 +59,7 @@ export default function SignUpForm() {
         "registree_client_resendCountdown",
         JSON.stringify(new Date(Date.now() + 30 * 1000)),
       );
-      router.push("/verify-code");
+      router.push(verifyCodeHref);
     } catch (error) {
       const errMessage = errorHandler(error);
       setError(errMessage.message);
@@ -198,7 +214,7 @@ export default function SignUpForm() {
             </ButtonLoadingStopper>
           </div>
           <div className="col-span-2">
-            <Link href={"/sign-in"} className="text-center block">
+            <Link href={signInHref} className="text-center block">
               <span className="text-xs text-secondary-normal font-bold underline lg:text-sm">
                 Already have an account?
               </span>
@@ -209,7 +225,7 @@ export default function SignUpForm() {
             <div className="py-[0.5rem] lg:py-[1rem]">
               <AlternativeSeparator />
             </div>
-            <GoogleSignOption />
+            <GoogleSignOption redirectPath={redirectPath} />
           </div>
         </div>
       </form>

@@ -5,8 +5,16 @@ import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import { HOST } from "@/app/shared/constants/config";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
+
+const getSafeRedirectPath = (path: string | null) => {
+  if (!path) return null;
+  if (!path.startsWith("/")) return null;
+  if (path.startsWith("//")) return null;
+
+  return path;
+};
 
 export default function CodeInput({ id }: { id?: string }) {
   const [otp, setOtp] = useState("");
@@ -14,6 +22,8 @@ export default function CodeInput({ id }: { id?: string }) {
   const [errorLabel, setErrorLabel] = useState<string>("");
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectPath = getSafeRedirectPath(searchParams.get("redirect"));
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,7 +40,7 @@ export default function CodeInput({ id }: { id?: string }) {
       );
       setErrorLabel("");
       localStorage.removeItem("registree_client_resendCountdown");
-      router.push("/auth");
+      router.push(redirectPath ?? "/auth");
     } catch (error) {
       const errorResult = errorHandler(error);
 

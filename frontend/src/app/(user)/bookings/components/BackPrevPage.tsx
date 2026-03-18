@@ -27,9 +27,6 @@ export default function BackPrevPage() {
       >
         <div className="px-[2rem] pt-[1.5rem] pb-[1rem] text-sm">
           <p className="text-center flex items-center">
-            {/* <span className="text-reject-normal text-2xl">
-                  <IoIosAlert />
-                </span> */}
             <span>
               Do you want to{" "}
               <strong className="text-reject-normal">exit</strong> this form?{" "}
@@ -45,7 +42,7 @@ export default function BackPrevPage() {
             <div>
               <button
                 type="button"
-                onClick={() => router.back()}
+                onClick={() => router.push(`/units`)}
                 className="bg-secondary-normal font-bold px-[2rem] py-[0.25rem] text-white rounded-lg"
               >
                 Yes

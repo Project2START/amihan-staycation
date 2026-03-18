@@ -5,6 +5,14 @@ import { userAuthService } from "../services/userAuth.service";
 import { generateSecureRandom } from "../../../shared/helpers/generators/generateSecureRandom";
 import { BadRequestError } from "../../../shared/helpers/appErrors";
 
+const getSafeRedirectPath = (path?: string) => {
+  if (!path) return "/auth";
+  if (!path.startsWith("/")) return "/auth";
+  if (path.startsWith("//")) return "/auth";
+
+  return path;
+};
+
 class UserAuthController {
   async signUp(req: Request, res: Response) {
     const user = await userAuthService.signUp(req.body);
@@ -29,26 +37,33 @@ class UserAuthController {
   async googleAuth(req: Request, res: Response) {
     const state = generateSecureRandom();
     const authorizationUrl = await userAuthService.googleAuth(state);
+    const redirectPath = getSafeRedirectPath(req.query.redirect as string);
 
     req.session.state = state;
+    req.session.redirectPath = redirectPath;
 
     res.redirect(authorizationUrl);
   }
   async googleAuthCallback(req: Request, res: Response) {
     const { code, state, error } = req.query;
+    const redirectPath = getSafeRedirectPath(req.session.redirectPath);
+    const signInRedirect = `${process.env.FRONTEND_HOST}/sign-in?redirect=${encodeURIComponent(redirectPath)}`;
 
     if (error) {
-      res.redirect(`${process.env.FRONTEND_HOST}/sign-up`);
+      req.session.redirectPath = undefined;
+      res.redirect(signInRedirect);
       throw new BadRequestError("User denied access or OAuth error occurred.");
     }
 
     if (req.session.state !== state) {
-      res.redirect(`${process.env.FRONTEND_HOST}/sign-up`);
+      req.session.redirectPath = undefined;
+      res.redirect(signInRedirect);
       throw new BadRequestError("Invalid state parameter");
     }
 
     if (!code) {
-      res.redirect(`${process.env.FRONTEND_HOST}/sign-up`);
+      req.session.redirectPath = undefined;
+      res.redirect(signInRedirect);
       throw new BadRequestError("Authorization code missing.");
     }
 
@@ -60,7 +75,9 @@ class UserAuthController {
 
     res.cookie("auth_token", jwt_token, cookieOptions(24 * 60 * 60 * 1000));
 
-    return res.redirect(`${process.env.FRONTEND_HOST}/auth`);
+    req.session.redirectPath = undefined;
+
+    return res.redirect(`${process.env.FRONTEND_HOST}${redirectPath}`);
 
     // throw new ForbiddenError("You do not have permission to sign in");
   }

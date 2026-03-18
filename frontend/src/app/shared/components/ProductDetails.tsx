@@ -1,26 +1,72 @@
 import Rating from "@/app/shared/components/Rating";
+import { HOST } from "@/app/shared/constants/config";
 import { Product } from "../../(admin)/spaces/[slug]/components/Product";
 import { formatMoney } from "@/app/shared/lib/formatMoney";
 import IconLabel from "@/app/shared/components/IconLabel";
 import ClampedParagraph from "@/app/shared/components/ClampedParagraph";
 import Link from "next/link";
 
-export default function ProductDetails({
+type ProductReviewSummaryResponse = {
+  reviews?: Array<{
+    rating: number;
+    isHidden: boolean;
+  }>;
+};
+
+export default async function ProductDetails({
   price,
   about,
   attributes,
   maxPersons,
   id,
 }: Pick<Product, "about" | "attributes" | "maxPersons" | "price" | "id">) {
+  let averageRating = 0;
+  let reviewCount = 0;
+
+  if (HOST) {
+    try {
+      const response = await fetch(`${HOST}/api/reviews/product/${id}`, {
+        cache: "no-store",
+      });
+
+      if (response.ok) {
+        const data: ProductReviewSummaryResponse = await response.json();
+        const visibleReviews = (data.reviews ?? []).filter(
+          (review) => !review.isHidden,
+        );
+
+        reviewCount = visibleReviews.length;
+
+        if (reviewCount > 0) {
+          const total = visibleReviews.reduce(
+            (sum, review) => sum + review.rating,
+            0,
+          );
+          averageRating = total / reviewCount;
+        }
+      }
+    } catch {
+      averageRating = 0;
+      reviewCount = 0;
+    }
+  }
+
   return (
     <div className="text-xs grid gap-y-7 my-[1rem]">
       <div className="flex items-start justify-between">
         <Link href={`/reviews?productId=${id}`}>
           <div className="flex items-center mt-[0.5rem]">
-            <Rating value={4.5} textColor="font-bold" />
-            <button className="underline ml-[0.5rem]">
-              <span>Based on 5 reviews</span>
-            </button>
+            <Rating
+              value={Number(averageRating.toFixed(1))}
+              textColor="font-bold"
+            />
+            {reviewCount === 0 ? (
+              <span className="ml-[0.5rem]">No review as of the moment</span>
+            ) : (
+              <span className="underline ml-[0.5rem]">
+                Based on {reviewCount} review{reviewCount === 1 ? "" : "s"}
+              </span>
+            )}
           </div>
         </Link>
         <div className="flex flex-col">

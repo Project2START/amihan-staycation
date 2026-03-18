@@ -4,6 +4,7 @@ import ValuePropSection from "./components/value-section/ValuePropSection";
 import TestimonialSection from "./components/testimonial-section/TestimonialsSection";
 import ExploreUnitsSection from "./components/ExploreUnitsSection";
 import ReadyPromptSection from "./components/ReadyPromptSection";
+import OwnerMessage from "./components/testimonial-section/OwnerMessage";
 
 export default function HomePage() {
   return (
@@ -15,6 +16,8 @@ export default function HomePage() {
           <ValuePropSection />
           <ExploreUnitsSection />
           <TestimonialSection />
+          <OwnerMessage />
+
           <ReadyPromptSection />
         </div>
       </div>

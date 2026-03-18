@@ -12,6 +12,10 @@ export const paths = [
     pathType: "notification",
     path: "/notifications",
   },
+  {
+    pathType: "review",
+    path: "/units",
+  },
 ];
 
 interface NotificationUserOwner {
@@ -46,11 +50,25 @@ export default function NotificationItem({
   const fullName = `${userOwner.first_name} ${userOwner.last_name}`;
   const timeAgo = formatTimeAgo(createdAt);
 
-  const path = paths.find((path) => path.pathType === pathType);
+  const getPath = (): string => {
+    for (const path of paths) {
+      if (path.pathType === "review") {
+        return `${path.path}/${notification.pathId}/reviews/create`;
+      }
+
+      if (path.pathType === pathType) {
+        return `${path.path}/${notification.pathId}`;
+      }
+    }
+
+    return "";
+  };
+
+  const path = getPath();
 
   return (
     <Link
-      href={path ? `${path.path}/${notification.pathId}` : "#"}
+      href={path ? path : "#"}
       className={`flex items-start gap-3 px-4 py-3 transition-colors hover:bg-gray-100 ${
         !hasRead ? "bg-blue-50" : ""
       }`}

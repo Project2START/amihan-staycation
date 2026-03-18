@@ -22,6 +22,8 @@ export default function ProductBooking({ productId }: { productId: string }) {
   }>({ booking: null, loading: false, error: "" });
 
   const user = useAppSelector((state) => state.users.data);
+  const bookingHref = `/bookings?id=${productId}`;
+  const signInRedirectHref = `/sign-in?redirect=${encodeURIComponent(bookingHref)}`;
 
   useEffect(() => {
     if (!user?.id) return;
@@ -77,7 +79,7 @@ export default function ProductBooking({ productId }: { productId: string }) {
         </p>
       ) : (
         <Link
-          href={user ? `/bookings?id=${productId}` : `/sign-in`}
+          href={user ? bookingHref : signInRedirectHref}
           className="w-[80%] text-white bg-primary-normal font-bold rounded-lg py-[1rem] text-center text-xs"
         >
           Book Now

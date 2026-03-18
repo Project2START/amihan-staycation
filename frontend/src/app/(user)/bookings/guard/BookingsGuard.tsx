@@ -1,11 +1,13 @@
 "use client";
 import NotFoundClient from "@/app/shared/components/NotFoundClient";
 import { HOST } from "@/app/shared/constants/config";
-import { useSearchParams } from "next/navigation";
-import React, { createContext, useContext } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import useSWR from "swr";
 import { Skeleton } from "@mantine/core";
 import { Product } from "../../units/[slug]/components/Product";
+import axios from "axios";
+import { useAppSelector } from "@/lib/hooks";
 
 const ProductContext = createContext<Product | undefined>(undefined);
 
@@ -102,19 +104,63 @@ export default function BookingsGuard({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
+  const user = useAppSelector((state) => state.users.data);
+  const [checkingExistingBooking, setCheckingExistingBooking] =
+    useState<boolean>(true);
 
   if (!productId) {
     return <NotFoundClient />;
   }
+
+  useEffect(() => {
+    let mounted = true;
+
+    const checkExistingBooking = async () => {
+      if (!productId) {
+        if (mounted) setCheckingExistingBooking(false);
+        return;
+      }
+
+      if (user?.role === "agent") {
+        if (mounted) setCheckingExistingBooking(false);
+        return;
+      }
+
+      try {
+        const result = await axios.get(`${HOST}/api/bookings/me`, {
+          params: { service: "existingBooking" },
+          withCredentials: true,
+        });
+
+        if (!mounted) return;
+
+        if (result.data?.booking) {
+          router.replace(`/units/${productId}`);
+          return;
+        }
+      } catch {
+        // Let the regular bookings guard continue if this check fails.
+      } finally {
+        if (mounted) setCheckingExistingBooking(false);
+      }
+    };
+
+    void checkExistingBooking();
+
+    return () => {
+      mounted = false;
+    };
+  }, [productId, router, user?.role]);
 
   const { error, isLoading, data } = useSWR(
     `${HOST}/api/products/${productId}`,
     fetcher,
   );
 
-  if (isLoading) {
+  if (isLoading || checkingExistingBooking) {
     return <BookingsFormSkeleton />;
   }
   if (error) {

@@ -1,3 +1,4 @@
+import { notifyUser } from "../../../shared/helpers/notifyUser";
 import { uploadFileToSupabase } from "../../../shared/helpers/uploadFileToSupabase";
 import { BookingDTO } from "../schemas/booking.schema";
 import {
@@ -74,11 +75,26 @@ class BookingService {
 
       if (booking.status === "checked_in") {
         if (checkOutDateTime && now >= checkOutDateTime) {
-          await bookingRepository.update(booking.id, {
+          const updatedBooking = await bookingRepository.update(booking.id, {
             status: "checked_out",
             checkedOutAt: now,
           } as any);
+
           checkedOut++;
+
+          await notificationRepository.create({
+            hasRead: false,
+            isPublic: false,
+            title: "⭐ Share Your Experience",
+            message:
+              "You've completed your stay. We'd love to hear your feedback—leave a review to help others and improve our service.",
+            pathId: updatedBooking.id,
+            pathType: "review",
+            userDestinationId: updatedBooking.userId,
+            userOwnerId: updatedBooking.adminId,
+          });
+
+          await notifyUser(updatedBooking.userId);
         }
       }
     }
@@ -106,15 +122,6 @@ class BookingService {
     if (booking.adminId !== adminId) {
       throw new ForbiddenError("You do not own this booking");
     }
-
-    const notifyUser = async (id: string | null) => {
-      const unreadNotifCount =
-        await notificationRepository.countUnreadByDestination(id ?? "");
-
-      io.to(`notifications:${id}`).emit("notification:unread-count", {
-        count: unreadNotifCount,
-      });
-    };
 
     let title, message;
 
@@ -548,8 +555,6 @@ class BookingService {
             : ownerLastName
               ? ownerLastName
               : "Deleted user",
-        // userName: `${booking?.user?.first_name} ${booking?.user?.last_name}`,
-        // ownerName: `${booking?.admin?.first_name} ${booking.admin.last_name}`,
         booking: { connect: { id: booking.id } },
         hasUserResponded: true,
         action_items: [],

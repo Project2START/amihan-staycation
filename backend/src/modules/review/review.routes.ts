@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { checkAuth } from "../../middleware/checkAuth";
+import { authAttacher } from "../../middleware/authAttacher";
 import { checkRole } from "../../middleware/checkRole";
 import { asyncHandler } from "../../shared/helpers/asyncHandler";
 import { reviewController } from "./controllers/review.controller";
@@ -14,6 +15,7 @@ const router = Router();
 
 router.get(
   "/product/:productId",
+  authAttacher,
   asyncHandler(reviewController.getReviewsByProduct),
 );
 

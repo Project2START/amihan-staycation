@@ -1,32 +1,50 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import verifyRegistree from "./proxyModules/verifyRegistree";
 import verifyAdmin from "./proxyModules/verifyAdmin";
 import verifyGuest from "./proxyModules/verifyGuest";
 import verifyUser from "./proxyModules/verifyUser";
 import verifyAuthenticated from "./proxyModules/verifyAuthenticated";
 
+const isPathMatch = (path: string, basePath: string) =>
+  path === basePath || path.startsWith(`${basePath}/`);
+
 export async function proxy(req: NextRequest) {
   const currentPath = req.nextUrl.pathname;
 
-  if (currentPath === "/verify-code") {
+  if (isPathMatch(currentPath, "/verify-code")) {
     return await verifyRegistree(req);
   }
 
-  if (["/spaces", "/payment-methods"].includes(currentPath)) {
+  if (
+    ["/spaces", "/payment-methods"].some((basePath) =>
+      isPathMatch(currentPath, basePath),
+    )
+  ) {
     return await verifyAdmin(req);
   }
 
-  if (["/bookings", "/my-bookings-history"].includes(currentPath)) {
+  if (
+    ["/bookings", "/my-bookings-history"].some((basePath) =>
+      isPathMatch(currentPath, basePath),
+    )
+  ) {
     return await verifyUser(req);
   }
 
-  if (["/profile"].includes(currentPath)) {
+  if (isPathMatch(currentPath, "/profile")) {
     return await verifyAuthenticated(req);
   }
 
-  if (["/auth", "/sign-in", "/sign-up", "/"].includes(currentPath)) {
+  if (
+    currentPath === "/" ||
+    ["/auth", "/sign-in", "/sign-up"].some((basePath) =>
+      isPathMatch(currentPath, basePath),
+    )
+  ) {
     return await verifyGuest(req);
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
@@ -34,11 +52,12 @@ export const config = {
     "/",
     "/verify-code/:path*",
     "/spaces/:path*",
-    "/auth",
-    "/sign-in",
-    "/sign-up",
-    "/bookings",
-    "/my-bookings-history",
-    "/profile",
+    "/payment-methods/:path*",
+    "/auth/:path*",
+    "/sign-in/:path*",
+    "/sign-up/:path*",
+    "/bookings/:path*",
+    "/my-bookings-history/:path*",
+    "/profile/:path*",
   ],
 };

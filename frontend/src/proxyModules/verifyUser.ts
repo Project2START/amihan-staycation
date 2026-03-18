@@ -13,9 +13,20 @@ export default async function verifyUser(req: NextRequest) {
     const { payload } = await jwtVerify(auth_token, secret);
 
     const role = payload.user_role;
+    const userId = payload.user_id;
 
-    if (role === "user" || role === "agent") {
-      return NextResponse.next();
+    if ((role === "user" || role === "agent") && userId) {
+      const response = NextResponse.next();
+
+      response.cookies.set("user_id", `${userId}`, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: "/",
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+      return response;
     } else {
       return NextResponse.rewrite(notForYouPage);
     }

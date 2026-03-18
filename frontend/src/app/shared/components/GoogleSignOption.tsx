@@ -2,14 +2,19 @@
 
 import { HOST } from "@/app/shared/constants/config";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
-import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 
-export default function GoogleSignOption() {
-  const router = useRouter();
+export default function GoogleSignOption({
+  redirectPath,
+}: {
+  redirectPath?: string | null;
+}) {
+  const oauthUrl = `${HOST}/api/users/google${
+    redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""
+  }`;
 
-  const handleNavigateOAuth = async () => {
-    router.push(`${HOST}/api/users/google`);
+  const handleNavigateOAuth = () => {
+    window.location.href = oauthUrl;
   };
   return (
     <div className="flex justify-center">
