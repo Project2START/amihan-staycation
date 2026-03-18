@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { HiOutlineMenuAlt2 } from "react-icons/hi";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import { logout } from "@/app/(user)/api/logout";

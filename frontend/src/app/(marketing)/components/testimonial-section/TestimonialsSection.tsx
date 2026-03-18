@@ -54,9 +54,15 @@ type TestimonialItem = {
 
 const MAX_TESTIMONIALS = 10;
 const MIN_POSITIVE_RATING = 4;
-const ITEMS_PER_VIEW = 2;
 const COMMENT_PREVIEW_LENGTH = 180;
 const PRODUCT_FETCH_LIMIT = 20;
+
+const getItemsPerView = (width: number) => {
+  if (width <= 767) return 2;
+  if (width <= 1280) return 2;
+  if (width <= 1920) return 3;
+  return 4;
+};
 
 const SOURCE_META: Record<string, { label: string; icon: React.ReactNode }> = {
   GOOGLE: {
@@ -81,18 +87,36 @@ const SOURCE_META: Record<string, { label: string; icon: React.ReactNode }> = {
   },
 };
 
-const getVisibleItems = (items: TestimonialItem[], page: number) => {
+const getVisibleItems = (
+  items: TestimonialItem[],
+  page: number,
+  itemsPerView: number,
+) => {
   if (!items.length) return [];
 
-  const start = page * ITEMS_PER_VIEW;
-  return items.slice(start, start + ITEMS_PER_VIEW);
+  const start = page * itemsPerView;
+  return items.slice(start, start + itemsPerView);
 };
 
 export default function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
   const [currentPage, setCurrentPage] = useState(0);
+  const [itemsPerView, setItemsPerView] = useState(1);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const updateItemsPerView = () => {
+      setItemsPerView(getItemsPerView(window.innerWidth));
+    };
+
+    updateItemsPerView();
+    window.addEventListener("resize", updateItemsPerView);
+
+    return () => {
+      window.removeEventListener("resize", updateItemsPerView);
+    };
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -180,11 +204,11 @@ export default function TestimonialsSection() {
     };
   }, []);
 
-  const totalPages = Math.ceil(testimonials.length / ITEMS_PER_VIEW);
+  const totalPages = Math.ceil(testimonials.length / itemsPerView);
 
   const visibleItems = useMemo(
-    () => getVisibleItems(testimonials, currentPage),
-    [testimonials, currentPage],
+    () => getVisibleItems(testimonials, currentPage, itemsPerView),
+    [testimonials, currentPage, itemsPerView],
   );
 
   useEffect(() => {
@@ -215,32 +239,40 @@ export default function TestimonialsSection() {
   };
 
   return (
-    <section className="overflow-hidden rounded-[1.15rem] bg-[#f1f1f1]">
-      <div className="relative overflow-hidden bg-secondary-normal px-4 pb-[3.25rem] pt-[1.75rem] text-white md:px-8 lg:px-10">
-        <h2 className="text-center text-xl font-bold md:text-2xl lg:text-[2rem]">
+    <section className="overflow-hidden rounded-[1.15rem] bg-[#f1f1f1] sm:rounded-[1.3rem] lg:rounded-[1.5rem]">
+      <div className="relative overflow-hidden bg-secondary-normal px-4 pb-12 pt-7 text-white sm:px-6 sm:pb-14 md:px-8 md:pb-16 md:pt-8 lg:px-10 lg:pt-10 xl:px-12 xl:pb-[4.5rem] 2xl:px-14 min-[1921px]:px-[4.5rem]">
+        <h2 className="text-center text-xl font-bold sm:text-2xl md:text-[1.8rem] lg:text-[2.2rem] xl:text-[2.6rem] 2xl:text-[3rem] min-[1921px]:text-[3.4rem]">
           What Our Guests Say
         </h2>
-        <p className="mx-auto mt-2 max-w-[38rem] text-center text-xs font-semibold md:text-sm lg:text-base">
+        <p className="mx-auto mt-2 max-w-[56rem] text-center text-xs font-semibold sm:text-sm md:mt-3 md:text-base lg:text-lg xl:text-xl 2xl:text-2xl min-[1921px]:text-[1.65rem]">
           Real guest stories and feedback on Amihan Staycation&apos;s comfort
           and care.
         </p>
 
-        <div className="pointer-events-none absolute bottom-[-2.6rem] left-[-12%] h-[4.8rem] w-[62%] rounded-[100%] bg-[#f1f1f1]" />
-        <div className="pointer-events-none absolute bottom-[-2.6rem] right-[-12%] h-[4.8rem] w-[62%] rounded-[100%] bg-[#f1f1f1]" />
+        <div className="pointer-events-none absolute bottom-[-2.6rem] left-[-12%] h-[4.8rem] w-[62%] rounded-[100%] bg-[#f1f1f1] sm:bottom-[-2.9rem] sm:h-[5.4rem] md:bottom-[-3.2rem] md:h-[5.9rem]" />
+        <div className="pointer-events-none absolute bottom-[-2.6rem] right-[-12%] h-[4.8rem] w-[62%] rounded-[100%] bg-[#f1f1f1] sm:bottom-[-2.9rem] sm:h-[5.4rem] md:bottom-[-3.2rem] md:h-[5.9rem]" />
       </div>
 
-      <div className="relative px-3 pb-4 pt-1 md:px-10 lg:px-12">
+      <div className="relative px-3 pb-4 pt-1 sm:px-4 sm:pb-6 md:px-8 lg:px-12 lg:pb-8 xl:px-14 2xl:px-16 min-[1921px]:px-20">
         <button
           type="button"
           aria-label="Previous testimonials"
           onClick={onPrev}
           disabled={isPrevDisabled}
-          className="absolute -left-1 top-[48%] z-10 -translate-y-1/2 text-secondary-normal transition enabled:hover:text-secondary-normal/70 disabled:cursor-not-allowed disabled:opacity-30"
+          className="absolute -left-1 top-[48%] z-10 -translate-y-1/2 text-secondary-normal transition enabled:hover:text-secondary-normal/70 disabled:cursor-not-allowed disabled:opacity-30 md:left-0"
         >
-          <FaChevronLeft size={24} />
+          <FaChevronLeft className="text-[1.25rem] sm:text-[1.4rem] md:text-[1.5rem] lg:text-[1.65rem]" />
         </button>
 
-        <div className="grid gap-3">
+        <div
+          className={`grid gap-3 sm:gap-4 md:gap-5 ${
+            itemsPerView <= 2
+              ? "grid-cols-1 md:grid-cols-2"
+              : itemsPerView === 3
+                ? "grid-cols-3"
+                : "grid-cols-4"
+          }`}
+        >
           {loading ? (
             <div className="rounded-xl border border-secondary-normal/10 bg-white px-4 py-8 text-center text-sm text-gray-500">
               Loading testimonials...
@@ -263,21 +295,21 @@ export default function TestimonialsSection() {
               return (
                 <article
                   key={item.id}
-                  className="max-h-[16.5rem] overflow-hidden rounded-xl bg-[#dedede] px-4 py-4 text-secondary-normal shadow-[0_4px_0_rgba(18,40,55,0.06)] md:px-5"
+                  className="rounded-xl bg-[#dedede] px-4 py-4 text-secondary-normal shadow-[0_4px_0_rgba(18,40,55,0.06)] md:px-5 md:py-5 xl:px-6"
                 >
                   <div className="flex flex-col gap-3">
                     <div className="flex items-start gap-3">
                       <FaQuoteLeft
                         className="mt-0.5 shrink-0 text-[#2db4d6]"
-                        size={28}
+                        size={26}
                       />
-                      <div className="min-w-0 flex-1 max-h-[9.2rem] overflow-y-auto pr-1">
-                        <p className="text-sm leading-7 md:text-base">
+                      <div className="min-w-0 flex-1 max-h-[11.5rem] overflow-y-auto pr-1">
+                        <p className="text-sm leading-7 md:text-[0.95rem] lg:text-base xl:text-lg 2xl:text-xl">
                           {preview}
                           {isLong && (
                             <button
                               type="button"
-                              className="ml-1 inline px-1.5 py-[1px] text-[10px] font-bold tracking-wide text-primary-normal"
+                              className="ml-1 inline px-1.5 py-[1px] text-[10px] font-bold tracking-wide text-primary-normal md:text-[11px]"
                               onClick={() => onToggleExpanded(item.id)}
                             >
                               <span className="text-xs font-bold">
@@ -303,7 +335,7 @@ export default function TestimonialsSection() {
                           {Array.from({ length: 5 }).map((_, index) => (
                             <FaStar
                               key={`${item.id}-star-${index}`}
-                              size={16}
+                              size={15}
                               className={
                                 index < item.rating
                                   ? "opacity-100"
@@ -315,10 +347,10 @@ export default function TestimonialsSection() {
                       </div>
 
                       <div className="flex min-w-0 items-center gap-2.5">
-                        <p className="max-w-[10rem] truncate text-sm font-bold md:max-w-none md:text-base">
+                        <p className="max-w-[10rem] truncate text-sm font-bold md:max-w-none md:text-[0.95rem] lg:text-base xl:text-lg 2xl:text-xl">
                           {item.name.trim().split(/\s+/)[0] || "Anonymous"}
                         </p>
-                        <div className="flex size-9 items-center justify-center overflow-hidden rounded-full border border-secondary-normal/15 bg-white text-[11px] font-bold text-secondary-normal/80">
+                        <div className="flex size-9 items-center justify-center overflow-hidden rounded-full border border-secondary-normal/15 bg-white text-[11px] font-bold text-secondary-normal/80 xl:size-10 2xl:size-11">
                           {item.avatarUrl ? (
                             <img
                               src={item.avatarUrl}
@@ -343,9 +375,9 @@ export default function TestimonialsSection() {
           aria-label="Next testimonials"
           onClick={onNext}
           disabled={isNextDisabled}
-          className="absolute -right-1 top-[48%] z-10 -translate-y-1/2 text-secondary-normal transition enabled:hover:text-secondary-normal/70 disabled:cursor-not-allowed disabled:opacity-30"
+          className="absolute -right-1 top-[48%] z-10 -translate-y-1/2 text-secondary-normal transition enabled:hover:text-secondary-normal/70 disabled:cursor-not-allowed disabled:opacity-30 md:right-0"
         >
-          <FaChevronRight size={24} />
+          <FaChevronRight className="text-[1.25rem] sm:text-[1.4rem] md:text-[1.5rem] lg:text-[1.65rem]" />
         </button>
       </div>
     </section>

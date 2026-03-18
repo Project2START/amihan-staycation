@@ -8,11 +8,11 @@ import OwnerMessage from "./components/testimonial-section/OwnerMessage";
 
 export default function HomePage() {
   return (
-    <div>
+    <div className="w-full overflow-x-hidden">
       <HeaderPromptAuth />
       <HeroSection />
-      <div className="flex flex-cols justify-center text-secondary-normal">
-        <div className="px-[1.5rem] md:w-[70%] lg:w-[50%]">
+      <div className="text-secondary-normal">
+        <div className="mx-auto w-full max-w-[34rem] px-4 sm:max-w-[44rem] sm:px-6 md:max-w-[56rem] md:px-8 lg:max-w-[72rem] lg:px-10 xl:max-w-[82rem] 2xl:max-w-[96rem] 2xl:px-12 min-[1921px]:max-w-[110rem] min-[1921px]:px-16">
           <ValuePropSection />
           <ExploreUnitsSection />
           <TestimonialSection />

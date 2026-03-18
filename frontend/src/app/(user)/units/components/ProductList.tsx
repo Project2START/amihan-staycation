@@ -54,7 +54,7 @@ export default async function ProductList({ searchParams }: ProductListProps) {
   const totalProducts = parsedProducts.products?.length ?? 0;
 
   return (
-    <div className="grid gap-y-8 mt-[2rem]">
+    <div className="grid gap-y-8 mt-[2rem] md:w-[55%]">
       {hasSearched ? (
         <p className="text-sm font-semibold text-gray-600">
           Search Result: {totalProducts} unit{totalProducts === 1 ? "" : "s"}{" "}

@@ -34,14 +34,15 @@ export default async function MyBookingsHistoryPage() {
   return (
     <div className="h-[calc(100vh-72px)] flex flex-col px-[1rem] py-[1.5rem] md:px-[2rem] lg:px-[3rem]">
       <div className="flex items-center justify-between border-b-3 border-secondary-normal/50 pb-[1rem] mb-4">
-        <span className="flex-1/3 flex items-center">
+        <span className="flex-1/3 flex items-center lg:hidden">
           <ClientBackButton />
         </span>
-        <h1 className="flex-1/3 text-nowrap text-center text-lg font-bold text-secondary-normal">
+        <h1 className="flex-1/3 text-nowrap text-center text-lg font-bold text-secondary-normal md:text-xl lg:text-2xl lg:py-[1rem]">
           My Bookings
         </h1>
-        <span className="flex-1/3" />
+        <span className="flex-1/3 lg:hidden" />
       </div>
+
       <MyBookingsHistoryList bookings={parsed.bookings} />
     </div>
   );

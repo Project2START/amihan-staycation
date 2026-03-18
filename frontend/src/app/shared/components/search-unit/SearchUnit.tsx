@@ -137,7 +137,7 @@ export default function SearchUnit() {
 
   return (
     <div className="text-xs md:flex md:justify-center lg:text-base">
-      <div className="border-2 border-primary-normal rounded-lg bg-white md:flex md:justify-between md:w-[80%] lg:w-[55%]">
+      <div className="border-2 border-primary-normal rounded-lg bg-white md:flex md:justify-between md:w-[80%] lg:w-[55%] ">
         <div className="relative md:basis-3/5">
           <button
             onClick={() => handleSetCalendar(true)}
@@ -263,7 +263,7 @@ export default function SearchUnit() {
           <button
             type="button"
             onClick={onSearch}
-            className="w-full primary-button-link hover-animation rounded-[5px] h-[100%] px-[1.5rem] lg:text-base"
+            className="w-full primary-button-link hover-animation rounded-[5px] h-[100%] px-[1.5rem] lg:text-base hover-animation lg:hover:bg-primary-normal/80"
           >
             Search
           </button>

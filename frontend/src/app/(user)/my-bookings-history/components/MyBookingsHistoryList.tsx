@@ -42,12 +42,12 @@ export default function MyBookingsHistoryList({
   }
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden">
-      <ul className="flex justify-between items-center gap-x-3 text-sm overflow-x-auto py-2 mb-3">
+    <div className="flex flex-col flex-1 overflow-hidden md:w-[70%] md:self-center">
+      <ul className="flex justify-between items-center gap-x-3 text-sm overflow-x-auto py-2 mb-3 lg:text-base">
         <li>
           <button
             onClick={() => setFilterStatus("all")}
-            className="text-nowrap flex items-center px-3 py-1 rounded-lg border-2 border-secondary-normal/30 gap-x-1"
+            className="text-nowrap flex items-center px-3 py-1 rounded-lg border-2 border-secondary-normal/30 gap-x-1 hover-animation lg:hover:bg-primary-normal/10"
             style={
               filterStatus === "all"
                 ? {
@@ -67,7 +67,7 @@ export default function MyBookingsHistoryList({
             <li key={s.status}>
               <button
                 onClick={() => setFilterStatus(s.status)}
-                className="text-nowrap flex items-center px-3 py-1 rounded-lg border-2 border-secondary-normal/30 gap-x-1"
+                className="text-nowrap flex items-center px-3 py-1 rounded-lg border-2 border-secondary-normal/30 gap-x-1 hover-animation lg:hover:bg-primary-normal/10"
                 style={
                   s.status === filterStatus
                     ? {

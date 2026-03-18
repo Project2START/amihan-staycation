@@ -3,7 +3,6 @@ import GreetUser from "../components/GreetUser";
 import ProductList from "./components/ProductList";
 import { Skeleton } from "@mui/material";
 import SearchUnit from "@/app/shared/components/search-unit/SearchUnit";
-// import BookingStatus from "./components/BookingStatus";
 
 interface UnitsPageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -13,9 +12,9 @@ export default async function UnitsPage({ searchParams }: UnitsPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
 
   return (
-    <div className="px-[1.5rem] py-[2rem]">
+    <div className="px-[1.5rem] py-[2rem] ">
       <GreetUser />
-      <div className="mt-[1.5rem]">
+      <div className="mt-[1.5rem] mb-[2.5rem]">
         <SearchUnit />
       </div>
       <Suspense
@@ -31,7 +30,9 @@ export default async function UnitsPage({ searchParams }: UnitsPageProps) {
           </div>
         }
       >
-        <ProductList searchParams={resolvedSearchParams} />
+        <div className="md:flex md:justify-center">
+          <ProductList searchParams={resolvedSearchParams} />
+        </div>
       </Suspense>
     </div>
   );

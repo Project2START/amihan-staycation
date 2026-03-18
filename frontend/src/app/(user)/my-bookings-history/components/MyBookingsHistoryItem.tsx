@@ -31,21 +31,26 @@ export default function MyBookingsHistoryItem({
   const displayNameStatus = getStatusDisplayName(status as Status);
 
   return (
-    <Link href={`/units/booking/${id}`}>
+    <Link
+      href={`/units/booking/${id}`}
+      className="hover-animation lg:hover:bg-primary-normal/10"
+    >
       <div
-        className="relative text-xs text-secondary-normal rounded-lg p-3 border-l-2 border-r-2 border-b-2 border-gray-300"
+        className="relative text-xs text-secondary-normal rounded-lg p-3 border-l-2 border-r-2 border-b-2 border-gray-300 lg:p-6"
         style={{ borderTop: `3.5px solid ${colorStatus}` }}
       >
         <div
           className="absolute top-0 right-0 rounded-bl-4xl p-[0.35rem] pl-[1rem] text-white"
           style={{ backgroundColor: colorStatus }}
         >
-          <span className="capitalize font-bold">{displayNameStatus}</span>
+          <span className="capitalize font-bold lg:text-base">
+            {displayNameStatus}
+          </span>
         </div>
         <div>
-          <span className="text-base font-bold">{name}</span>
+          <span className="text-base font-bold lg:text-lg">{name}</span>
         </div>
-        <div className="flex items-center justify-between mt-[0.25rem]">
+        <div className="flex items-center justify-between mt-[0.25rem] lg:text-base">
           <div>
             <span>{contact_number}</span>
           </div>
