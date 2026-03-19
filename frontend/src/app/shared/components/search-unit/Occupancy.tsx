@@ -44,7 +44,7 @@ export default function Occupancy({
     setOccupancy((occ) => ({ ...occ, [field]: occ[field] - 1 }));
   };
   return (
-    <div className="grid gap-y-3 p-[1rem] text-xs bg-white shadow-xl/10 rounded-xl relative lg:text-base lg:p-[1.5rem] lg:pt-[2rem]">
+    <div className="grid gap-y-3 p-[1rem] text-xs bg-white shadow-xl/10 rounded-xl relative lg:text-sm lg:p-[1.5rem] lg:pt-[2rem]">
       <div className="flex justify-between items-center">
         <div>
           <span className="font-bold">Adults</span>

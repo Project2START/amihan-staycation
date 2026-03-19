@@ -138,18 +138,18 @@ export default function SearchUnit() {
   return (
     <div className="text-xs md:flex md:justify-center lg:text-base">
       <div className="border-2 border-primary-normal rounded-lg bg-white md:flex md:justify-between md:w-[80%] lg:w-[55%] ">
-        <div className="relative md:basis-3/5">
+        <div className="relative min-w-0 md:basis-[45%]">
           <button
             onClick={() => handleSetCalendar(true)}
             className="border-b-2 border-primary-normal/50 w-full p-[1rem] hover-animation hover:opacity-50 md:border-0 md:border-r-2 md:border-gray-300 lg:p-[1.5rem]"
             disabled={calendar}
             aria-label="date-range-button"
           >
-            <div className="relative flex items-center justify-center text-gray-500 pl-[1.5rem]">
-              <span className="absolute left-0 mr-[0.5rem] text-lg lg:text-2xl">
+            <div className="flex items-center justify-center gap-2 text-gray-500">
+              <span className="shrink-0 text-lg lg:text-2xl">
                 <LuCalendarDays />
               </span>
-              <div>
+              <div className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
                 {!search.checkIn ? (
                   <span>Check-in date</span>
                 ) : (
@@ -212,19 +212,22 @@ export default function SearchUnit() {
           </div>
         </div>
 
-        <div className="relative md:basis-3/5">
+        <div className="relative min-w-0 md:basis-[35%]">
           <button
             disabled={occupancy}
             onClick={() => handleSetOccupancy(true)}
             className="w-full p-[1rem] hover-animation hover:opacity-50 lg:p-[1.5rem]"
             aria-label="occupancy-button"
           >
-            <div className="relative flex items-center justify-center text-gray-500 pl-[0.5rem]">
-              <span className="absolute left-0 mr-[0.5rem] text-lg lg:text-2xl">
+            <div className="flex items-center justify-center gap-2 text-gray-500">
+              <span className="shrink-0 text-lg lg:text-2xl">
                 <IoPersonSharp />
               </span>
-              <div>
-                <ul role="list" className="list-disc flex gap-5 md:gap-8.5">
+              <div className="min-w-0 overflow-hidden whitespace-nowrap">
+                <ul
+                  role="list"
+                  className="list-disc flex flex-nowrap gap-6 whitespace-nowrap sm:gap-4 md:gap-5 lg:gap-8.5"
+                >
                   <li className="list-none">
                     <span>{search.adults}</span> Adults
                   </li>
@@ -259,13 +262,13 @@ export default function SearchUnit() {
             </AnimatePresence>
           </div>
         </div>
-        <div className="overflow-hidden md:basis-1/5">
+        <div className="md:basis-1/5 md:min-w-[6.25rem] md:shrink-0">
           <button
             type="button"
             onClick={onSearch}
-            className="w-full primary-button-link hover-animation rounded-[5px] h-[100%] px-[1.5rem] lg:text-base hover-animation lg:hover:bg-primary-normal/80"
+            className="w-full whitespace-nowrap primary-button-link hover-animation rounded-[5px] h-[100%] px-4 lg:px-[1.5rem] lg:text-base hover-animation lg:hover:bg-primary-normal/80"
           >
-            Search
+            <span className="font-bold">Search</span>
           </button>
         </div>
       </div>

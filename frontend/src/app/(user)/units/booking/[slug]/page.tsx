@@ -7,7 +7,7 @@ export default async function BookingSlugPage({
 }) {
   const { slug } = await params;
   return (
-    <div className="flex flex-col h-[calc(100vh-72px)]">
+    <div className="flex flex-col h-[calc(100vh-72px)] md:items-center">
       <BookingDetails bookingId={slug} />
     </div>
   );

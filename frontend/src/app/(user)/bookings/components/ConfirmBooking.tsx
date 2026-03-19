@@ -12,11 +12,7 @@ export default function ConfirmBooking({
   prevStep: () => void;
   confirmLoading: boolean;
 }) {
-  const {
-    control,
-    register,
-    formState: { errors },
-  } = useFormContext<BookingSchema>();
+  const { control, register } = useFormContext<BookingSchema>();
 
   const agree_terms = useWatch({ control, name: "agree_terms" });
 

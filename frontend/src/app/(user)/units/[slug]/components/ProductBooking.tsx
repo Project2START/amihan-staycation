@@ -64,23 +64,23 @@ export default function ProductBooking({ productId }: { productId: string }) {
 
   if (existingBooking.loading) {
     return (
-      <div className="flex justify-center mt-[2.5rem]">
-        <Skeleton variant="rounded" className="w-[80%]" height={48} />
+      <div className="mt-[2.5rem] flex justify-center md:mt-[1.5rem]">
+        <Skeleton variant="rounded" className="w-[80%] md:w-full" height={48} />
       </div>
     );
   }
 
   return (
-    <div className="mt-[2.5rem] flex justify-center">
+    <div className="mt-[2.5rem] flex justify-center md:mt-[1.5rem]">
       {user?.role !== "agent" && existingBooking.booking ? (
-        <p className="text-reject-normal text-xs text-center">
+        <p className="text-reject-normal px-1 text-center text-xs md:text-sm">
           You’ve already got a booking in place, so another reservation isn’t
           available at the moment.
         </p>
       ) : (
         <Link
           href={user ? bookingHref : signInRedirectHref}
-          className="w-[80%] text-white bg-primary-normal font-bold rounded-lg py-[1rem] text-center text-xs"
+          className="w-[80%] rounded-lg bg-primary-normal py-[1rem] text-center text-xs font-bold text-white md:w-full md:py-[1.05rem] md:text-sm"
         >
           Book Now
         </Link>

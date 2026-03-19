@@ -50,8 +50,8 @@ export default function ProductHeader({ product }: { product: Product }) {
   };
 
   return (
-    <div className="flex justify-between items-center py-[1.5rem]">
-      <div className="flex-1/4">
+    <div className="flex items-center justify-between gap-3 py-[1.5rem]">
+      <div className="w-[3rem] shrink-0">
         <PrimaryBackButton
           onClick={() => {
             router.back();
@@ -59,28 +59,32 @@ export default function ProductHeader({ product }: { product: Product }) {
           style="text-xl"
         />
       </div>
-      <div className="flex-2/4 overflow-x-hidden">
+
+      <div className="min-w-0 flex-1 overflow-x-hidden">
         <h1 className="text-center truncate" title={name}>
           {name}
         </h1>
       </div>
-      <div className="flex-1/4 flex justify-center items-center gap-x-3">
-        <div>
-          <button>
+
+      <div className="w-auto shrink-0">
+        <div className="flex items-center justify-center gap-x-3 md:hidden">
+          <button type="button" aria-label="settings">
             <span className="text-xl text-gray-500">
               <CiSettings />
             </span>
           </button>
-        </div>
-        <div>
-          <button onClick={() => setEditDialog(true)}>
+          <button
+            type="button"
+            aria-label="edit unit"
+            onClick={() => setEditDialog(true)}
+          >
             <span className="text-xl text-gray-500">
               <GoPencil />
             </span>
           </button>
-        </div>
-        <div>
           <button
+            type="button"
+            aria-label="delete unit"
             onClick={() => {
               setDeleteDialog(true);
             }}
@@ -88,6 +92,39 @@ export default function ProductHeader({ product }: { product: Product }) {
             <span className="text-xl text-reject-normal">
               <RiDeleteBin6Line />
             </span>
+          </button>
+        </div>
+
+        <div className="hidden items-center gap-2 md:flex lg:gap-2.5">
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:bg-gray-50"
+            aria-label="settings"
+          >
+            <CiSettings className="text-base" />
+            Settings
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setEditDialog(true)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-primary-normal/25 bg-primary-light/35 px-3 py-1.5 text-xs font-semibold text-secondary-normal transition hover:bg-primary-light/55"
+            aria-label="edit unit"
+          >
+            <GoPencil className="text-sm" />
+            Edit
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setDeleteDialog(true);
+            }}
+            className="inline-flex items-center gap-1.5 rounded-full border border-reject-normal/20 bg-reject-normal/10 px-3 py-1.5 text-xs font-semibold text-reject-normal transition hover:bg-reject-normal/20"
+            aria-label="delete unit"
+          >
+            <RiDeleteBin6Line className="text-sm" />
+            Delete
           </button>
         </div>
       </div>

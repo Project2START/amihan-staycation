@@ -27,7 +27,7 @@ export default function DialogBaseContent({
             className="w-[100vw] h-[100vh] fixed top-0 left-0 bg-black/50 flex justify-center items-center z-999"
           >
             <div
-              className="rounded-lg bg-white w-[85%] h-auto max-h-[80%]"
+              className="rounded-lg bg-white w-[85%] h-auto max-h-[80%] md:w-[50%] xl:w-[40%]"
               style={
                 scrollVertically
                   ? { overflowY: "auto" }

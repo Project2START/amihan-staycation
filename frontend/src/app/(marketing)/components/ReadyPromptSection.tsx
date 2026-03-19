@@ -14,7 +14,7 @@ export default function ReadyPromptSection() {
         <div className="flex justify-center">
           <Link
             href={"/units"}
-            className="primary-button-link px-10 py-4 text-sm sm:px-14 sm:py-4 md:px-16 lg:px-24 lg:py-5 lg:text-base xl:px-[7.5rem] xl:text-lg 2xl:px-36 min-[1921px]:px-44"
+            className="primary-button-link px-10 py-4 text-xs sm:px-14 sm:py-4 md:px-16 md:text-sm lg:px-24 lg:py-5 lg:text-base xl:px-[7.5rem] xl:text-lg 2xl:px-36 min-[1921px]:px-44"
           >
             Browse Units
           </Link>

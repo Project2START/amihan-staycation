@@ -82,7 +82,7 @@ export default function BookingCalendar() {
               <button
                 ref={field.ref}
                 type="button"
-                className="flex justify-center input-base relative"
+                className="flex justify-center input-base relative lg:text-base"
                 onClick={handleOpenCalendar}
               >
                 {!checkPeriod ? (
@@ -101,15 +101,15 @@ export default function BookingCalendar() {
                   </div>
                 )}
 
-                <div className="absolute right-5 top-[50%] translate-y-[-50%] opacity-50">
-                  <span className="text-lg">
+                <div className="absolute right-5 top-[50%] translate-y-[-50%] opacity-50 lg:right-6">
+                  <span className="text-lg lg:text-xl">
                     <LuCalendarDays />
                   </span>
                 </div>
               </button>
               {errors.check_period && (
                 <p
-                  className="text-red-900 text-[0.65rem]"
+                  className="text-red-900 text-[0.65rem] lg:text-xs"
                   id="guestCheckPeriod-error"
                 >
                   Check in and check out date is required
@@ -127,8 +127,8 @@ export default function BookingCalendar() {
                   >
                     <ClickOutside onClickOutside={handleCloseCalendar}>
                       {isCalendarLoading ? (
-                        <div className="bg-white p-[1.5rem] rounded-lg overflow-hidden min-w-0 shadow-xl/30 w-full">
-                          <div className="h-[16rem] w-full animate-pulse rounded-md bg-secondary-normal/10" />
+                        <div className="bg-white p-[1.5rem] rounded-lg overflow-hidden min-w-0 shadow-xl/30 w-full lg:p-[1.75rem]">
+                          <div className="h-[16rem] w-full animate-pulse rounded-md bg-secondary-normal/10 lg:h-[18rem]" />
                         </div>
                       ) : (
                         <CalendarBooking

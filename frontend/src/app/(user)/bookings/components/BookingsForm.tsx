@@ -186,18 +186,18 @@ export default function BookingsForm() {
   };
 
   return (
-    <div className="px-[1rem] pt-[1.5rem] pb-[1rem] text-xs text-secondary-normal">
+    <div className="px-[1rem] pt-[1.5rem] pb-[1rem] text-xs text-secondary-normal lg:w-[60%] lg:text-sm xl:w-[50%]">
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div>
-            <div className="mb-[1rem] flex justify-between items-center">
+            <div className="mb-[1rem] flex justify-between items-center lg:mb-[2rem] lg:mt-[1rem]">
               {step === minStep && (
                 <div className="flex-1/3">
                   <BackPrevPage />
                 </div>
               )}
 
-              <h1 className="text-nowrap grow-1 text-center">
+              <h1 className="text-nowrap grow-1 text-center lg:text-3xl">
                 {step === maxStep ? "Booking Summary" : "Book Your Stay"}
               </h1>
               {step === minStep && <div className="flex-1/3"></div>}
@@ -261,10 +261,10 @@ export default function BookingsForm() {
             </div>
             <div>
               {step !== maxStep ? (
-                <div className="flex justify-evenly gap-x-5 font-bold">
+                <div className="flex justify-evenly gap-x-5 font-bold lg:gap-x-6">
                   <button
                     type="button"
-                    className="flex-1/2 text-primary-normal py-[0.5rem]"
+                    className="flex-1/2 text-primary-normal py-[0.5rem] lg:py-[0.75rem]"
                     onClick={prevStep}
                     disabled={step === minStep}
                   >
@@ -272,7 +272,7 @@ export default function BookingsForm() {
                   </button>
                   <button
                     type="button"
-                    className="flex-1/2 bg-primary-normal text-white py-[0.5rem] rounded-lg"
+                    className="flex-1/2 bg-primary-normal text-white py-[0.5rem] rounded-lg lg:py-[0.75rem]"
                     onClick={onHandleSubmitStep}
                   >
                     <span>Next</span>
@@ -293,15 +293,17 @@ export default function BookingsForm() {
         onCloseDialog={() => setConfirmationDialog(false)}
         enableClickOutside={false}
       >
-        <div className="p-6 flex flex-col items-center text-center">
+        <div className="p-6 flex flex-col items-center text-center lg:p-7">
           <div className="mb-4 flex items-center flex-col gap-3">
             <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
               <AiOutlineCheckCircle className="h-6 w-6 text-green-600" />
             </div>
-            <h2 className="text-lg font-semibold">Booking Confirmed</h2>
+            <h2 className="text-lg font-semibold lg:text-xl">
+              Booking Confirmed
+            </h2>
           </div>
 
-          <p className="text-sm text-secondary-normal mb-3">
+          <p className="text-sm text-secondary-normal mb-3 lg:text-base">
             Thank you — we will contact you via email or notify you here in the
             app.
           </p>
@@ -309,7 +311,7 @@ export default function BookingsForm() {
           <button
             type="button"
             onClick={handleConfirmationOk}
-            className="px-16 py-2 rounded-lg text-white"
+            className="px-16 py-2 rounded-lg text-white lg:py-3 lg:text-base"
             style={{ backgroundColor: "var(--color-primary-normal)" }}
           >
             <span className="font-bold">OK</span>

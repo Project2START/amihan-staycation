@@ -21,7 +21,7 @@ export default async function ExploreUnitsSection() {
   }
 
   return (
-    <section className="py-8 sm:py-10 md:py-12 lg:py-14 xl:py-16 2xl:py-20 min-[1921px]:py-24">
+    <section className="py-6 sm:py-10 md:py-12 lg:py-14 xl:py-16 2xl:py-20 min-[1921px]:py-24">
       <h2 className="mb-1 text-center text-xl font-bold sm:text-2xl md:text-3xl lg:text-[2.3rem] xl:text-[2.7rem] 2xl:text-[3.1rem] min-[1921px]:text-[3.5rem]">
         Explore Our Stays
       </h2>

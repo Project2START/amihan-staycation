@@ -88,7 +88,7 @@ class BookingService {
             title: "⭐ Share Your Experience",
             message:
               "You've completed your stay. We'd love to hear your feedback—leave a review to help others and improve our service.",
-            pathId: updatedBooking.id,
+            pathId: updatedBooking.productId ?? "",
             pathType: "review",
             userDestinationId: updatedBooking.userId,
             userOwnerId: updatedBooking.adminId,

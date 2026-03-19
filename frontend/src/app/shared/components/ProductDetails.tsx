@@ -54,26 +54,37 @@ export default async function ProductDetails({
   return (
     <div className="text-xs grid gap-y-7 my-[1rem]">
       <div className="flex items-start justify-between">
-        <Link href={`/reviews?productId=${id}`}>
+        {reviewCount === 0 ? (
           <div className="flex items-center mt-[0.5rem]">
             <Rating
               value={Number(averageRating.toFixed(1))}
               textColor="font-bold"
             />
-            {reviewCount === 0 ? (
-              <span className="ml-[0.5rem]">No review as of the moment</span>
-            ) : (
-              <span className="underline ml-[0.5rem]">
+            <span className="ml-[0.5rem] xl:text-base">
+              No review as of the moment
+            </span>
+          </div>
+        ) : (
+          <Link href={`/reviews?productId=${id}`}>
+            <div className="flex items-center mt-[0.5rem]">
+              <Rating
+                value={Number(averageRating.toFixed(1))}
+                textColor="font-bold"
+              />
+              <span className="underline ml-[0.5rem] xl:text-base">
                 Based on {reviewCount} review{reviewCount === 1 ? "" : "s"}
               </span>
-            )}
-          </div>
-        </Link>
+            </div>
+          </Link>
+        )}
+
         <div className="flex flex-col">
-          <span className="text-lg font-bold">
+          <span className="text-lg font-bold xl:text-xl">
             {formatMoney(price, { decimals: 2, symbol: "₱" })}
           </span>
-          <span>1 night, {maxPersons} persons max</span>
+          <span className="xl:text-base">
+            1 night, {maxPersons} persons max
+          </span>
         </div>
       </div>
       <div>
