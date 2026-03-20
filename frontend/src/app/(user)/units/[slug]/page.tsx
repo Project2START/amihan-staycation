@@ -13,7 +13,7 @@ export default async function ProductSlugPage({
     <div className="px-[1rem] pb-[2rem]">
       <Suspense
         fallback={
-          <div className="my-[1rem]">
+          <div className="my-[2rem]">
             <div className="grid gap-y-8 md:hidden">
               <div className="flex justify-center">
                 <Skeleton

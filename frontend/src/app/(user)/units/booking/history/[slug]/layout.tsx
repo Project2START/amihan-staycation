@@ -7,7 +7,7 @@ export default async function HistoryLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col h-[calc(100vh-72px)]">
+    <div className="flex min-h-[calc(100vh-72px)] flex-col">
       <Suspense fallback={<HistoryLoading />}>{children}</Suspense>
     </div>
   );

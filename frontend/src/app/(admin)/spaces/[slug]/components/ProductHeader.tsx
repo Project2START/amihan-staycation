@@ -61,18 +61,13 @@ export default function ProductHeader({ product }: { product: Product }) {
       </div>
 
       <div className="min-w-0 flex-1 overflow-x-hidden">
-        <h1 className="text-center truncate" title={name}>
+        <h1 className="text-center truncate lg:text-3xl" title={name}>
           {name}
         </h1>
       </div>
 
       <div className="w-auto shrink-0">
         <div className="flex items-center justify-center gap-x-3 md:hidden">
-          <button type="button" aria-label="settings">
-            <span className="text-xl text-gray-500">
-              <CiSettings />
-            </span>
-          </button>
           <button
             type="button"
             aria-label="edit unit"
@@ -96,15 +91,6 @@ export default function ProductHeader({ product }: { product: Product }) {
         </div>
 
         <div className="hidden items-center gap-2 md:flex lg:gap-2.5">
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:bg-gray-50"
-            aria-label="settings"
-          >
-            <CiSettings className="text-base" />
-            Settings
-          </button>
-
           <button
             type="button"
             onClick={() => setEditDialog(true)}
@@ -135,11 +121,11 @@ export default function ProductHeader({ product }: { product: Product }) {
           setDeleteDialog(false);
         }}
       >
-        <div className="px-[2rem] pt-[1.5rem] pb-[1rem] text-sm">
-          <p className="text-center flex items-center">
-            <span className="text-reject-normal text-2xl">
+        <div className="px-[2rem] pt-[1.5rem] pb-[1rem] text-sm lg:pt-10 lg:text-base">
+          <p className="text-center flex items-center flex justify-center">
+            {/* <span className="text-reject-normal text-2xl lg:mr-2">
               <IoIosAlert />
-            </span>
+            </span> */}
             <span>
               Do you want to delete this unit?{" "}
               <b>This action can't be undone.</b>

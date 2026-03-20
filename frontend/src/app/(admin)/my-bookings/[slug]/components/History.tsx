@@ -36,7 +36,7 @@ export default function History({ bookingId }: { bookingId: string }) {
           </div>
         </div>
       </Link>
-      <p className="text-[0.65rem] italic">
+      <p className="text-[0.65rem] italic lg:text-xs">
         You have previous activity for this booking. Click View History to see
         the details.
       </p>

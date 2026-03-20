@@ -105,44 +105,55 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
   };
 
   return (
-    <div className="relative text-secondary-normal text-xs px-[1.5rem] py-[2rem]">
-      <h1 className="text-center text-xl font-bold">Add New Unit</h1>
+    <div className="relative px-[1.5rem] py-[2rem] text-xs text-secondary-normal lg:px-[2rem] lg:py-[1.75rem] lg:text-sm xl:px-[2.25rem]">
+      <h1 className="text-center text-xl font-bold lg:text-2xl">
+        Add New Unit
+      </h1>
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mt-[1rem] h-[23rem] overflow-y-auto px-[0.25rem] pb-[1rem]">
-            <div className="flex flex-col">
-              <span className="font-bold">Name</span>
-              <input
-                {...register("name")}
-                placeholder="New unit"
-                type="text"
-                aria-describedby={errors.name ? "unitName-error" : undefined}
-                className="mt-[0.5rem] border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
-              />
-              {errors.name && (
-                <p className="text-red-900 text-[0.65rem]" id="unitName-error">
-                  {errors.name.message}
-                </p>
-              )}
+          <div className="mt-[1rem] h-[23rem] overflow-y-auto px-[0.25rem] pb-[1rem] lg:mt-[1.25rem] lg:h-[25rem] lg:px-[0.5rem] lg:pb-[1.25rem]">
+            <div className="lg:grid lg:grid-cols-2 lg:gap-x-5 lg:gap-y-1">
+              <div className="flex flex-col">
+                <span className="font-bold">Name</span>
+                <input
+                  {...register("name")}
+                  placeholder="New unit"
+                  type="text"
+                  aria-describedby={errors.name ? "unitName-error" : undefined}
+                  className="mt-[0.5rem] border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
+                />
+                {errors.name && (
+                  <p
+                    className="text-red-900 text-[0.65rem]"
+                    id="unitName-error"
+                  >
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-col mt-[1rem] lg:mt-0">
+                <span className="font-bold">Price</span>
+                <input
+                  {...register("price", { valueAsNumber: true })}
+                  type="number"
+                  placeholder="0.00"
+                  step="any"
+                  aria-describedby={errors.name ? "unitPrice-error" : undefined}
+                  onWheel={(e) => e.currentTarget.blur()}
+                  className="mt-[0.5rem] border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
+                />
+                {errors.price && (
+                  <p
+                    className="text-red-900 text-[0.65rem]"
+                    id="unitPrice-error"
+                  >
+                    {errors.price.message}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="flex flex-col mt-[1rem]">
-              <span className="font-bold">Price</span>
-              <input
-                {...register("price", { valueAsNumber: true })}
-                type="number"
-                placeholder="0.00"
-                step="any"
-                aria-describedby={errors.name ? "unitPrice-error" : undefined}
-                onWheel={(e) => e.currentTarget.blur()}
-                className="mt-[0.5rem] border-b-2 border-secondary-normal/30 py-[0.5rem] input-base-focus"
-              />
-              {errors.price && (
-                <p className="text-red-900 text-[0.65rem]" id="unitPrice-error">
-                  {errors.price.message}
-                </p>
-              )}
-            </div>
-            <div className="flex flex-col mt-[1rem]">
+            <div className="flex flex-col mt-[1rem] lg:mt-[1.25rem]">
               <span className="font-bold">Max persons</span>
               <input
                 {...register("maxPersons", { valueAsNumber: true })}
@@ -163,9 +174,9 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                 </p>
               )}
             </div>
-            <div className="flex flex-col mt-[1rem]">
+            <div className="flex flex-col mt-[1rem] lg:col-span-2 lg:mt-[1.25rem]">
               <span className="font-bold">About</span>
-              <div className="mt-[0.5rem] h-[7rem]">
+              <div className="mt-[0.5rem] h-[7rem] lg:h-[8.5rem]">
                 <textarea
                   {...register("about")}
                   id="unit-about"
@@ -182,7 +193,7 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                 </p>
               )}
             </div>
-            <div className="mt-[1.5rem]">
+            <div className="mt-[1.5rem] lg:col-span-2 lg:mt-[1.75rem] lg:rounded-xl lg:border lg:border-secondary-normal/15 lg:bg-[#fafbfc] lg:p-[1rem]">
               <div className="flex items-center justify-between py-[-0.5rem]">
                 <span className="font-bold">Attributes</span>
                 <button type="button" onClick={() => setOpenAddAttr(true)}>
@@ -200,17 +211,17 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                 <AddUnitAttributes onClose={() => setOpenAddAttr(false)} />
               </DialogBaseContent>
             </div>
-            <div className="mt-[1rem]">
+            <div className="mt-[1rem] lg:col-span-2 lg:mt-[1.25rem] lg:rounded-xl lg:border lg:border-secondary-normal/15 lg:bg-[#fafbfc] lg:p-[1rem]">
               <AddUnitPhotos />
             </div>
           </div>
-          <div className="mt-[1rem]">
+          <div className="mt-[1rem] lg:mt-[1.25rem]">
             {formError && (
               <p className="text-center text-[0.65rem] pb-[0.5rem] text-red-900">
                 {formError}
               </p>
             )}
-            <div className="flex items-center justify-center gap-x-7.5">
+            <div className="flex items-center justify-center gap-x-7.5 lg:justify-end lg:gap-x-3">
               <div>
                 <PrimaryButton
                   variant="text"
@@ -218,7 +229,7 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
                   onClick={onCloseDialog}
                   disabled={loading}
                 >
-                  <span className="text-xs normal-case text-secondary-normal">
+                  <span className="text-xs normal-case text-secondary-normal lg:text-sm">
                     Cancel
                   </span>
                 </PrimaryButton>
@@ -226,7 +237,9 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
               <div>
                 <LoadingOverlay loading={loading}>
                   <PrimaryButton type="submit" disabled={loading}>
-                    <span className="text-xs px-[2.5rem] font-bold">Save</span>
+                    <span className="text-xs px-[2.5rem] font-bold lg:text-sm lg:px-[3rem]">
+                      Save
+                    </span>
                   </PrimaryButton>
                 </LoadingOverlay>
               </div>

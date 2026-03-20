@@ -49,7 +49,7 @@ export default function SecurityDeposit({
         {destination === "from" ? (
           image_from_url ? (
             <PhotoFullViewDialog url={image_from_url}>
-              <div className="p-[0.5rem] flex justify-center items-center w-full h-[10rem] rounded-lg border-2 border-secondary-normal/30">
+              <div className="p-[0.5rem] flex justify-center items-center w-full h-[10rem] rounded-lg border-2 border-secondary-normal/30 lg:h-[13rem]">
                 <div className="w-full relative rounded-lg h-full">
                   <Image
                     src={image_from_url}

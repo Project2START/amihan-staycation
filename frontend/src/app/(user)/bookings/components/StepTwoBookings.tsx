@@ -33,7 +33,7 @@ export default function StepTwoBookings() {
   return (
     <div className="h-[60vh] px-[0.75rem] py-[1.5rem] overflow-y-auto shadow-[inset_0_12px_12px_-12px_rgba(0,0,0,0.2),inset_0_-12px_12px_-12px_rgba(0,0,0,0.2)] lg:px-[1rem] lg:py-[1.75rem]">
       <div>
-        <h2 className="text-center font-normal mb-[1rem] lg:mb-[1.25rem] lg:text-2xl lg:mb-[1.5rem]">
+        <h2 className="text-center text-base font-normal mb-[1rem] lg:text-xl lg:mb-[1.25rem] lg:mb-[1.5rem]">
           Additional Guests
         </h2>
       </div>

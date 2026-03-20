@@ -28,9 +28,9 @@ export default function MyBookingsList({
 
   return (
     <div className="h-full">
-      <div className="h-full flex flex-col gap-y-5">
+      <div className="h-full flex flex-col gap-y-5 lg:gap-y-4 lg:mb-[3rem]">
         {bookings.length === 0 ? (
-          <div className="flex justify-center mb-[1rem] items-center font-bold text-center text-gray-300 py-8 h-full">
+          <div className="mb-[1rem] flex h-full items-center justify-center py-8 text-center font-bold text-gray-300 lg:mb-0 lg:rounded-xl lg:border lg:border-dashed lg:border-secondary-normal/20 lg:bg-secondary-normal/5">
             <span>
               {filterStatus
                 ? statusMessages[filterStatus]

@@ -93,8 +93,8 @@ export default async function Product({ spaceId }: { spaceId: string }) {
       </div>
 
       <div className="hidden lg:block">
-        <section className="mx-auto w-full max-w-[90rem] px-2 pb-8 pt-4">
-          <div className="rounded-[2rem] border border-secondary-normal/10 bg-[#f8fbfa] p-8 shadow-[0_18px_55px_rgba(0,0,0,0.08)] xl:p-10">
+        <section className="mx-auto w-full max-w-[90rem] px-4 pb-8 pt-8">
+          <div className="rounded-[2rem] border border-secondary-normal/10 bg-[#f8fbfa] p-8 shadow-[0_18px_55px_rgba(0,0,0,0.08)] xl:p-8">
             <div className="mb-8 border-b border-secondary-normal/10 pb-7">
               <ProductHeader product={product} />
               <div className="mt-4 flex flex-wrap items-center gap-2">

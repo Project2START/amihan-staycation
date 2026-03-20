@@ -36,64 +36,109 @@ export const fetcher = async (url: string) => {
 
 function BookingsFormSkeleton() {
   return (
-    <div className="px-[1rem] py-[2rem] text-xs">
-      {/* Header with back button and title */}
-      <div className="mb-[1rem] flex items-center justify-between">
-        <div className="flex-1/3">
-          <Skeleton height={24} width={24} circle />
-        </div>
-        <Skeleton height={16} width={120} className="grow-1 text-center" />
-        <div className="flex-1/3" />
-      </div>
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 text-xs text-secondary-normal sm:px-6 lg:px-8 lg:py-10 lg:text-sm">
+      <div className="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8 xl:grid-cols-[320px_minmax(0,1fr)] xl:gap-10">
+        <aside className="hidden lg:flex lg:flex-col lg:rounded-2xl lg:border lg:border-gray-100 lg:bg-gradient-to-br lg:from-primary-bg/80 lg:to-white lg:p-6 lg:shadow-sm">
+          <div className="mb-6">
+            <Skeleton height={10} width={100} mb={12} />
+            <Skeleton height={30} width={220} radius="sm" />
+          </div>
 
-      {/* Stepper indicators */}
-      <div className="mb-[1.5rem] flex items-center justify-between gap-2">
-        {[...Array(4)].map((_, i) => (
-          <React.Fragment key={i}>
-            <Skeleton height={24} width={24} circle />
-            {i < 3 && <Skeleton height={4} className="flex-1" />}
-          </React.Fragment>
-        ))}
-      </div>
+          <div className="space-y-4">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-gray-100 bg-white/60 px-3 py-3"
+              >
+                <div className="mb-2 flex items-center gap-2">
+                  <Skeleton height={24} width={24} circle />
+                  <Skeleton height={12} width={140} radius="sm" />
+                </div>
+                <Skeleton height={10} width="85%" mb={6} />
+                <Skeleton height={10} width="65%" />
+              </div>
+            ))}
+          </div>
 
-      {/* Step content area — mimics StepOneBookings fields */}
-      <div className="flex flex-col gap-y-4">
-        {/* Name field */}
-        <div>
-          <Skeleton height={12} width={80} mb={6} />
-          <Skeleton height={36} radius="sm" />
-        </div>
-        {/* Age field */}
-        <div>
-          <Skeleton height={12} width={50} mb={6} />
-          <Skeleton height={36} radius="sm" />
-        </div>
-        {/* Contact number field */}
-        <div>
-          <Skeleton height={12} width={110} mb={6} />
-          <Skeleton height={36} radius="sm" />
-        </div>
-        {/* Nationality field */}
-        <div>
-          <Skeleton height={12} width={80} mb={6} />
-          <Skeleton height={36} radius="sm" />
-        </div>
-        {/* Valid ID upload */}
-        <div>
-          <Skeleton height={12} width={70} mb={6} />
-          <Skeleton height={80} radius="sm" />
-        </div>
-        {/* Check period / calendar */}
-        <div>
-          <Skeleton height={12} width={100} mb={6} />
-          <Skeleton height={36} radius="sm" />
-        </div>
-      </div>
+          <div className="mt-auto rounded-xl bg-white p-4 shadow-sm">
+            <Skeleton height={9} width={90} mb={10} />
+            <Skeleton height={14} width={160} mb={8} radius="sm" />
+            <Skeleton height={10} width="90%" mb={6} />
+            <Skeleton height={10} width="70%" />
+          </div>
+        </aside>
 
-      {/* Back / Next buttons */}
-      <div className="mt-6 flex justify-evenly gap-x-5 font-bold">
-        <Skeleton height={36} radius="sm" className="flex-1/2" />
-        <Skeleton height={36} radius="md" className="flex-1/2" />
+        <div className="min-w-0 rounded-2xl bg-white p-0 lg:border lg:border-gray-100 lg:px-8 lg:py-7 lg:shadow-sm xl:px-10 xl:py-8">
+          {/* Header with back button and title */}
+          <div className="mb-4 flex items-center justify-between lg:mb-6">
+            <div className="flex-1/3">
+              <Skeleton height={24} width={24} circle />
+            </div>
+            <div className="flex-1/3 flex justify-center">
+              <Skeleton height={24} width={190} radius="sm" />
+            </div>
+            <div className="flex-1/3" />
+          </div>
+
+          {/* Mobile step summary */}
+          <div className="mb-3 rounded-xl border border-gray-100 bg-white px-3 py-3 lg:hidden">
+            <Skeleton height={8} width={70} mb={8} />
+            <Skeleton height={12} width={130} mb={6} radius="sm" />
+            <Skeleton height={10} width="85%" />
+          </div>
+
+          {/* Stepper indicators */}
+          <div className="mb-8 flex items-center justify-between gap-2">
+            {[...Array(4)].map((_, i) => (
+              <React.Fragment key={i}>
+                <Skeleton height={24} width={24} circle />
+                {i < 3 && <Skeleton height={4} className="flex-1" />}
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Step content area */}
+          <div className="flex flex-col gap-y-4">
+            <div>
+              <Skeleton height={12} width={80} mb={6} />
+              <Skeleton height={38} radius="sm" />
+            </div>
+            <div>
+              <Skeleton height={12} width={50} mb={6} />
+              <Skeleton height={38} radius="sm" />
+            </div>
+            <div>
+              <Skeleton height={12} width={110} mb={6} />
+              <Skeleton height={38} radius="sm" />
+            </div>
+            <div>
+              <Skeleton height={12} width={80} mb={6} />
+              <Skeleton height={38} radius="sm" />
+            </div>
+            <div>
+              <Skeleton height={12} width={70} mb={6} />
+              <Skeleton height={84} radius="sm" />
+            </div>
+            <div>
+              <Skeleton height={12} width={100} mb={6} />
+              <Skeleton height={38} radius="sm" />
+            </div>
+          </div>
+
+          {/* Back / Next buttons */}
+          <div className="mt-6 flex justify-evenly gap-x-4 font-bold lg:justify-end lg:gap-x-5 xl:gap-x-6">
+            <Skeleton
+              height={40}
+              radius="sm"
+              className="flex-1 lg:max-w-[140px]"
+            />
+            <Skeleton
+              height={40}
+              radius="md"
+              className="flex-1 lg:max-w-[180px]"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

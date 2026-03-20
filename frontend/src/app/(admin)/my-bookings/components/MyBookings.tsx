@@ -34,11 +34,29 @@ export default function MyBookings() {
 
   if (loading)
     return (
-      <div className="grid gap-y-5 mt-[1.5rem]">
-        <Skeleton variant="rounded" height={70} />
-        <Skeleton variant="rounded" height={70} />
-        <Skeleton variant="rounded" height={70} />
-        <Skeleton variant="rounded" height={70} />
+      <div className="mt-[1.5rem] grid gap-y-5 lg:mt-0">
+        <div className="hidden items-center justify-between lg:flex">
+          <div className="flex items-center gap-3">
+            <Skeleton variant="rounded" width={110} height={34} />
+            <Skeleton variant="rounded" width={120} height={34} />
+            <Skeleton variant="rounded" width={125} height={34} />
+            <Skeleton variant="rounded" width={150} height={34} />
+          </div>
+          <Skeleton variant="rounded" width={112} height={34} />
+        </div>
+
+        <div className="grid gap-y-5">
+          <Skeleton variant="rounded" height={84} />
+          <Skeleton variant="rounded" height={84} />
+          <Skeleton variant="rounded" height={84} />
+          <Skeleton variant="rounded" height={84} />
+        </div>
+
+        <div className="hidden lg:grid lg:grid-cols-2 lg:gap-4 xl:grid-cols-3">
+          <Skeleton variant="rounded" height={90} />
+          <Skeleton variant="rounded" height={90} />
+          <Skeleton variant="rounded" height={90} />
+        </div>
       </div>
     );
 
@@ -60,52 +78,55 @@ export default function MyBookings() {
 
   return (
     <div className="h-full flex flex-col">
-      <div>
-        <ul className="flex justify-between items-center gap-x-3 text-sm overflow-x-auto py-2 mb-3">
-          {statuses.map((status) => {
-            const statusCount = counts[status.status] ?? 0;
+      <div className="lg:flex lg:items-center lg:justify-between">
+        <div>
+          <ul className="mb-3 flex items-center justify-between gap-x-3 overflow-x-auto py-2 text-sm lg:mb-4 lg:flex-wrap lg:justify-start lg:gap-2.5 lg:overflow-visible">
+            {statuses.map((status) => {
+              const statusCount = counts[status.status] ?? 0;
 
-            return (
-              <li key={status.status}>
-                <button
-                  onClick={() => handleFilterStatus(status.status)}
-                  className="text-nowrap flex items-center px-3 py-1 rounded-lg border-2 border-secondary-normal/30 gap-x-1"
-                  style={
-                    status.status === filterStatus
-                      ? {
-                          backgroundColor: "var(--color-secondary-normal)",
-                          color: "white",
-                        }
-                      : undefined
-                  }
-                >
-                  <span>{status.name}</span>
-                  {statusCount === 0 ? null : (
-                    <div className="px-[0.5rem] min-w-[1.25rem] max-w-[2.5rem] rounded-full bg-primary-normal">
-                      <span className="text-white font-bold text-[0.65rem] text-center">
-                        {statusCount > 99 ? "99+" : statusCount}
-                      </span>
-                    </div>
-                  )}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+              return (
+                <li key={status.status}>
+                  <button
+                    onClick={() => handleFilterStatus(status.status)}
+                    className="text-nowrap flex items-center gap-x-1 rounded-lg border-2 border-secondary-normal/30 px-3 py-1 lg:rounded-full lg:px-3.5 lg:py-1.5 lg:text-[0.82rem]"
+                    style={
+                      status.status === filterStatus
+                        ? {
+                            backgroundColor: "var(--color-secondary-normal)",
+                            color: "white",
+                          }
+                        : undefined
+                    }
+                  >
+                    <span>{status.name}</span>
+                    {statusCount === 0 ? null : (
+                      <div className="px-[0.5rem] min-w-[1.25rem] max-w-[2.5rem] rounded-full bg-primary-normal">
+                        <span className="text-white font-bold text-[0.65rem] text-center">
+                          {statusCount > 99 ? "99+" : statusCount}
+                        </span>
+                      </div>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div className="mb-4 flex items-center justify-end lg:mb-5">
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="text-secondary-normal flex items-center rounded-lg border border-gray-300 bg-white px-2 py-1 text-xs font-bold text-gray-700 transition hover:bg-gray-100 lg:px-3 lg:py-1.5"
+          >
+            <span className="text-xs mr-2">
+              <FiRefreshCw />
+            </span>
+            <span className="text-xs">Refresh</span>
+          </button>
+        </div>
       </div>
-      <div className="flex items-center justify-end mb-4">
-        <button
-          type="button"
-          onClick={() => refetch()}
-          className="text-secondary-normal text-xs flex items-center bg-white border border-gray-300 rounded-lg px-2 py-1 font-bold text-gray-700 hover:bg-gray-100 transition"
-        >
-          <span className="text-xs mr-2">
-            <FiRefreshCw />
-          </span>
-          <span className="text-xs">Refresh</span>
-        </button>
-      </div>
-      <div className="flex-1">
+
+      <div className="flex-1 ">
         <MyBookingsList data={data} filterStatus={filterStatus} />
       </div>
     </div>

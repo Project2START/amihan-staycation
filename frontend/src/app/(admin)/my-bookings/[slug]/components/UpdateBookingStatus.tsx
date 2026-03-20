@@ -34,6 +34,16 @@ export default function UpdateBookingStatus({
   const [error, setError] = useState<string>("");
   const [loadingOverlay, setLoadingOverlay] = useState(false);
 
+  const isActionRequired = booking.status === "action_required";
+  const hasMessage = booking.message.trim().length > 0;
+  const hasActionItems = booking.action_items.length > 0;
+
+  const shouldDisableUpdate = loadingOverlay
+    ? true
+    : isActionRequired
+      ? !hasMessage || !hasActionItems
+      : bookingStatus === booking.status;
+
   async function handleUpdateBooking() {
     if (booking.message.length > ABOUT_MAX) {
       setError(`Maximum ${ABOUT_MAX} characters allowed.`);
@@ -148,11 +158,7 @@ export default function UpdateBookingStatus({
             <PrimaryButton
               style={{ padding: "0.75rem" }}
               onClick={handleUpdateBooking}
-              disabled={
-                loadingOverlay
-                // || bookingStatus === booking.status ||
-                // booking.action_items.length === 0
-              }
+              disabled={shouldDisableUpdate}
             >
               <span className="text-xs font-bold">Update</span>
             </PrimaryButton>
