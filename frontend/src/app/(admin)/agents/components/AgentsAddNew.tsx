@@ -89,7 +89,13 @@ export default function AgentsAddNew() {
         openDialog={dialog}
         enableClickOutside={false}
       >
-        <div className="p-5 text-xs relative">
+        <div className="p-5 text-xs relative md:p-7 lg:p-8 lg:text-sm">
+          <div className="mb-4 md:mb-5 lg:mb-6">
+            <p className="font-bold text-secondary-normal">Add New Agent</p>
+            <p className="text-secondary-normal/70 mt-1 md:mt-2">
+              Enter the email address to invite an agent.
+            </p>
+          </div>
           <div className="flex flex-col">
             <span className="font-bold">Email</span>
             <input
@@ -97,19 +103,26 @@ export default function AgentsAddNew() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Please enter the agent's email..."
               type="text"
-              className="mt-[0.5rem] border-b-2 border-secondary-normal/30 p-[0.5rem] input-base-focus"
+              className="mt-[0.5rem] md:mt-3 border-b-2 border-secondary-normal/30 p-[0.5rem] md:py-[0.7rem] md:mb-1 input-base-focus"
             />
             {inputError.length !== 0 && (
-              <p className="text-red-900 text-[0.65rem]">{inputError}</p>
+              <p className="text-red-900 text-[0.65rem] md:text-xs mt-1 md:mt-2">
+                {inputError}
+              </p>
             )}
           </div>
           {formError.length !== 0 && (
-            <div className="flex justify-center mt-3">
-              <p className="text-red-900 text-[0.65rem]">{formError}</p>
+            <div className="flex justify-center mt-3 md:mt-4">
+              <p className="text-red-900 text-[0.65rem] md:text-xs">
+                {formError}
+              </p>
             </div>
           )}
-          <div className="flex justify-center items-center gap-x-7 mt-3">
-            <button onClick={handleCloseDialog}>
+          <div className="flex justify-center items-center gap-x-7 mt-3 md:mt-6 lg:mt-8">
+            <button
+              onClick={handleCloseDialog}
+              className="transition-colors md:hover:text-secondary-normal/70"
+            >
               <span className="text-xs">Cancel</span>
             </button>
             <PrimaryButton

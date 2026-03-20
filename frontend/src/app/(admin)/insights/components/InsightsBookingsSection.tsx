@@ -50,7 +50,12 @@ export default function InsightsBookingsSection({
               <button
                 type="button"
                 onClick={() => setActiveStatus(tab.status)}
-                className="text-nowrap flex items-center gap-x-1 px-3 py-1 rounded-lg border-2 border-secondary-normal/30"
+                className={[
+                  "text-nowrap flex items-center gap-x-1 px-3 py-1 rounded-lg border-2 border-secondary-normal/30 transition-colors duration-150 cursor-pointer select-none",
+                  isActive
+                    ? "bg-secondary-normal text-white shadow-md"
+                    : "hover:bg-secondary-normal/10 hover:border-secondary-normal/60 active:bg-secondary-normal/20 focus-visible:ring-2 focus-visible:ring-primary-normal",
+                ].join(" ")}
                 style={
                   isActive
                     ? {
@@ -59,6 +64,8 @@ export default function InsightsBookingsSection({
                       }
                     : undefined
                 }
+                tabIndex={0}
+                aria-pressed={isActive}
               >
                 {dotColor && !isActive && (
                   <span
@@ -81,14 +88,23 @@ export default function InsightsBookingsSection({
       </ul>
 
       {filtered.length === 0 ? (
-        <div className="flex justify-center items-center font-bold text-gray-300 h-[18rem] md:h-[22rem]">
+        <div className="text-center flex justify-center items-center font-bold text-gray-300 h-[18rem] md:h-[22rem]">
           <span>No bookings for this status in the selected period.</span>
         </div>
       ) : (
         <div className="h-[18rem] md:h-[22rem] overflow-y-auto pr-1">
           <div className="flex flex-col gap-y-3 pb-2">
             {filtered.map((booking) => (
-              <InsightsBookingItem key={booking.id} booking={booking} />
+              <div
+                key={booking.id}
+                className="rounded-lg transition-shadow duration-150 hover:shadow-lg active:shadow-md cursor-pointer group"
+                tabIndex={0}
+                role="button"
+                aria-label="View booking details"
+                style={{ outline: "none" }}
+              >
+                <InsightsBookingItem booking={booking} />
+              </div>
             ))}
           </div>
         </div>

@@ -5,7 +5,15 @@ import { useQuery } from "@apollo/client/react";
 import dayjs, { Dayjs } from "dayjs";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
-import { LuDownload, LuFilter } from "react-icons/lu";
+import {
+  LuCalendarDays,
+  LuCircleDollarSign,
+  LuDoorOpen,
+  LuDownload,
+  LuFilter,
+  LuLoaderCircle,
+  LuUsers,
+} from "react-icons/lu";
 import { formatMoney } from "@/app/shared/lib/formatMoney";
 import NavigationBottom from "../components/NavigationBottom";
 import InsightsHeader from "./components/InsightsHeader";
@@ -39,13 +47,36 @@ type FilterErrors = {
 
 function InsightsLoadingState() {
   return (
-    <div className="mt-[1rem] space-y-4">
-      <div className="h-[8rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
-      <div className="grid grid-cols-2 gap-3">
+    <div className="mt-[1rem] space-y-4 lg:mt-5">
+      <div className="lg:hidden space-y-4">
         <div className="h-[8rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
+        <div className="grid grid-cols-2 gap-3">
+          <div className="h-[8rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
+          <div className="h-[8rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
+        </div>
         <div className="h-[8rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
       </div>
-      <div className="h-[8rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
+
+      <div className="hidden lg:block lg:space-y-4">
+        <div className="grid grid-cols-4 gap-4">
+          <div className="h-[7.5rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
+          <div className="h-[7.5rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
+          <div className="h-[7.5rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
+          <div className="h-[7.5rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
+        </div>
+
+        <div className="grid grid-cols-[300px_minmax(0,1fr)] gap-6">
+          <div className="space-y-4 rounded-2xl border border-secondary-normal/10 bg-white p-4 shadow-sm">
+            <div className="h-[8rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
+            <div className="h-[14rem] rounded-xl bg-secondary-normal/10 animate-pulse" />
+          </div>
+
+          <div className="space-y-4">
+            <div className="h-[22rem] rounded-2xl bg-secondary-normal/10 animate-pulse" />
+            <div className="h-[22rem] rounded-2xl bg-secondary-normal/10 animate-pulse" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -246,6 +277,10 @@ export default function InsightsPage() {
     if (!pdfTargetRef.current) return;
 
     setExportingPdf(true);
+    // Let React paint the loading indicator before starting heavy image/PDF work.
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => resolve());
+    });
 
     try {
       const dataUrl = await toPng(pdfTargetRef.current, {
@@ -536,53 +571,178 @@ export default function InsightsPage() {
         <div ref={pdfTargetRef}>
           <InsightsHeader />
 
-          <div className="px-[1rem] pb-[1rem]">
-            <InsightsDateNavigator
-              label={currentRange.label}
-              onPrevious={handlePrevious}
-              onNext={handleNext}
-              hideNavigation={viewMode === "all"}
-              rightActions={
-                <>
-                  <button
-                    type="button"
-                    onClick={exportAsPdf}
-                    className="p-1 rounded hover:bg-secondary-normal/10"
-                    aria-label="Export insights to PDF"
-                    disabled={exportingPdf}
-                  >
-                    <LuDownload className="text-[1.15rem] text-gray-500" />
-                  </button>
+          <div className="px-[1rem] pb-[1rem] lg:mx-auto lg:w-full lg:max-w-[1280px] lg:px-6 lg:pb-6">
+            <div className="lg:rounded-2xl lg:border lg:border-secondary-normal/10 lg:bg-white lg:px-5 lg:py-2 lg:shadow-sm lg:mt-[1.5rem]">
+              <InsightsDateNavigator
+                label={currentRange.label}
+                onPrevious={handlePrevious}
+                onNext={handleNext}
+                hideNavigation={viewMode === "all"}
+                rightActions={
+                  <>
+                    <button
+                      type="button"
+                      onClick={exportAsPdf}
+                      className="p-1 rounded hover:bg-secondary-normal/10 disabled:opacity-70"
+                      aria-label="Export insights to PDF"
+                      disabled={exportingPdf}
+                    >
+                      {exportingPdf ? (
+                        <LuLoaderCircle className="text-[1.15rem] text-gray-500 animate-spin" />
+                      ) : (
+                        <LuDownload className="text-[1.15rem] text-gray-500" />
+                      )}
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={openFilter}
-                    className="p-1 rounded hover:bg-secondary-normal/10"
-                    aria-label="Open insights filter"
-                  >
-                    <LuFilter className="text-[1.15rem] text-gray-500" />
-                  </button>
-                </>
-              }
-            />
+                    <button
+                      type="button"
+                      onClick={openFilter}
+                      className="p-1 rounded hover:bg-secondary-normal/10"
+                      aria-label="Open insights filter"
+                    >
+                      <LuFilter className="text-[1.15rem] text-gray-500" />
+                    </button>
+                  </>
+                }
+              />
+            </div>
 
             {loading ? (
               <InsightsLoadingState />
             ) : (
               <>
-                <InsightsSummaryCards metrics={metrics} />
+                <div className="lg:hidden">
+                  <InsightsSummaryCards metrics={metrics} />
 
-                <InsightsOverviewSection
-                  bookingTrendData={bookingTrendData}
-                  bookingsPerUnitData={bookingsPerUnitData}
-                  xAxisLabel={currentRange.xAxisLabel}
-                  revenueMax={revenueMax}
-                  revenueTickStep={revenueTickStep}
-                  bookingsPerUnitMax={bookingsPerUnitMax}
-                  bookingTickStep={bookingTickStep}
-                />
+                  <InsightsOverviewSection
+                    bookingTrendData={bookingTrendData}
+                    bookingsPerUnitData={bookingsPerUnitData}
+                    xAxisLabel={currentRange.xAxisLabel}
+                    revenueMax={revenueMax}
+                    revenueTickStep={revenueTickStep}
+                    bookingsPerUnitMax={bookingsPerUnitMax}
+                    bookingTickStep={bookingTickStep}
+                  />
 
-                <InsightsBookingsSection bookings={bookingsInRange} />
+                  <InsightsBookingsSection bookings={bookingsInRange} />
+                </div>
+
+                <div className="hidden lg:block lg:mt-5 lg:space-y-4">
+                  <section className="grid grid-cols-4 gap-4">
+                    <div className="rounded-xl p-4 shadow-lg text-white bg-secondary-normal">
+                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#8AD34E] text-secondary-normal">
+                        <LuCircleDollarSign className="text-[1rem]" />
+                      </div>
+                      <p className="text-[0.78rem] font-bold uppercase tracking-[0.06em] text-white">
+                        Total Revenue
+                      </p>
+                      <p className="mt-1 text-xl font-semibold text-white">
+                        {formatMoney(metrics.totalRevenue, {
+                          symbol: "₱",
+                          decimals: 2,
+                        })}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl p-4 shadow-lg text-white bg-[#227E98]">
+                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
+                        <LuCalendarDays className="text-[1rem]" />
+                      </div>
+                      <p className="text-[0.78rem] font-bold uppercase tracking-[0.06em] text-white">
+                        Total Bookings
+                      </p>
+                      <p className="mt-1 text-xl font-semibold text-white">
+                        {metrics.totalBookings}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl p-4 shadow-lg text-white bg-[#587DBD]">
+                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
+                        <LuDoorOpen className="text-[1rem]" />
+                      </div>
+                      <p className="text-[0.78rem] font-bold uppercase tracking-[0.06em] text-white">
+                        Occupancy Rate
+                      </p>
+                      <p className="mt-1 text-xl font-semibold text-white">
+                        {metrics.occupancyRate}%
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl p-4 shadow-lg text-white bg-[#617A7D]">
+                      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
+                        <LuUsers className="text-[1rem]" />
+                      </div>
+                      <p className="text-[0.78rem] font-bold uppercase tracking-[0.06em] text-white">
+                        Guests Hosted
+                      </p>
+                      <p className="mt-1 text-xl font-semibold text-white">
+                        {metrics.totalGuestsHosted}
+                      </p>
+                    </div>
+                  </section>
+
+                  <div className="grid grid-cols-[300px_minmax(0,1fr)] gap-6 items-start">
+                    <aside className="sticky top-4 space-y-4 self-start">
+                      <div className="rounded-2xl border border-secondary-normal/10 bg-gradient-to-br from-[#eef6fa] to-white p-4 shadow-sm">
+                        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.13em] text-secondary-normal/60">
+                          Analytics Window
+                        </p>
+                        <p className="mt-1 text-sm font-semibold text-secondary-normal">
+                          {currentRange.label}
+                        </p>
+                        <p className="mt-2 text-xs text-secondary-normal/75">
+                          Monitor performance, demand, and guest movement for
+                          the selected period.
+                        </p>
+                      </div>
+
+                      <div className="rounded-2xl border border-secondary-normal/10 bg-white p-4 shadow-sm">
+                        <h3 className="text-[0.75rem] font-semibold uppercase tracking-[0.1em] text-secondary-normal/60">
+                          Status Snapshot
+                        </h3>
+                        <div className="mt-3 space-y-2">
+                          {ALL_BOOKING_STATUSES.map((statusMeta) => {
+                            const count = bookingsInRange.filter(
+                              (booking) => booking.status === statusMeta.status,
+                            ).length;
+
+                            return (
+                              <div
+                                key={statusMeta.status}
+                                className="flex items-center justify-between rounded-lg border border-secondary-normal/10 px-3 py-2"
+                              >
+                                <span className="text-xs text-secondary-normal/80">
+                                  {statusMeta.name}
+                                </span>
+                                <span className="text-xs font-semibold text-secondary-normal">
+                                  {count}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </aside>
+
+                    <main className="space-y-4">
+                      <section className="rounded-2xl border border-secondary-normal/10 bg-white p-5 shadow-sm">
+                        <InsightsOverviewSection
+                          bookingTrendData={bookingTrendData}
+                          bookingsPerUnitData={bookingsPerUnitData}
+                          xAxisLabel={currentRange.xAxisLabel}
+                          revenueMax={revenueMax}
+                          revenueTickStep={revenueTickStep}
+                          bookingsPerUnitMax={bookingsPerUnitMax}
+                          bookingTickStep={bookingTickStep}
+                        />
+                      </section>
+
+                      <section className="rounded-2xl border border-secondary-normal/10 bg-white p-5 shadow-sm">
+                        <InsightsBookingsSection bookings={bookingsInRange} />
+                      </section>
+                    </main>
+                  </div>
+                </div>
               </>
             )}
           </div>

@@ -17,7 +17,7 @@ export default function InsightsDateNavigator({
   hideNavigation = false,
 }: InsightsDateNavigatorProps) {
   return (
-    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 border-b border-secondary-normal/20 min-h-[2.75rem] py-[1rem]">
+    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 border-b border-secondary-normal/20 min-h-[2.75rem] py-[1rem] lg:border-none">
       <div />
 
       <div className="min-w-0 flex items-center gap-x-1 sm:gap-x-2">

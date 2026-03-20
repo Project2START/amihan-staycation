@@ -1,7 +1,6 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import ClickOutside from "./ClickOutside";
 
 export default function DialogBaseContent({
   openDialog,
@@ -9,12 +8,16 @@ export default function DialogBaseContent({
   children,
   onCloseDialog,
   enableClickOutside = true,
+  overlayClassName = "",
+  contentClassName = "",
 }: {
   scrollVertically?: boolean;
   enableClickOutside?: boolean;
   openDialog: boolean;
   onCloseDialog: () => void;
   children: React.ReactNode;
+  overlayClassName?: string;
+  contentClassName?: string;
 }) {
   return (
     <>
@@ -24,23 +27,22 @@ export default function DialogBaseContent({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="w-[100vw] h-[100vh] fixed top-0 left-0 bg-black/50 flex justify-center items-center z-999"
+            className={`w-[100vw] h-[100vh] fixed top-0 left-0 bg-black/50 flex justify-center items-center z-999 ${overlayClassName}`}
+            onMouseDown={(event) => {
+              if (enableClickOutside && event.target === event.currentTarget) {
+                onCloseDialog();
+              }
+            }}
           >
             <div
-              className="rounded-lg bg-white w-[85%] h-auto max-h-[80%] md:w-[50%] xl:w-[40%]"
+              className={`rounded-lg bg-white w-[85%] h-auto max-h-[80%] md:w-[50%] xl:w-[40%] ${contentClassName}`}
               style={
                 scrollVertically
                   ? { overflowY: "auto" }
                   : { overflowY: "hidden" }
               }
             >
-              {enableClickOutside ? (
-                <ClickOutside onClickOutside={onCloseDialog}>
-                  {children}
-                </ClickOutside>
-              ) : (
-                children
-              )}
+              {children}
             </div>
           </motion.div>
         ) : null}

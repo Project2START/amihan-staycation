@@ -94,11 +94,25 @@ export default function AgentBookings({ agentId }: { agentId: string }) {
 
   if (loading)
     return (
-      <div className="mt-8 grid gap-y-5">
-        <Skeleton variant="rounded" height={90} />
-        <Skeleton variant="rounded" height={70} />
-        <Skeleton variant="rounded" height={70} />
-        <Skeleton variant="rounded" height={70} />
+      <div className="mt-8 grid gap-y-4 md:gap-y-5">
+        <Skeleton variant="text" width={180} height={26} />
+
+        <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
+          <Skeleton variant="rounded" height={90} />
+          <Skeleton variant="rounded" height={90} />
+          <Skeleton variant="rounded" height={90} />
+          <Skeleton variant="rounded" height={90} />
+          <Skeleton variant="rounded" height={90} />
+          <Skeleton variant="rounded" height={90} />
+        </div>
+
+        <Skeleton variant="rounded" height={42} />
+
+        <div className="grid gap-y-3">
+          <Skeleton variant="rounded" height={78} />
+          <Skeleton variant="rounded" height={78} />
+          <Skeleton variant="rounded" height={78} />
+        </div>
       </div>
     );
 
@@ -174,18 +188,18 @@ export default function AgentBookings({ agentId }: { agentId: string }) {
   ];
 
   return (
-    <div className="mt-8 mb-12">
+    <div className="mt-8 md:mt-10 lg:mt-12 mb-12 md:mb-14 lg:mb-16">
       {/* Title */}
       <h2 className="text-base font-bold text-secondary-normal">
         Agent&apos;s Bookings
       </h2>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-3 gap-3 mt-4">
+      <div className="grid grid-cols-3 gap-3 md:gap-4 lg:gap-5 mt-4 md:mt-6 lg:mt-7">
         {summaryCards.map((card) => (
           <div
             key={card.label}
-            className="rounded-xl border border-gray-200 bg-white p-3 flex flex-col items-center gap-y-1"
+            className="rounded-xl border border-gray-200 bg-white p-3 md:p-5 lg:p-6 flex flex-col items-center gap-y-1 md:gap-y-2"
           >
             <div
               className="flex items-center justify-center w-8 h-8 rounded-full"
@@ -204,8 +218,8 @@ export default function AgentBookings({ agentId }: { agentId: string }) {
       </div>
 
       {/* Status Tabs */}
-      <div className="mt-6">
-        <ul className="flex items-center gap-x-3 text-sm overflow-x-auto py-2 mb-3">
+      <div className="mt-6 md:mt-8 lg:mt-9">
+        <ul className="flex items-center gap-x-3 text-sm overflow-x-auto py-2 md:py-3 mb-3 md:mb-4">
           {statuses.map((s) => {
             const statusCount = counts[s.status] ?? 0;
 
@@ -213,7 +227,7 @@ export default function AgentBookings({ agentId }: { agentId: string }) {
               <li key={s.status}>
                 <button
                   onClick={() => setFilterStatus(s.status)}
-                  className="text-nowrap flex items-center px-3 py-1 rounded-lg border-2 border-secondary-normal/30 gap-x-1"
+                  className="text-nowrap flex items-center px-3 py-1 rounded-lg border-2 border-secondary-normal/30 gap-x-1 transition-all duration-150 cursor-pointer md:hover:bg-secondary-normal/10 md:hover:border-secondary-normal/50 md:hover:shadow-sm"
                   style={
                     s.status === filterStatus
                       ? {
@@ -239,11 +253,11 @@ export default function AgentBookings({ agentId }: { agentId: string }) {
       </div>
 
       {/* Refresh */}
-      <div className="flex items-center justify-end mb-4">
+      <div className="flex items-center justify-end mb-4 md:mb-5 lg:mb-6">
         <button
           type="button"
           onClick={() => refetch()}
-          className="text-secondary-normal text-xs flex items-center bg-white border border-gray-300 rounded-lg px-2 py-1 font-bold text-gray-700 hover:bg-gray-100 transition"
+          className="text-secondary-normal text-xs flex items-center bg-white border border-gray-300 rounded-lg px-2 py-1 font-bold text-gray-700 transition md:hover:bg-gray-100 md:hover:shadow-sm"
         >
           <span className="text-xs mr-2">
             <FiRefreshCw />
@@ -253,9 +267,9 @@ export default function AgentBookings({ agentId }: { agentId: string }) {
       </div>
 
       {/* Bookings List */}
-      <div className="flex flex-col gap-y-5">
+      <div className="flex flex-col gap-y-5 md:h-[28rem] md:overflow-y-auto md:pr-1">
         {filteredBookings.length === 0 ? (
-          <div className="flex justify-center items-center font-bold text-center text-gray-300 py-8">
+          <div className="flex justify-center items-center font-bold text-center text-gray-300 py-8 md:h-full">
             <span>
               {filterStatus === "all"
                 ? "No bookings available."
@@ -276,9 +290,9 @@ export default function AgentBookings({ agentId }: { agentId: string }) {
 
             return (
               <div key={id}>
-                <Link href={`/my-bookings/${id}`}>
+                <Link href={`/my-bookings/${id}`} className="block">
                   <div
-                    className="relative text-xs text-secondary-normal rounded-lg p-3 border-l-2 border-r-2 border-b-2 border-gray-300"
+                    className="relative text-xs text-secondary-normal rounded-lg p-3 md:p-4 lg:p-5 border-l-2 border-r-2 border-b-2 border-gray-300 transition-all duration-150 md:hover:shadow-md md:hover:bg-secondary-normal/[0.03]"
                     style={{ borderTop: `3.5px solid ${colorStatus}` }}
                   >
                     <div

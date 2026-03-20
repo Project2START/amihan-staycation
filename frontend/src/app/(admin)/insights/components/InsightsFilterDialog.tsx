@@ -32,20 +32,23 @@ export default function InsightsFilterDialog({
   return (
     <DialogBaseContent openDialog={open} onCloseDialog={onClose}>
       <div className="p-4 text-secondary-normal">
-        <h3 className="font-bold text-center text-[1.05rem] mb-3">
+        <h3 className="font-bold text-center text-[1.05rem] mb-3 lg:text-lg">
           Filter Insights View
         </h3>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           {(Object.keys(MODE_LABELS) as ViewMode[]).map((mode) => (
-            <label key={mode} className="flex items-center gap-2 text-[0.9rem]">
+            <label
+              key={mode}
+              className="flex items-center gap-2 text-[0.9rem] hover-animation rounded-lg lg:cursor-pointer lg:text-base lg:gap-4 lg:hover:bg-primary-normal/10 lg:px-1 lg:py-2"
+            >
               <input
                 type="radio"
                 name="view-mode"
                 value={mode}
                 checked={pendingMode === mode}
                 onChange={() => onModeChange(mode)}
-                className="accent-secondary-normal"
+                className="accent-secondary-normal "
               />
               <span>{MODE_LABELS[mode]}</span>
             </label>
@@ -99,14 +102,14 @@ export default function InsightsFilterDialog({
           <button
             type="button"
             onClick={onClose}
-            className="px-3 py-2 rounded-lg border border-secondary-normal/30 text-[0.85rem]"
+            className="px-3 py-2 rounded-lg border border-secondary-normal/30 text-[0.85rem] lg:cursor-pointer lg:text-base lg:gap-4 lg:hover:bg-primary-normal/10"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onApply}
-            className="px-3 py-2 rounded-lg bg-secondary-normal text-white text-[0.85rem]"
+            className="px-3 py-2 rounded-lg bg-secondary-normal text-white text-[0.85rem] hover-animation lg:cursor-pointer lg:text-base lg:gap-4 lg:hover:bg-secondary-normal/80"
           >
             Apply
           </button>

@@ -23,7 +23,7 @@ export default function InsightsOverviewSection({
 }: InsightsOverviewSectionProps) {
   return (
     <div className="mt-6 pb-6">
-      <h2 className="text-center font-bold text-secondary-normal uppercase">
+      <h2 className="text-center font-bold text-secondary-normal uppercase lg:text-3xl">
         Overview
       </h2>
 
