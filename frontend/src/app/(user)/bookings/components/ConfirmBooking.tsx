@@ -30,11 +30,11 @@ export default function ConfirmBooking({
           By confirming this booking, you acknowledge that all information
           provided is accurate and final. Please review your details carefully,
           as incorrect information may affect your reservation. See our{" "}
-          <Link href={"/about/terms-and-conditions"}>
+          <Link href={"/terms-and-conditions"}>
             <span className="underline font-bold">Terms & Conditions</span>
           </Link>{" "}
           and{" "}
-          <Link href={"/about/privacy-policy"}>
+          <Link href={"/privacy-policy"}>
             <span className="underline font-bold">Privacy Policy.</span>
           </Link>
         </p>

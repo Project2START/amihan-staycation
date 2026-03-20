@@ -34,6 +34,7 @@ export default function SignUpForm() {
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowCP] = useState<boolean>(false);
+  const [agreeTerms, setAgreeTerms] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
@@ -200,17 +201,55 @@ export default function SignUpForm() {
             )}
           </div>
           <div className="col-span-2 mt-[0.25rem] lg:mt-[0.75rem]">
+            <div className="flex items-start gap-x-2 lg:gap-x-3">
+              <input
+                type="checkbox"
+                checked={agreeTerms}
+                onChange={(e) => setAgreeTerms(e.target.checked)}
+                className="accent-secondary-normal scale-125 mt-[0.25rem] lg:hover:cursor-pointer"
+                disabled={loading}
+                aria-label="Agree to terms and privacy policy"
+              />
+              <p className="leading-5 text-[0.72rem] text-secondary-normal mb-[1rem] lg:text-sm">
+                By creating this account, you acknowledge that all information
+                provided is accurate and final. Please review your details
+                carefully, as incorrect information may affect your account
+                setup. See our{" "}
+                <Link href="/terms-and-conditions">
+                  <span className="underline font-bold">
+                    Terms & Conditions
+                  </span>
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy-policy">
+                  <span className="underline font-bold">Privacy Policy.</span>
+                </Link>
+              </p>
+            </div>
+
             {error.length !== 0 && (
               <p className="text-xs text-center mb-[0.5rem] text-red-900 font-bold lg:text-sm">
                 {error}
               </p>
             )}
             <ButtonLoadingStopper loading={loading}>
-              <PrimaryButton type="submit" disabled={loading ? true : false}>
-                <span className="font-bold lg:text-base lg:py-[0.5rem]">
-                  Sign Up
-                </span>
-              </PrimaryButton>
+              <div
+                className={`transition-opacity duration-200 ${
+                  loading || !agreeTerms ? "opacity-60" : "opacity-100"
+                }`}
+              >
+                <PrimaryButton
+                  type="submit"
+                  disabled={loading || !agreeTerms}
+                  style={{
+                    cursor: loading || !agreeTerms ? "not-allowed" : "pointer",
+                  }}
+                >
+                  <span className="font-bold lg:text-base lg:py-[0.5rem]">
+                    Sign Up
+                  </span>
+                </PrimaryButton>
+              </div>
             </ButtonLoadingStopper>
           </div>
           <div className="col-span-2">
