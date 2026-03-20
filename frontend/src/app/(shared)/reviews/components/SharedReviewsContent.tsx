@@ -151,10 +151,22 @@ export default function SharedReviewsContent({
 
   if (loading) {
     return (
-      <div className="px-[1rem] py-[1.5rem] grid gap-y-3">
-        <Skeleton variant="rounded" height={52} />
-        <Skeleton variant="rounded" height={120} />
-        <Skeleton variant="rounded" height={360} />
+      <div className="lg:flex lg:justify-center">
+        <div className="px-[1rem] md:px-6 lg:px-8 py-[1.5rem] md:py-6 grid gap-y-3 md:gap-y-4 lg:w-[60%]">
+          <Skeleton variant="rounded" height={52} className="md:!h-[64px]" />
+          <Skeleton variant="rounded" height={120} className="md:!h-[140px]" />
+          <div className="md:rounded-xl md:border md:border-secondary-normal/15 md:bg-white md:p-4 lg:p-5 md:shadow-sm">
+            <div className="hidden md:grid md:grid-cols-[1fr,auto] gap-3 mb-4">
+              <Skeleton variant="rounded" height={30} />
+              <Skeleton variant="rounded" width={180} height={30} />
+            </div>
+            <Skeleton
+              variant="rounded"
+              height={360}
+              className="md:!h-[440px]"
+            />
+          </div>
+        </div>
       </div>
     );
   }
@@ -164,82 +176,90 @@ export default function SharedReviewsContent({
   }
 
   return (
-    <div className="px-[1rem] py-[1.5rem] text-secondary-normal h-[100vh] flex flex-col overflow-hidden">
-      <div className="flex items-center justify-between border-b-3 border-secondary-normal/50 pb-[1rem]">
-        <span className="flex-1/3 flex items-center">
-          <PrimaryBackButton onClick={() => router.back()} style="text-xl" />
-        </span>
-        <h1 className="flex-1/3 text-nowrap text-center font-semibold">
-          Unit Reviews
-        </h1>
-        <span className="flex-1/3" />
-      </div>
+    <div className="lg:flex lg:justify-center">
+      <div className="px-[1rem] md:px-6 lg:px-8 py-[1.5rem] md:py-6 text-secondary-normal h-[100vh] flex flex-col overflow-hidden lg:w-[60%]">
+        <div className="flex items-center justify-between border-b-3 border-secondary-normal/50 pb-[1rem]">
+          <span className="flex-1/3 flex items-center">
+            <PrimaryBackButton onClick={() => router.back()} style="text-xl" />
+          </span>
+          <h1 className="flex-1/3 text-nowrap text-center font-semibold lg:text-2xl">
+            Unit Reviews
+          </h1>
+          <span className="flex-1/3" />
+        </div>
 
-      {productId && (
-        <div className="flex-1 min-h-0 flex flex-col">
-          <ReviewProductCard unit={reviewsData.unit} />
+        {productId && (
+          <div className="flex-1 min-h-0 flex flex-col">
+            <ReviewProductCard unit={reviewsData.unit} />
 
-          <div className="mt-[1rem] flex-1 min-h-0 rounded-xl border border-secondary-normal/20 bg-[#fafafa] p-3 flex flex-col overflow-hidden">
-            <div className="mb-2 flex items-center justify-between gap-2">
-              <div className="text-xs text-gray-500">
-                {sortedReviews.length} review
-                {sortedReviews.length === 1 ? "" : "s"}
+            <div className="mt-[1rem] md:mt-4 flex-1 min-h-0 rounded-xl border border-secondary-normal/20 md:border-secondary-normal/15 bg-[#fafafa] md:bg-white p-3 md:p-4 lg:p-5 flex flex-col overflow-hidden shadow-none md:shadow-sm">
+              <div className="mb-3 md:mb-4 md:grid md:grid-cols-[1fr,auto] md:items-center md:gap-4">
+                <div>
+                  <p className="hidden md:block text-sm font-semibold text-secondary-normal lg:text-lg">
+                    Guest Reviews
+                  </p>
+                  <div className="text-xs md:text-sm text-gray-500">
+                    {sortedReviews.length} review
+                    {sortedReviews.length === 1 ? "" : "s"}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1 md:gap-2 text-[11px] md:text-xs text-gray-600 rounded-lg md:border md:border-secondary-normal/15 md:px-3 md:py-1.5">
+                  <span className="font-medium">Overall</span>
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <FaStar
+                        key={`overall-star-${index}`}
+                        className={
+                          index < roundedAverageRating
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                        }
+                        size={12}
+                      />
+                    ))}
+                  </div>
+                  <span className="font-semibold text-secondary-normal">
+                    {averageRating.toFixed(1)}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-1 text-[11px] text-gray-600">
-                <span>Overall</span>
-                <div className="flex items-center gap-0.5">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <FaStar
-                      key={`overall-star-${index}`}
-                      className={
-                        index < roundedAverageRating
-                          ? "text-yellow-400"
-                          : "text-gray-300"
-                      }
-                      size={12}
+
+              <div className="flex-1 min-h-0 overflow-y-auto grid gap-y-2 md:gap-y-3 pr-1 md:pr-2">
+                {sortedReviews.length === 0 ? (
+                  <div className="rounded-lg border border-secondary-normal/20 bg-white p-3 md:p-4 text-sm text-gray-500">
+                    No reviews yet for this unit.
+                  </div>
+                ) : (
+                  sortedReviews.map((review: ReviewItemData) => (
+                    <ReviewListItem
+                      key={review.id}
+                      review={review}
+                      isAdmin={isAdmin}
+                      onToggleVisibility={onToggleVisibility}
+                      expanded={expandedReviewIds.includes(review.id)}
+                      onToggleExpanded={onToggleExpanded}
+                      updating={updatingReviewId === review.id}
                     />
-                  ))}
-                </div>
-                <span className="font-semibold">
-                  {averageRating.toFixed(1)}
-                </span>
+                  ))
+                )}
               </div>
-            </div>
-
-            <div className="flex-1 min-h-0 overflow-y-auto grid gap-y-2 pr-1">
-              {sortedReviews.length === 0 ? (
-                <div className="rounded-lg border border-secondary-normal/20 bg-white p-3 text-sm text-gray-500">
-                  No reviews yet for this unit.
-                </div>
-              ) : (
-                sortedReviews.map((review: ReviewItemData) => (
-                  <ReviewListItem
-                    key={review.id}
-                    review={review}
-                    isAdmin={isAdmin}
-                    onToggleVisibility={onToggleVisibility}
-                    expanded={expandedReviewIds.includes(review.id)}
-                    onToggleExpanded={onToggleExpanded}
-                    updating={updatingReviewId === review.id}
-                  />
-                ))
-              )}
             </div>
           </div>
-        </div>
-      )}
-      {showSubmitButton && (
-        <div className="mt-3 shrink-0">
-          <Link href={submitHref}>
-            <button
-              type="button"
-              className="w-full py-2 rounded-lg bg-primary-normal text-white font-bold disabled:opacity-60"
-            >
-              <span className="text-sm font-bold">Submit Review</span>
-            </button>
-          </Link>
-        </div>
-      )}
+        )}
+        {showSubmitButton && (
+          <div className="mt-3 shrink-0">
+            <Link href={submitHref}>
+              <button
+                type="button"
+                className="w-full py-2 rounded-lg bg-primary-normal text-white font-bold disabled:opacity-60"
+              >
+                <span className="text-sm font-bold">Submit Review</span>
+              </button>
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

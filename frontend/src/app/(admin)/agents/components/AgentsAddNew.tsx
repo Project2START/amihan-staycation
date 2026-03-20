@@ -75,14 +75,18 @@ export default function AgentsAddNew() {
 
   return (
     <div className="mt-[0.5rem]">
-      <PrimaryButton onClick={handleOpenDialog}>
-        <div className="flex items-center gap-x-3">
-          <span className="text-2xl">
-            <IoIosAdd />
-          </span>
-          <span className="text-xs font-bold">Add new agent</span>
+      <div className="lg:flex lg:justify-center">
+        <div className="lg:w-[24rem]">
+          <PrimaryButton onClick={handleOpenDialog}>
+            <div className="flex items-center gap-x-3 ">
+              <span className="text-2xl">
+                <IoIosAdd />
+              </span>
+              <span className="text-xs font-bold">Add new agent</span>
+            </div>
+          </PrimaryButton>
         </div>
-      </PrimaryButton>
+      </div>
 
       <DialogBaseContent
         onCloseDialog={handleCloseDialog}

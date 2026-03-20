@@ -50,11 +50,11 @@ export default function ReviewListItem({
 
   return (
     <article
-      className={`rounded-lg border p-3 bg-white ${review.isHidden ? "border-reject-normal/40 opacity-80" : "border-secondary-normal/20"}`}
+      className={`rounded-lg md:rounded-xl border p-3 md:p-4 bg-white transition-colors ${review.isHidden ? "border-reject-normal/40 opacity-80" : "border-secondary-normal/20 md:hover:border-secondary-normal/35 md:hover:bg-secondary-normal/[0.02]"}`}
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-2 min-w-0">
-          <div className="relative size-9 shrink-0 rounded-full overflow-hidden bg-gray-100 border border-secondary-normal/10">
+        <div className="flex items-start gap-2 min-w-0 md:gap-3">
+          <div className="relative size-9 md:size-10 shrink-0 rounded-full overflow-hidden bg-gray-100 border border-secondary-normal/10">
             {review.reviewerAvatarUrl ? (
               <Image
                 src={review.reviewerAvatarUrl}
@@ -70,12 +70,30 @@ export default function ReviewListItem({
           </div>
 
           <div className="min-w-0">
-            <p className="text-sm font-bold text-secondary-normal truncate">
+            <p className="text-sm md:text-base font-bold text-secondary-normal truncate">
               {review.reviewerName}
             </p>
-            <p className="text-[11px] text-gray-500">
-              {dayjs(review.createdAt).format("MMMM D, YYYY")}
-            </p>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
+              <p className="text-[11px] md:text-xs text-gray-500">
+                {dayjs(review.createdAt).format("MMMM D, YYYY")}
+              </p>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }).map((_, index) => {
+                  const active = index < review.rating;
+                  return (
+                    <FaStar
+                      key={`${review.id}-star-${index}`}
+                      className={active ? "text-yellow-400" : "text-gray-300"}
+                      size={12}
+                    />
+                  );
+                })}
+                <span className="ml-1 text-xs text-gray-500">
+                  {review.rating}/5
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -83,7 +101,7 @@ export default function ReviewListItem({
           <button
             type="button"
             onClick={() => onToggleVisibility?.(review.id, !review.isHidden)}
-            className="p-2 rounded-md border border-secondary-normal/20 text-secondary-normal hover:bg-secondary-normal/5 disabled:opacity-60"
+            className="p-2 rounded-md border border-secondary-normal/20 text-secondary-normal hover:bg-secondary-normal/5 md:hover:bg-secondary-normal/10 disabled:opacity-60"
             aria-label={review.isHidden ? "Unhide review" : "Hide review"}
             title={review.isHidden ? "Unhide review" : "Hide review"}
             disabled={updating}
@@ -93,28 +111,14 @@ export default function ReviewListItem({
         )}
       </div>
 
-      <div className="mt-2 flex items-center gap-1">
-        {Array.from({ length: 5 }).map((_, index) => {
-          const active = index < review.rating;
-          return (
-            <FaStar
-              key={`${review.id}-star-${index}`}
-              className={active ? "text-yellow-400" : "text-gray-300"}
-              size={14}
-            />
-          );
-        })}
-        <span className="ml-1 text-xs text-gray-500">{review.rating}/5</span>
-      </div>
-
-      <p className="mt-2 text-sm text-secondary-normal whitespace-pre-wrap break-words">
+      <p className="mt-2.5 md:mt-3 text-sm md:text-[15px] text-secondary-normal whitespace-pre-wrap break-words leading-relaxed md:pl-[3.1rem]">
         {displayedComment}
       </p>
 
       {isLongComment && (
         <button
           type="button"
-          className="mt-1 text-primary-normal font-semibold underline underline-offset-2"
+          className="mt-1 text-primary-normal font-semibold underline underline-offset-2 md:ml-[3.1rem]"
           onClick={() => onToggleExpanded?.(review.id)}
         >
           <span className="text-xs">{expanded ? "See less" : "See more"}</span>
@@ -122,7 +126,7 @@ export default function ReviewListItem({
       )}
 
       {review.isImported && (
-        <p className="mt-2 text-[11px] text-gray-500 uppercase tracking-wide flex items-center gap-1">
+        <p className="mt-2 text-[11px] text-gray-500 uppercase tracking-wide flex items-center gap-1 md:ml-[3.1rem]">
           {sourceMeta?.icon ?? <FaGlobe size={11} />}
           <span>
             Imported from {sourceMeta?.label ?? review.source ?? "other"}
@@ -131,7 +135,7 @@ export default function ReviewListItem({
       )}
 
       {review.isHidden && (
-        <p className="mt-2 text-[11px] text-reject-normal font-semibold">
+        <p className="mt-2 text-[11px] text-reject-normal font-semibold md:ml-[3.1rem]">
           This review is currently hidden.
         </p>
       )}

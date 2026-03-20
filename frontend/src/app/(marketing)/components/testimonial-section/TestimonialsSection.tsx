@@ -264,6 +264,13 @@ export default function TestimonialsSection() {
           <FaChevronLeft className="text-[1.25rem] sm:text-[1.4rem] md:text-[1.5rem] lg:text-[1.65rem]" />
         </button>
 
+        {loading && (
+          <div>
+            <div className="rounded-xl border border-secondary-normal/10 bg-white px-4 py-8 text-center text-sm text-gray-500">
+              Loading testimonials...
+            </div>
+          </div>
+        )}
         <div
           className={`grid gap-3 sm:gap-4 md:gap-5 ${
             itemsPerView <= 2
@@ -273,11 +280,7 @@ export default function TestimonialsSection() {
                 : "grid-cols-4"
           }`}
         >
-          {loading ? (
-            <div className="rounded-xl border border-secondary-normal/10 bg-white px-4 py-8 text-center text-sm text-gray-500">
-              Loading testimonials...
-            </div>
-          ) : visibleItems.length === 0 ? (
+          {visibleItems.length === 0 && !loading ? (
             <div className="rounded-xl border border-secondary-normal/10 bg-white px-4 py-8 text-center text-sm text-gray-500">
               No reviews available yet.
             </div>

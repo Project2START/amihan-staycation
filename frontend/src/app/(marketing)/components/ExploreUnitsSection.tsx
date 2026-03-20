@@ -16,9 +16,7 @@ export default async function ExploreUnitsSection() {
       const data: { products: IProductItemProps[] } = await result.json();
       products = (data.products ?? []).slice(0, PREVIEW_LIMIT);
     }
-  } catch {
-    // silently fall through — show empty state
-  }
+  } catch {}
 
   return (
     <section className="py-6 sm:py-10 md:py-12 lg:py-14 xl:py-16 2xl:py-20 min-[1921px]:py-24">

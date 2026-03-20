@@ -153,10 +153,12 @@ export default function CreateImportedReviewForm({
 
   if (loadingUnit) {
     return (
-      <div className="px-[1rem] py-[1.5rem] grid gap-y-3">
-        <Skeleton variant="rounded" height={52} />
-        <Skeleton variant="rounded" height={120} />
-        <Skeleton variant="rounded" height={290} />
+      <div className="px-[1rem] md:px-6 lg:px-8 py-[1.5rem] md:py-6 grid gap-y-3 md:gap-y-4">
+        <Skeleton variant="rounded" height={52} className="md:!h-[64px]" />
+        <Skeleton variant="rounded" height={120} className="md:!h-[132px]" />
+        <div className="md:rounded-xl md:border md:border-secondary-normal/15 md:bg-white md:p-5 lg:p-6">
+          <Skeleton variant="rounded" height={290} className="md:!h-[360px]" />
+        </div>
       </div>
     );
   }
@@ -164,7 +166,7 @@ export default function CreateImportedReviewForm({
   const thumb = unit?.photos?.[0];
 
   return (
-    <div className="px-[1rem] py-[1.5rem] text-secondary-normal">
+    <div className="px-[1rem] md:px-6 lg:px-8 py-[1.5rem] md:py-6 text-secondary-normal">
       <div className="flex items-center justify-between border-b-3 border-secondary-normal/50 pb-[1rem]">
         <span className="flex-1/3 flex items-center">
           <PrimaryBackButton onClick={() => router.back()} style="text-xl" />
@@ -175,10 +177,13 @@ export default function CreateImportedReviewForm({
         <span className="flex-1/3" />
       </div>
 
-      <div className="mt-[1.25rem] rounded-xl border border-secondary-normal/20 p-3 bg-white">
+      <div className="mt-[1.25rem] md:mt-4 rounded-xl border border-secondary-normal/20 md:border-secondary-normal/15 p-3 md:p-4 bg-white md:shadow-sm">
         {unit ? (
-          <Link href={`/spaces/${unit.id}`} className="flex items-center gap-3">
-            <div className="relative w-[5rem] h-[5rem] rounded-lg overflow-hidden bg-gray-100 shrink-0">
+          <Link
+            href={`/spaces/${unit.id}`}
+            className="flex items-center gap-3 md:gap-4 rounded-lg md:hover:bg-secondary-normal/5 md:p-2 md:-m-2 transition-colors"
+          >
+            <div className="relative w-[5rem] h-[5rem] md:w-[6.5rem] md:h-[6.5rem] rounded-lg overflow-hidden bg-gray-100 shrink-0">
               {thumb?.image_url ? (
                 <Image
                   src={thumb.image_url}
@@ -193,9 +198,11 @@ export default function CreateImportedReviewForm({
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-xs text-gray-500">Importing review for unit</p>
-              <p className="font-bold truncate">{unit.name}</p>
-              <p className="text-xs text-secondary-normal underline mt-1">
+              <p className="text-xs md:text-sm text-gray-500">
+                Importing review for unit
+              </p>
+              <p className="font-bold truncate md:text-lg">{unit.name}</p>
+              <p className="text-xs md:text-sm text-secondary-normal underline mt-1">
                 View unit details
               </p>
             </div>
@@ -205,95 +212,104 @@ export default function CreateImportedReviewForm({
         )}
       </div>
 
-      <div className="mt-[1rem] rounded-xl border border-secondary-normal/20 p-4 bg-white grid gap-y-4">
-        <div>
-          <label htmlFor="reviewer-name" className="text-sm font-semibold">
-            Reviewer name
-          </label>
-          <input
-            id="reviewer-name"
-            type="text"
-            value={reviewerName}
-            onChange={(event) => setReviewerName(event.target.value)}
-            placeholder="Name from external review"
-            className="mt-2 w-full rounded-lg border border-secondary-normal/20 px-3 py-2 text-sm"
-            disabled={submitLoading}
-          />
+      <div className="mt-[1rem] md:mt-4 rounded-xl border border-secondary-normal/20 md:border-secondary-normal/15 p-4 md:p-5 lg:p-6 bg-white md:shadow-sm grid gap-y-4 md:gap-y-5">
+        <div className="hidden md:flex items-center justify-between rounded-lg border border-secondary-normal/10 bg-secondary-normal/[0.03] px-4 py-2.5">
+          <p className="text-sm font-semibold">Imported Review Metadata</p>
+          <p className="text-xs text-gray-500">Admin Only</p>
         </div>
 
-        <div>
-          <p className="text-sm font-semibold">Source</p>
-          <div className="mt-2 grid grid-cols-2 gap-2">
-            {SOURCE_OPTIONS.map((item) => {
-              const isActive = item.value === source;
-
-              return (
-                <button
-                  key={item.value}
-                  type="button"
-                  onClick={() => setSource(item.value)}
-                  className={`rounded-lg border px-3 py-2 flex items-center gap-2 text-sm transition ${
-                    isActive
-                      ? "border-primary-normal bg-primary-normal/10 text-primary-normal"
-                      : "border-secondary-normal/20 text-secondary-normal hover:bg-secondary-normal/5"
-                  }`}
-                  disabled={submitLoading}
-                >
-                  <span>{item.icon}</span>
-                  <span className="truncate">{item.label}</span>
-                </button>
-              );
-            })}
+        <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-7">
+          <div>
+            <label htmlFor="reviewer-name" className="text-sm font-semibold">
+              Reviewer name
+            </label>
+            <input
+              id="reviewer-name"
+              type="text"
+              value={reviewerName}
+              onChange={(event) => setReviewerName(event.target.value)}
+              placeholder="Name from external review"
+              className="mt-2 w-full rounded-lg border border-secondary-normal/20 px-3 py-2 text-sm"
+              disabled={submitLoading}
+            />
           </div>
-          {selectedSourceLabel ? (
-            <p className="mt-1 text-[11px] text-gray-500">
-              Selected: {selectedSourceLabel}
-            </p>
-          ) : null}
+
+          <div className="mt-4 md:mt-0 md:rounded-lg md:border md:border-secondary-normal/10 md:bg-secondary-normal/[0.02] md:p-4">
+            <p className="text-sm font-semibold">Source</p>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {SOURCE_OPTIONS.map((item) => {
+                const isActive = item.value === source;
+
+                return (
+                  <button
+                    key={item.value}
+                    type="button"
+                    onClick={() => setSource(item.value)}
+                    className={`rounded-lg border px-3 py-2 flex items-center gap-2 text-sm transition ${
+                      isActive
+                        ? "border-primary-normal bg-primary-normal/10 text-primary-normal"
+                        : "border-secondary-normal/20 text-secondary-normal hover:bg-secondary-normal/5 md:hover:bg-secondary-normal/10"
+                    }`}
+                    disabled={submitLoading}
+                  >
+                    <span>{item.icon}</span>
+                    <span className="truncate">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {selectedSourceLabel ? (
+              <p className="mt-1 text-[11px] text-gray-500">
+                Selected: {selectedSourceLabel}
+              </p>
+            ) : null}
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="original-date" className="text-sm font-semibold">
-            Original date
-          </label>
-          <input
-            id="original-date"
-            type="date"
-            value={originalDate}
-            onChange={(event) => setOriginalDate(event.target.value)}
-            max={dayjs().format("YYYY-MM-DD")}
-            className="mt-2 w-full rounded-lg border border-secondary-normal/20 px-3 py-2 text-sm"
-            disabled={submitLoading}
-          />
-        </div>
+        <div className="md:grid md:grid-cols-2 md:gap-6 lg:gap-7">
+          <div>
+            <label htmlFor="original-date" className="text-sm font-semibold">
+              Original date
+            </label>
+            <input
+              id="original-date"
+              type="date"
+              value={originalDate}
+              onChange={(event) => setOriginalDate(event.target.value)}
+              max={dayjs().format("YYYY-MM-DD")}
+              className="mt-2 w-full rounded-lg border border-secondary-normal/20 px-3 py-2 text-sm"
+              disabled={submitLoading}
+            />
+          </div>
 
-        <div>
-          <p className="text-sm font-semibold">Rating</p>
-          <div className="mt-2 flex items-center gap-1">
-            {Array.from({ length: 5 }).map((_, index) => {
-              const value = index + 1;
-              const active = (hoveredStar ?? rating) >= value;
+          <div className="mt-4 md:mt-0 md:rounded-lg md:border md:border-secondary-normal/10 md:bg-secondary-normal/[0.02] md:p-4">
+            <p className="text-sm font-semibold">Rating</p>
+            <div className="mt-2 flex items-center gap-1">
+              {Array.from({ length: 5 }).map((_, index) => {
+                const value = index + 1;
+                const active = (hoveredStar ?? rating) >= value;
 
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  onMouseEnter={() => setHoveredStar(value)}
-                  onMouseLeave={() => setHoveredStar(null)}
-                  onClick={() => setRating(value)}
-                  className="text-2xl cursor-pointer"
-                  aria-label={`Rate ${value} star${value > 1 ? "s" : ""}`}
-                  disabled={submitLoading}
-                >
-                  <FaStar
-                    className={active ? "text-yellow-400" : "text-gray-300"}
-                  />
-                </button>
-              );
-            })}
-            <span className="ml-2 text-xs text-gray-500">
-              {rating > 0 ? `${rating}/5` : "Tap to rate"}
-            </span>
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onMouseEnter={() => setHoveredStar(value)}
+                    onMouseLeave={() => setHoveredStar(null)}
+                    onClick={() => setRating(value)}
+                    className="text-2xl cursor-pointer transition-transform md:hover:scale-110"
+                    aria-label={`Rate ${value} star${value > 1 ? "s" : ""}`}
+                    disabled={submitLoading}
+                  >
+                    <FaStar
+                      className={active ? "text-yellow-400" : "text-gray-300"}
+                    />
+                  </button>
+                );
+              })}
+              <span className="ml-2 text-xs text-gray-500">
+                {rating > 0 ? `${rating}/5` : "Tap to rate"}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -315,7 +331,7 @@ export default function CreateImportedReviewForm({
           </p>
         </div>
 
-        <div>
+        <div className="md:border-t md:border-secondary-normal/10 md:pt-4">
           <LoadingOverlay loading={submitLoading}>
             <button
               type="button"
