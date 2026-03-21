@@ -133,6 +133,7 @@ export default function SearchUnit() {
       checkIn: null,
       checkOut: null,
     }));
+    setCalendar(false);
   };
 
   return (
@@ -179,6 +180,7 @@ export default function SearchUnit() {
                   exit={{ opacity: 0, translateY: "-5%" }}
                   key="search-calendar"
                   data-testid="search-calendar"
+                  className="relative"
                 >
                   <ClickOutside onClickOutside={() => handleSetCalendar(false)}>
                     <CalendarBooking
@@ -196,11 +198,11 @@ export default function SearchUnit() {
                         }
                       }}
                     />
-                    <div className="mt-[0.75rem] flex justify-end">
+                    <div className="hidden mt-[0.75rem] absolute top-2 left-2 text-xs lg:block lg:text-sm">
                       <button
                         type="button"
                         onClick={onResetDates}
-                        className="text-xs font-semibold text-secondary-normal hover:opacity-70 lg:text-sm"
+                        className="underline font-semibold text-secondary-normal hover:opacity-70 "
                       >
                         Reset
                       </button>

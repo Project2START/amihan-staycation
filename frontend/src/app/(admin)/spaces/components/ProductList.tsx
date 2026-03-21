@@ -67,6 +67,8 @@ export default async function ProductList() {
                   attributes,
                   about,
                   maxPersons,
+                  rating,
+                  ratingCount,
                 } = product;
 
                 return (
@@ -79,6 +81,8 @@ export default async function ProductList() {
                     attributes={attributes}
                     about={about}
                     maxPersons={maxPersons}
+                    rating={rating}
+                    ratingCount={ratingCount}
                     linkPath="/spaces"
                   />
                 );

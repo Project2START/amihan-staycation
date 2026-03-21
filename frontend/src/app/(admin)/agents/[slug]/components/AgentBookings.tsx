@@ -31,6 +31,7 @@ const GET_BOOKINGS_BY_AGENT = gql`
       id
       name
       contact_number
+      createdAt
       check_period {
         check_in
         check_out
@@ -47,6 +48,7 @@ interface AgentBooking {
   id: string | null;
   name: string | null;
   contact_number: string | null;
+  createdAt?: string | null;
   check_period: {
     check_in: string | null;
     check_out: string | null;
@@ -82,6 +84,105 @@ const statusIcons: Record<Status, React.ReactNode> = {
   action_required: <MdWarning className="text-lg" />,
   expired: <MdTimerOff className="text-lg" />,
   cancelled: <MdCancel className="text-lg" />,
+};
+
+const STATUS_PRIORITY: Record<Status, number> = {
+  action_required: 0,
+  pending: 1,
+  confirmed: 2,
+  checked_in: 3,
+  checked_out: 4,
+  expired: 5,
+  cancelled: 5,
+};
+
+const parseDateValue = (value?: string | null) => {
+  if (!value) return 0;
+  const parsed = new Date(value).getTime();
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const getCheckInTimestamp = (booking: AgentBooking) =>
+  parseDateValue(booking.check_period?.check_in ?? null);
+
+const compareAsc = (a: number, b: number) => a - b;
+const compareDesc = (a: number, b: number) => b - a;
+
+const compareWithinStatus = (
+  a: AgentBooking,
+  b: AgentBooking,
+  status: FilterStatus,
+) => {
+  if (status === "action_required" || status === "pending") {
+    return compareAsc(
+      parseDateValue(a.createdAt ?? null),
+      parseDateValue(b.createdAt ?? null),
+    );
+  }
+
+  if (status === "confirmed") {
+    const byCheckIn = compareAsc(
+      getCheckInTimestamp(a),
+      getCheckInTimestamp(b),
+    );
+
+    if (byCheckIn !== 0) {
+      return byCheckIn;
+    }
+
+    return compareAsc(
+      parseDateValue(a.createdAt ?? null),
+      parseDateValue(b.createdAt ?? null),
+    );
+  }
+
+  if (status === "checked_in") {
+    const byCheckIn = compareDesc(
+      getCheckInTimestamp(a),
+      getCheckInTimestamp(b),
+    );
+
+    if (byCheckIn !== 0) {
+      return byCheckIn;
+    }
+
+    return compareDesc(
+      parseDateValue(a.createdAt ?? null),
+      parseDateValue(b.createdAt ?? null),
+    );
+  }
+
+  if (
+    status === "checked_out" ||
+    status === "expired" ||
+    status === "cancelled"
+  ) {
+    return compareDesc(
+      parseDateValue(a.createdAt ?? null),
+      parseDateValue(b.createdAt ?? null),
+    );
+  }
+
+  return compareDesc(
+    parseDateValue(a.createdAt ?? null),
+    parseDateValue(b.createdAt ?? null),
+  );
+};
+
+const sortBookings = (bookings: AgentBooking[]) => {
+  return [...bookings].sort((a, b) => {
+    const statusA = (a.status ?? "pending") as Status;
+    const statusB = (b.status ?? "pending") as Status;
+
+    const priorityA = STATUS_PRIORITY[statusA] ?? Number.MAX_SAFE_INTEGER;
+    const priorityB = STATUS_PRIORITY[statusB] ?? Number.MAX_SAFE_INTEGER;
+
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
+
+    return compareWithinStatus(a, b, statusA);
+  });
 };
 
 export default function AgentBookings({ agentId }: { agentId: string }) {
@@ -128,7 +229,7 @@ export default function AgentBookings({ agentId }: { agentId: string }) {
       </div>
     );
 
-  const allBookings = data.bookingsByAgent ?? [];
+  const allBookings = sortBookings(data.bookingsByAgent ?? []);
 
   const counts: Record<string, number> = { all: allBookings.length };
   allBookings.forEach((b: AgentBooking) => {
@@ -136,11 +237,18 @@ export default function AgentBookings({ agentId }: { agentId: string }) {
     counts[st] = (counts[st] ?? 0) + 1;
   });
 
-  const filteredBookings =
+  const scopedBookings =
     filterStatus === "all"
       ? allBookings
       : allBookings.filter(
           (b: AgentBooking) => (b?.status ?? "pending") === filterStatus,
+        );
+
+  const filteredBookings =
+    filterStatus === "all"
+      ? scopedBookings
+      : [...scopedBookings].sort((a, b) =>
+          compareWithinStatus(a, b, filterStatus),
         );
 
   const summaryCards: {

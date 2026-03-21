@@ -28,6 +28,10 @@ export interface IProductItemProps {
   photos: IProductPhoto[];
   attributes: IProductAttribute[];
   maxPersons: number;
+  rating?: number;
+  ratingCount?: number;
+  popularity?: number;
+  isAvailable?: boolean;
 }
 
 export default function ProductItem({
@@ -39,6 +43,8 @@ export default function ProductItem({
   about,
   linkPath,
   maxPersons,
+  rating,
+  ratingCount,
 }: IProductItemProps & { linkPath: string }) {
   const visibleAttributes = attributes.slice(0, 4);
   const iconExcessCount = Math.max(
@@ -51,7 +57,23 @@ export default function ProductItem({
       <div className="relative">
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between p-3 lg:p-4">
           <div className="rounded-full bg-black/45 px-2.5 py-1 backdrop-blur-sm">
-            <Rating value={4.5} textColor="text-[#efefef]" />
+            {typeof rating === "number" && rating > 0 ? (
+              <div className="flex items-center gap-1.5">
+                <Rating
+                  value={Number(rating.toFixed(1))}
+                  textColor="text-[#efefef]"
+                />
+                {typeof ratingCount === "number" ? (
+                  <span className="text-[11px] font-medium text-[#efefef]">
+                    ({ratingCount})
+                  </span>
+                ) : null}
+              </div>
+            ) : (
+              <span className="text-[11px] font-semibold text-[#efefef]">
+                No reviews yet
+              </span>
+            )}
           </div>
 
           <div className="rounded-full bg-black/35 px-2.5 py-1.5 text-white backdrop-blur-sm">

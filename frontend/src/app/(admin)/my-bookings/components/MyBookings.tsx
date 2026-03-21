@@ -17,7 +17,10 @@ const statuses: { name: string; status: Status }[] = [
   { name: "Pending", status: "pending" },
   { name: "Confirmed", status: "confirmed" },
   { name: "Checked-In", status: "checked_in" },
+  { name: "Checked-Out", status: "checked_out" },
   { name: "Action Required", status: "action_required" },
+  { name: "Cancelled", status: "cancelled" },
+  { name: "Expired", status: "expired" },
 ];
 
 export default function MyBookings() {
@@ -72,7 +75,7 @@ export default function MyBookings() {
 
   const counts: Partial<Record<Status, number>> = {};
   (data?.bookingsByAdmin ?? []).forEach((b) => {
-    const st = ((b as any)?.status ?? "pending") as Status;
+    const st = (b?.status ?? "pending") as Status;
     counts[st] = (counts[st] ?? 0) + 1;
   });
 

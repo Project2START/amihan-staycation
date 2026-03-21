@@ -49,6 +49,7 @@ export const bookingTypeDefs = `#graphql
         name: String
         check_period: CheckPeriod
         status: String!
+        createdAt: String
         guest_count: Int
         user: User
         product: Product

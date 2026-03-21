@@ -11,6 +11,7 @@ export type ViewMode =
 export type BookingRow = {
   id: string;
   status: string;
+  createdAt?: string | null;
   guest_count: number | null;
   check_period: {
     check_in: string | null;

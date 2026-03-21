@@ -76,19 +76,17 @@ export default function ProfileViewDesktop({
                 <MdEdit className="text-lg" />
                 <span>Edit Profile</span>
               </button>
-
-              <button
-                onClick={onDelete}
-                className="flex items-center justify-center gap-x-2 w-full py-3.5 bg-reject-normal text-white font-bold rounded-xl cursor-pointer hover:opacity-90 transition"
-              >
-                <span>Delete Account</span>
-              </button>
-
               <button
                 onClick={onResetPassword}
                 className="flex items-center justify-center gap-x-2 w-full py-3.5 bg-secondary-normal text-white font-bold rounded-xl cursor-pointer hover:opacity-90 transition"
               >
                 <span>Change Password</span>
+              </button>
+              <button
+                onClick={onDelete}
+                className="flex items-center justify-center gap-x-2 w-full py-3.5 bg-reject-normal text-white font-bold rounded-xl cursor-pointer hover:opacity-90 transition"
+              >
+                <span>Delete Account</span>
               </button>
             </div>
           </section>

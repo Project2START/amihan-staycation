@@ -91,36 +91,12 @@ export default function Occupancy({
           </button>
         </div>
       </div>
-      {/* <div className="flex justify-between items-center">
-        <div>
-          <span className="font-bold">Rooms</span>
-        </div>
-
-        <div className="w-[8.5rem] flex justify-between items-center border-1 border-gray-300 rounded p-[0.5rem]">
-          <button
-            disabled={occupancy.rooms <= 1}
-            onClick={() => handleDecreaseOccupancy("rooms")}
-            className="disabled:opacity-50"
-          >
-            <span className="text-secondary-normal text-xl">-</span>
-          </button>
-          <span className="text-md font-bold">{occupancy.rooms}</span>
-          <button
-            disabled={occupancy.rooms >= 2}
-            onClick={() => handleIncreaseOccupancy("rooms")}
-            className="disabled:opacity-50"
-          >
-            <span className="text-secondary-normal text-xl">+</span>
-          </button>
-        </div>
-      </div> */}
       <div className="mt-[1rem]">
         <PrimaryButton
           onClick={() => {
             onSetSearch({
               children: occupancy.children,
               adults: occupancy.adults,
-              // rooms: occupancy.rooms,
             });
             onSetOccupancy(false);
           }}

@@ -44,7 +44,7 @@ export default function MyBookingsList({
             const contact_number = b?.contact_number ?? "";
             const name = b?.name ?? "Unknown";
             const product_name = b?.product?.name ?? "—";
-            const status = (b?.status ?? "pending") as any;
+            const status = (b?.status ?? "pending") as Status;
             const id = b?.id ?? `${name}-${check_in}`;
 
             return (

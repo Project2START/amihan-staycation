@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "payment_methods"
+ADD COLUMN "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

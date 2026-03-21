@@ -25,6 +25,110 @@ type BookingCheckPeriod = {
   check_out?: string;
 };
 
+type SortableBooking = {
+  status?: string | null;
+  createdAt?: Date | string | null;
+  check_period?: unknown;
+};
+
+const STATUS_PRIORITY: Record<string, number> = {
+  action_required: 0,
+  pending: 1,
+  confirmed: 2,
+  checked_in: 3,
+  checked_out: 4,
+  expired: 5,
+  cancelled: 5,
+};
+
+const parseDateValue = (value?: Date | string | null) => {
+  if (!value) return 0;
+  if (value instanceof Date) return value.getTime();
+
+  const parsed = new Date(value).getTime();
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const getCheckInTimestamp = (booking: SortableBooking) => {
+  const checkPeriod = booking.check_period;
+
+  if (!checkPeriod || typeof checkPeriod !== "object") {
+    return 0;
+  }
+
+  const checkIn = (checkPeriod as BookingCheckPeriod).check_in;
+  return checkIn ? parseDateValue(checkIn) : 0;
+};
+
+const compareAsc = (a: number, b: number) => a - b;
+const compareDesc = (a: number, b: number) => b - a;
+
+const compareWithinStatus = (a: SortableBooking, b: SortableBooking) => {
+  const status = a.status ?? "";
+
+  if (status === "action_required" || status === "pending") {
+    return compareAsc(parseDateValue(a.createdAt), parseDateValue(b.createdAt));
+  }
+
+  if (status === "confirmed") {
+    const byCheckIn = compareAsc(
+      getCheckInTimestamp(a),
+      getCheckInTimestamp(b),
+    );
+
+    if (byCheckIn !== 0) {
+      return byCheckIn;
+    }
+
+    return compareAsc(parseDateValue(a.createdAt), parseDateValue(b.createdAt));
+  }
+
+  if (status === "checked_in") {
+    const byCheckIn = compareDesc(
+      getCheckInTimestamp(a),
+      getCheckInTimestamp(b),
+    );
+
+    if (byCheckIn !== 0) {
+      return byCheckIn;
+    }
+
+    return compareDesc(
+      parseDateValue(a.createdAt),
+      parseDateValue(b.createdAt),
+    );
+  }
+
+  if (
+    status === "checked_out" ||
+    status === "expired" ||
+    status === "cancelled"
+  ) {
+    return compareDesc(
+      parseDateValue(a.createdAt),
+      parseDateValue(b.createdAt),
+    );
+  }
+
+  return compareDesc(parseDateValue(a.createdAt), parseDateValue(b.createdAt));
+};
+
+const sortBookingsForRoleView = <T extends SortableBooking>(bookings: T[]) => {
+  return [...bookings].sort((a, b) => {
+    const statusA = a.status ?? "";
+    const statusB = b.status ?? "";
+
+    const priorityA = STATUS_PRIORITY[statusA] ?? Number.MAX_SAFE_INTEGER;
+    const priorityB = STATUS_PRIORITY[statusB] ?? Number.MAX_SAFE_INTEGER;
+
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
+
+    return compareWithinStatus(a, b);
+  });
+};
+
 const buildDateTime = (date: string, time: string): Date => {
   return new Date(`${date}T${time}`);
 };
@@ -399,12 +503,12 @@ class BookingService {
   async getAllByAdmin(adminId: string) {
     const bookings = await bookingRepository.findAllByAdminId(adminId);
 
-    return bookings;
+    return sortBookingsForRoleView<(typeof bookings)[number]>(bookings);
   }
   async getAllByUser(userId: string) {
     const bookings = await bookingRepository.findAllByUserId(userId);
 
-    return bookings;
+    return sortBookingsForRoleView<(typeof bookings)[number]>(bookings);
   }
 
   async getBookedDatesByProduct(productId: string): Promise<string[]> {

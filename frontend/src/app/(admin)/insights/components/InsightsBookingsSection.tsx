@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   getStatusColor,
   Status,
@@ -11,6 +11,101 @@ import InsightsBookingItem from "./InsightsBookingItem";
 
 const TAB_LIST = [{ name: "All", status: "all" }, ...ALL_BOOKING_STATUSES];
 
+const STATUS_PRIORITY: Record<string, number> = {
+  action_required: 0,
+  pending: 1,
+  confirmed: 2,
+  checked_in: 3,
+  checked_out: 4,
+  expired: 5,
+  cancelled: 5,
+};
+
+const parseDateValue = (value?: string | null) => {
+  if (!value) return 0;
+  const parsed = new Date(value).getTime();
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const getCheckInTimestamp = (booking: BookingRow) =>
+  parseDateValue(booking.check_period?.check_in ?? null);
+
+const compareAsc = (a: number, b: number) => a - b;
+const compareDesc = (a: number, b: number) => b - a;
+
+const compareWithinStatus = (a: BookingRow, b: BookingRow, status: string) => {
+  if (status === "action_required" || status === "pending") {
+    return compareAsc(
+      parseDateValue(a.createdAt ?? null),
+      parseDateValue(b.createdAt ?? null),
+    );
+  }
+
+  if (status === "confirmed") {
+    const byCheckIn = compareAsc(
+      getCheckInTimestamp(a),
+      getCheckInTimestamp(b),
+    );
+
+    if (byCheckIn !== 0) {
+      return byCheckIn;
+    }
+
+    return compareAsc(
+      parseDateValue(a.createdAt ?? null),
+      parseDateValue(b.createdAt ?? null),
+    );
+  }
+
+  if (status === "checked_in") {
+    const byCheckIn = compareDesc(
+      getCheckInTimestamp(a),
+      getCheckInTimestamp(b),
+    );
+
+    if (byCheckIn !== 0) {
+      return byCheckIn;
+    }
+
+    return compareDesc(
+      parseDateValue(a.createdAt ?? null),
+      parseDateValue(b.createdAt ?? null),
+    );
+  }
+
+  if (
+    status === "checked_out" ||
+    status === "expired" ||
+    status === "cancelled"
+  ) {
+    return compareDesc(
+      parseDateValue(a.createdAt ?? null),
+      parseDateValue(b.createdAt ?? null),
+    );
+  }
+
+  return compareDesc(
+    parseDateValue(a.createdAt ?? null),
+    parseDateValue(b.createdAt ?? null),
+  );
+};
+
+const sortBookingsForInsights = (bookings: BookingRow[]) => {
+  return [...bookings].sort((a, b) => {
+    const statusA = a.status ?? "pending";
+    const statusB = b.status ?? "pending";
+
+    const priorityA = STATUS_PRIORITY[statusA] ?? Number.MAX_SAFE_INTEGER;
+    const priorityB = STATUS_PRIORITY[statusB] ?? Number.MAX_SAFE_INTEGER;
+
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
+
+    return compareWithinStatus(a, b, statusA);
+  });
+};
+
 export default function InsightsBookingsSection({
   bookings,
 }: {
@@ -18,16 +113,28 @@ export default function InsightsBookingsSection({
 }) {
   const [activeStatus, setActiveStatus] = useState<string>("all");
 
+  const sortedBookings = useMemo(() => {
+    return sortBookingsForInsights(bookings);
+  }, [bookings]);
+
   const counts: Record<string, number> = {};
-  bookings.forEach((b) => {
+  sortedBookings.forEach((b) => {
     const st = b.status ?? "pending";
     counts[st] = (counts[st] ?? 0) + 1;
   });
 
-  const filtered =
-    activeStatus === "all"
-      ? bookings
-      : bookings.filter((b) => b.status === activeStatus);
+  const filtered = useMemo(() => {
+    const scoped =
+      activeStatus === "all"
+        ? sortedBookings
+        : sortedBookings.filter((b) => b.status === activeStatus);
+
+    if (activeStatus === "all") {
+      return scoped;
+    }
+
+    return [...scoped].sort((a, b) => compareWithinStatus(a, b, activeStatus));
+  }, [activeStatus, sortedBookings]);
 
   return (
     <div className="mt-4 rounded-xl border border-secondary-normal/20 p-3">
@@ -38,7 +145,9 @@ export default function InsightsBookingsSection({
       <ul className="flex items-center gap-x-2 text-sm overflow-x-auto py-1 mb-3">
         {TAB_LIST.map((tab) => {
           const count =
-            tab.status === "all" ? bookings.length : (counts[tab.status] ?? 0);
+            tab.status === "all"
+              ? sortedBookings.length
+              : (counts[tab.status] ?? 0);
           const isActive = activeStatus === tab.status;
           const dotColor =
             tab.status !== "all"

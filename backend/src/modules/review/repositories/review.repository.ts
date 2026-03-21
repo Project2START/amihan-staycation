@@ -60,6 +60,44 @@ class ReviewRepository {
     }
   }
 
+  async findRatingRowsByProductIds(
+    productIds: string[],
+    includeHidden: boolean,
+  ) {
+    if (productIds.length === 0) {
+      return [];
+    }
+
+    try {
+      return await prisma.review.findMany({
+        where: {
+          OR: [
+            {
+              productId: { in: productIds },
+            },
+            {
+              booking: {
+                productId: { in: productIds },
+              },
+            },
+          ],
+          ...(includeHidden ? {} : { isHidden: false }),
+        },
+        select: {
+          rating: true,
+          productId: true,
+          booking: {
+            select: {
+              productId: true,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch reviews. Please try again");
+    }
+  }
+
   async findById(id: string) {
     try {
       return await prisma.review.findUnique({

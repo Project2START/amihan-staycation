@@ -6,6 +6,7 @@ export const GET_ADMIN_INSIGHTS_BOOKINGS = gql`
     bookingsByAdmin {
       id
       status
+      createdAt
       check_period {
         check_in
         check_out

@@ -1,6 +1,7 @@
 import { productService } from "../../../../modules/product/services/product.service";
 import { productRepository } from "../../../../modules/product/repositories/product.repository";
 import { supabase } from "../../../../shared/lib/supabase";
+import { reviewRepository } from "../../../../modules/review/repositories/review.repository";
 import {
   BadRequestError,
   NotFoundError,
@@ -9,6 +10,7 @@ import {
 
 jest.mock("../../../../modules/product/repositories/product.repository");
 jest.mock("../../../../shared/lib/supabase");
+jest.mock("../../../../modules/review/repositories/review.repository");
 
 describe("ProductService", () => {
   beforeEach(() => jest.clearAllMocks());
@@ -40,9 +42,27 @@ describe("ProductService", () => {
     (productRepository.findAll as jest.Mock).mockResolvedValue([
       { id: "p1", createdAt: new Date(), updatedAt: new Date(), foo: "bar" },
     ]);
+    (
+      productRepository.findSuccessfulBookingCountsByProductIds as jest.Mock
+    ).mockResolvedValue({});
+    (
+      productRepository.findAvailabilityBlockingByProductIds as jest.Mock
+    ).mockResolvedValue([]);
+    (
+      reviewRepository.findRatingRowsByProductIds as jest.Mock
+    ).mockResolvedValue([]);
 
     const res = await productService.getAll();
 
-    expect(res).toEqual([{ id: "p1", foo: "bar" }]);
+    expect(res).toEqual([
+      {
+        id: "p1",
+        foo: "bar",
+        isAvailable: true,
+        popularity: 0,
+        rating: 0,
+        ratingCount: 0,
+      },
+    ]);
   });
 });

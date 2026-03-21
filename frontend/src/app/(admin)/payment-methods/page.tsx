@@ -1,4 +1,3 @@
-// import { Suspense } from "react";
 import { Suspense } from "react";
 import NavigationBottom from "../components/NavigationBottom";
 import AddPaymentMethod from "./components/AddPaymentMethod";

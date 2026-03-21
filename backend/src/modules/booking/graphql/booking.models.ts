@@ -17,6 +17,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
         name,
         check_period,
         status,
+        createdAt,
         product,
         id,
         additional_guests,
@@ -29,6 +30,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
         name,
         check_period,
         status,
+        createdAt: createdAt?.toISOString?.() ?? null,
         guest_count: guestCount,
         product: {
           name: product?.name,
@@ -57,6 +59,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
         name,
         check_period,
         status,
+        createdAt,
         product,
         id,
         additional_guests,
@@ -69,6 +72,7 @@ export const generateBookingModel = ({ user }: { user: any }) => ({
         name,
         check_period,
         status,
+        createdAt: createdAt?.toISOString?.() ?? null,
         guest_count: guestCount,
         product: {
           name: product?.name,

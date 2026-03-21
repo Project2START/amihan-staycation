@@ -72,19 +72,17 @@ export default function ProfileViewMobile({
           <MdEdit className="text-base" />
           <span className="text-sm">Edit Profile</span>
         </button>
-
-        <button
-          onClick={onDelete}
-          className="flex items-center justify-center gap-x-2 w-full py-3 bg-reject-normal text-white font-bold rounded-lg cursor-pointer hover:opacity-90 transition"
-        >
-          <span className="text-sm">Delete Account</span>
-        </button>
-
         <button
           onClick={onResetPassword}
           className="flex items-center justify-center gap-x-2 w-full py-3 bg-secondary-normal text-white font-bold rounded-lg cursor-pointer hover:opacity-90 transition"
         >
           <span className="text-sm">Change Password</span>
+        </button>
+        <button
+          onClick={onDelete}
+          className="flex items-center justify-center gap-x-2 w-full py-3 bg-reject-normal text-white font-bold rounded-lg cursor-pointer hover:opacity-90 transition"
+        >
+          <span className="text-sm">Delete Account</span>
         </button>
       </div>
     </div>
