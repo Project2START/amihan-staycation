@@ -15,7 +15,7 @@ export default function AddPaymentMethodDesktop() {
         <PrimaryButton onClick={() => setOpenDialog(true)}>
           <div className="flex items-center gap-2 px-1 lg:px-2">
             <FiPlus size={18} />
-            <span className="text-sm lg:text-base font-semibold normal-case">
+            <span className="text-sm lg:text-sm font-semibold normal-case">
               Add Payment Method
             </span>
           </div>

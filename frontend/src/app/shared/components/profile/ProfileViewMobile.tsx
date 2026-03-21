@@ -16,11 +16,13 @@ export default function ProfileViewMobile({
   onBack,
   onEdit,
   onDelete,
+  onResetPassword,
 }: {
   user: ProfileUser;
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onResetPassword: () => void;
 }) {
   return (
     <div className="px-[1rem] py-[1.5rem]">
@@ -76,6 +78,13 @@ export default function ProfileViewMobile({
           className="flex items-center justify-center gap-x-2 w-full py-3 bg-reject-normal text-white font-bold rounded-lg cursor-pointer hover:opacity-90 transition"
         >
           <span className="text-sm">Delete Account</span>
+        </button>
+
+        <button
+          onClick={onResetPassword}
+          className="flex items-center justify-center gap-x-2 w-full py-3 bg-secondary-normal text-white font-bold rounded-lg cursor-pointer hover:opacity-90 transition"
+        >
+          <span className="text-sm">Change Password</span>
         </button>
       </div>
     </div>

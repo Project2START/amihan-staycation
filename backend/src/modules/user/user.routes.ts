@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { validateSchema } from "../../middleware/validateSchema";
 import { userSignInSchema, userSignUpSchema } from "./schemas/userAuth.schema";
+import {
+  passwordResetCompleteSchema,
+  passwordResetRequestSchema,
+  passwordResetValidateTokenSchema,
+} from "./schemas/passwordReset.schema";
 import { userUpdateSchema } from "./schemas/userUpdate.schema";
 import { asyncHandler } from "../../shared/helpers/asyncHandler";
 import { userAuthController } from "./controllers/userAuth.controller";
@@ -22,6 +27,21 @@ router.post(
   "/sign-in",
   validateSchema(userSignInSchema),
   asyncHandler(userAuthController.signIn),
+);
+router.post(
+  "/password-reset/request",
+  validateSchema(passwordResetRequestSchema),
+  asyncHandler(userAuthController.requestPasswordReset),
+);
+router.post(
+  "/password-reset/validate-token",
+  validateSchema(passwordResetValidateTokenSchema),
+  asyncHandler(userAuthController.validatePasswordResetToken),
+);
+router.post(
+  "/password-reset/complete",
+  validateSchema(passwordResetCompleteSchema),
+  asyncHandler(userAuthController.completePasswordReset),
 );
 
 router.get("/google", asyncHandler(userAuthController.googleAuth));

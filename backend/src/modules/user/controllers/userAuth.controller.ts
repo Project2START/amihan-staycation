@@ -4,6 +4,7 @@ import { cookieOptions } from "../../../shared/helpers/cookieOptions";
 import { userAuthService } from "../services/userAuth.service";
 import { generateSecureRandom } from "../../../shared/helpers/generators/generateSecureRandom";
 import { BadRequestError } from "../../../shared/helpers/appErrors";
+import { passwordResetService } from "../../auth/services/passwordReset.service";
 
 const getSafeRedirectPath = (path?: string) => {
   if (!path) return "/auth";
@@ -17,7 +18,11 @@ class UserAuthController {
   async signUp(req: Request, res: Response) {
     const user = await userAuthService.signUp(req.body);
 
-    const payload = { user_id: user.id, user_role: user.role };
+    const payload = {
+      user_id: user.id,
+      user_role: user.role,
+      auth_version: user.auth_version,
+    };
     const jwt_token = signToken(payload, "24h");
 
     res.cookie("auth_token", jwt_token, cookieOptions(24 * 60 * 60 * 1000));
@@ -27,7 +32,11 @@ class UserAuthController {
   async signIn(req: Request, res: Response) {
     const user = await userAuthService.signIn(req.body);
 
-    const payload = { user_id: user.id, user_role: user.role };
+    const payload = {
+      user_id: user.id,
+      user_role: user.role,
+      auth_version: user.auth_version,
+    };
     const jwt_token = signToken(payload, "24h");
 
     res.cookie("auth_token", jwt_token, cookieOptions(24 * 60 * 60 * 1000));
@@ -69,7 +78,11 @@ class UserAuthController {
 
     const user = await userAuthService.googleAuthCallback(code as string);
 
-    const payload = { user_id: user.id, user_role: user.role };
+    const payload = {
+      user_id: user.id,
+      user_role: user.role,
+      auth_version: user.auth_version,
+    };
 
     const jwt_token = signToken(payload, "24h");
 
@@ -95,6 +108,34 @@ class UserAuthController {
     res.cookie("auth_token", "", cookieOptions);
 
     res.status(200).json({ message: "User successfully log out" });
+  }
+
+  async requestPasswordReset(req: Request, res: Response) {
+    const result = await passwordResetService.requestPasswordReset(
+      req.body.email,
+      req.ip ?? "unknown",
+      req.body.source ?? "auth",
+    );
+
+    res.status(200).json(result);
+  }
+
+  async validatePasswordResetToken(req: Request, res: Response) {
+    const result = await passwordResetService.validateResetToken(
+      req.body.token,
+    );
+    res.status(200).json(result);
+  }
+
+  async completePasswordReset(req: Request, res: Response) {
+    const result = await passwordResetService.resetPassword({
+      token: req.body.token,
+      password: req.body.password,
+      source: req.body.source ?? "auth",
+      ipAddress: req.ip ?? "unknown",
+    });
+
+    res.status(200).json(result);
   }
 }
 

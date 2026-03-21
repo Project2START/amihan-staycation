@@ -109,6 +109,18 @@ export default function SignInForm() {
               </p>
             )}
           </div>
+          <div className="col-span-2">
+            <div className="flex justify-center">
+              <Link
+                href={"/forgot-password"}
+                className="w-max text-center block"
+              >
+                <span className="text-xs text-secondary-normal lg:text-sm">
+                  Forgot password?
+                </span>
+              </Link>
+            </div>
+          </div>
           <div className="col-span-2 mt-[0.25rem]">
             {error.length !== 0 && (
               <p className="text-xs text-center mb-[0.5rem] text-red-900 font-bold">
@@ -123,16 +135,6 @@ export default function SignInForm() {
               </PrimaryButton>
             </ButtonLoadingStopper>
           </div>
-          <div className="col-span-2">
-            <div className="flex justify-center">
-              <Link href={"/log-in"} className="w-max text-center block">
-                <span className="text-xs text-secondary-normal lg:text-sm">
-                  Forgot password?
-                </span>
-              </Link>
-            </div>
-          </div>
-
           <div className="col-span-2 mt-[0.85rem] border-b-1 border-tertiary-normal/30 pb-[1rem]">
             <AlternativeSeparator />
             <div className="py-[0.5rem] lg:py-[1rem]">

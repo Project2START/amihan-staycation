@@ -16,11 +16,13 @@ export default function ProfileViewDesktop({
   onBack,
   onEdit,
   onDelete,
+  onResetPassword,
 }: {
   user: ProfileUser;
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onResetPassword: () => void;
 }) {
   const fullName = `${user.first_name ?? ""} ${user.last_name ?? ""}`.trim();
 
@@ -29,7 +31,10 @@ export default function ProfileViewDesktop({
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between mb-8">
           <div className="w-1/3">
-            <PrimaryBackButton style="text-xl text-secondary-normal" onClick={onBack} />
+            <PrimaryBackButton
+              style="text-xl text-secondary-normal"
+              onClick={onBack}
+            />
           </div>
           <h1 className="w-1/3 text-center text-2xl lg:text-3xl font-extrabold text-secondary-normal tracking-tight">
             My Profile
@@ -42,7 +47,12 @@ export default function ProfileViewDesktop({
             <div className="flex flex-col items-center text-center">
               {user.avatar_url ? (
                 <div className="relative w-[8rem] h-[8rem] rounded-full overflow-hidden border-4 border-white shadow-md">
-                  <Image src={user.avatar_url} alt="Profile" fill className="object-cover" />
+                  <Image
+                    src={user.avatar_url}
+                    alt="Profile"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               ) : (
                 <div className="flex items-center justify-center w-[8rem] h-[8rem] rounded-full border-4 border-white bg-gray-100 shadow-md">
@@ -53,7 +63,9 @@ export default function ProfileViewDesktop({
               <h2 className="mt-4 text-xl font-extrabold text-secondary-normal">
                 {fullName || "Unknown User"}
               </h2>
-              <p className="mt-1 text-sm text-gray-600 break-all">{user.email || "-"}</p>
+              <p className="mt-1 text-sm text-gray-600 break-all">
+                {user.email || "-"}
+              </p>
             </div>
 
             <div className="mt-6 space-y-3">
@@ -71,12 +83,21 @@ export default function ProfileViewDesktop({
               >
                 <span>Delete Account</span>
               </button>
+
+              <button
+                onClick={onResetPassword}
+                className="flex items-center justify-center gap-x-2 w-full py-3.5 bg-secondary-normal text-white font-bold rounded-xl cursor-pointer hover:opacity-90 transition"
+              >
+                <span>Change Password</span>
+              </button>
             </div>
           </section>
 
           <section className="rounded-2xl border-2 border-secondary-normal/25 bg-white p-6 lg:p-8 shadow-sm">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-secondary-normal">Account Details</h3>
+              <h3 className="text-xl font-bold text-secondary-normal">
+                Account Details
+              </h3>
               <span className="text-xs uppercase tracking-[0.18em] text-secondary-normal/60">
                 Personal Info
               </span>
@@ -85,7 +106,11 @@ export default function ProfileViewDesktop({
             <div className="grid gap-4 md:grid-cols-2">
               <DetailCard label="First Name" value={user.first_name} />
               <DetailCard label="Last Name" value={user.last_name} />
-              <DetailCard label="Email" value={user.email} className="md:col-span-2" />
+              <DetailCard
+                label="Email"
+                value={user.email}
+                className="md:col-span-2"
+              />
               <DetailCard label="Nationality" value={user.nationality} />
             </div>
           </section>
@@ -105,9 +130,15 @@ function DetailCard({
   className?: string;
 }) {
   return (
-    <div className={`rounded-xl border border-secondary-normal/20 bg-secondary-normal/5 p-4 ${className}`}>
-      <p className="text-xs uppercase tracking-[0.08em] text-gray-500">{label}</p>
-      <p className="mt-1 text-base font-semibold text-secondary-normal break-words">{value || "-"}</p>
+    <div
+      className={`rounded-xl border border-secondary-normal/20 bg-secondary-normal/5 p-4 ${className}`}
+    >
+      <p className="text-xs uppercase tracking-[0.08em] text-gray-500">
+        {label}
+      </p>
+      <p className="mt-1 text-base font-semibold text-secondary-normal break-words">
+        {value || "-"}
+      </p>
     </div>
   );
 }

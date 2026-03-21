@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import SignUpForm from "./components/SignUpForm";
 import HeaderAuth from "@/app/shared/components/HeaderAuth";
 
@@ -15,7 +16,9 @@ export default function SignUpPage() {
               Join AStaycation ━ your getaway begins here!
             </p>
           </div>
-          <SignUpForm />
+          <Suspense fallback={null}>
+            <SignUpForm />
+          </Suspense>
         </div>
       </div>
     </>

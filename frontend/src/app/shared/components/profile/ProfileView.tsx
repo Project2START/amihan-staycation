@@ -7,12 +7,14 @@ import ProfileEditModal from "./ProfileEditModal";
 import ProfileDeleteModal from "./ProfileDeleteModal";
 import ProfileViewMobile from "./ProfileViewMobile";
 import ProfileViewLarge from "./ProfileViewLarge";
+import PasswordResetModal from "../auth/PasswordResetModal";
 
 export default function ProfileView() {
   const router = useRouter();
   const user = useAppSelector((state) => state.users.data);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
 
   if (!user) {
     return (
@@ -32,6 +34,7 @@ export default function ProfileView() {
           onBack={() => router.back()}
           onEdit={() => setEditOpen(true)}
           onDelete={() => setDeleteOpen(true)}
+          onResetPassword={() => setResetOpen(true)}
         />
       </div>
 
@@ -41,6 +44,7 @@ export default function ProfileView() {
           onBack={() => router.back()}
           onEdit={() => setEditOpen(true)}
           onDelete={() => setDeleteOpen(true)}
+          onResetPassword={() => setResetOpen(true)}
         />
       </div>
 
@@ -54,6 +58,13 @@ export default function ProfileView() {
         <ProfileDeleteModal
           userId={user.id}
           onClose={() => setDeleteOpen(false)}
+        />
+      )}
+
+      {resetOpen && (
+        <PasswordResetModal
+          email={user.email}
+          onClose={() => setResetOpen(false)}
         />
       )}
     </div>

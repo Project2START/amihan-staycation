@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import HeaderAuth from "@/app/shared/components/HeaderAuth";
 import SignInForm from "./components/SignInForm";
 
@@ -13,7 +14,9 @@ export default function SignInPage() {
               Continue your AStaycation — sign in.
             </p>
           </div>
-          <SignInForm />
+          <Suspense fallback={null}>
+            <SignInForm />
+          </Suspense>
         </div>
       </div>
     </>
