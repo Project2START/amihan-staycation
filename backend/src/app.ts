@@ -92,33 +92,3 @@ export const server = new ApolloServer({
 });
 
 export default app;
-
-// async function setUpGraphql() {
-//   const server = new ApolloServer({ typeDefs, resolvers });
-
-//   await server.start();
-
-//   app.use(
-//     "/graphql",
-//     expressMiddleware(server, {
-//       context: async ({ req, res }) => {
-//         const token =
-//           req.cookies?.auth_token ||
-//           (req.headers.authorization || "").replace("Bearer ", "");
-//         let user = null;
-//         if (token) {
-//           try {
-//             user = verifyToken(token);
-//           } catch {
-//             user = null;
-//           }
-//         }
-//         return { req, res, user };
-//       },
-//     }),
-//   );
-// }
-
-// setUpGraphql();
-
-// export default app;
