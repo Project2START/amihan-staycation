@@ -15,6 +15,9 @@ export function authAttacher(req: Request, res: Response, next: NextFunction) {
 
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+    if (req.cookies?.auth_token) {
+      res.clearCookie("auth_token");
+    }
+    return next();
   }
 }
