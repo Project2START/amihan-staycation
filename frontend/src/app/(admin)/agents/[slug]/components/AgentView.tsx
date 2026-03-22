@@ -1,6 +1,3 @@
-// "use client";
-
-// import PrimaryBackButton from "@/app/shared/components/PrimaryBackButton";
 import { ProfileField } from "@/app/shared/components/profile/ProfileView";
 import fetchWithAuth from "@/app/shared/lib/fetchWithAuth";
 import Image from "next/image";
