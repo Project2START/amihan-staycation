@@ -109,13 +109,13 @@ export default function ResetPasswordForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-3">
       {validating && (
-        <p className="text-xs text-secondary-normal font-bold lg:text-sm">
+        <p className="text-center text-xs text-secondary-normal font-bold lg:text-sm">
           Validating reset link...
         </p>
       )}
 
       {!validating && tokenError.length !== 0 && (
-        <p className="text-xs text-reject-normal font-bold lg:text-sm">
+        <p className="text-center text-xs text-reject-normal font-bold lg:text-sm">
           {tokenError}
         </p>
       )}

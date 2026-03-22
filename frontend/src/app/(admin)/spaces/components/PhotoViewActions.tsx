@@ -105,17 +105,26 @@ export default function PhotoViewActions({
 
               replaceInputRef.current.click();
             }}
+            className="hover-animation lg:hover:opacity-80"
           >
             <span className="text-white text-base">
               <TbReplace />
             </span>
           </button>
-          <button type="button" onClick={handleDeletePhoto}>
+          <button
+            type="button"
+            onClick={handleDeletePhoto}
+            className="hover-animation lg:hover:opacity-80"
+          >
             <span className="text-white text-base">
               <RiDeleteBin6Line />
             </span>
           </button>
-          <button type="button" onClick={() => setFullView(true)}>
+          <button
+            type="button"
+            onClick={() => setFullView(true)}
+            className="hover-animation lg:hover:opacity-80"
+          >
             <span className="text-white text-base">
               <MdOpenInFull />
             </span>
@@ -143,6 +152,10 @@ export default function PhotoViewActions({
         <PhotoFullView
           photoSrc={photoSrc}
           onCloseDialog={() => setFullView(false)}
+          initialIndex={Math.max(photoIndex, 0)}
+          images={photos.map((photo) => ({
+            src: photo.src,
+          }))}
         />
       </DialogBaseContent>
     </div>

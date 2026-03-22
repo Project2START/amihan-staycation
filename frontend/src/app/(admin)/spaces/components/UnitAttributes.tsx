@@ -50,7 +50,7 @@ export default function UnitAttributes() {
 
   return (
     <div
-      className="border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] overflow-x-auto overflow-y-hidden h-[7rem]"
+      className="border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] overflow-x-auto overflow-y-hidden h-[7rem] lg:h-[10rem]"
       ref={attrContainerRef}
     >
       {attributes?.length === 0 ? (

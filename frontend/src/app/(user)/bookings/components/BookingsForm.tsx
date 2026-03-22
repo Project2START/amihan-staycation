@@ -361,7 +361,7 @@ export default function BookingsForm() {
                   <div className="flex justify-evenly gap-x-4 font-bold lg:justify-end lg:gap-x-5 xl:gap-x-6">
                     <button
                       type="button"
-                      className="flex-1 py-[0.65rem] text-primary-normal disabled:cursor-not-allowed disabled:opacity-50 lg:max-w-[140px] lg:rounded-lg lg:border lg:border-primary-normal"
+                      className="flex-1 py-[0.65rem] text-primary-normal disabled:cursor-not-allowed disabled:opacity-50 hover-animation lg:hover:opacity-80 lg:max-w-[140px] lg:rounded-lg lg:border lg:border-primary-normal"
                       onClick={prevStep}
                       disabled={step === minStep}
                     >
@@ -369,7 +369,7 @@ export default function BookingsForm() {
                     </button>
                     <button
                       type="button"
-                      className="flex-1 rounded-lg bg-primary-normal py-[0.65rem] text-white lg:max-w-[180px]"
+                      className="flex-1 rounded-lg bg-primary-normal py-[0.65rem] text-white lg:max-w-[180px] hover-animation lg:hover:bg-primary-normal/80"
                       onClick={onHandleSubmitStep}
                     >
                       <span>Next</span>
@@ -408,7 +408,7 @@ export default function BookingsForm() {
           <button
             type="button"
             onClick={handleConfirmationOk}
-            className="px-16 py-2 rounded-lg text-white lg:py-3 lg:text-base"
+            className="px-16 py-2 rounded-lg text-white hover-animation lg:py-3 lg:text-base lg:hover:opacity-80"
             style={{ backgroundColor: "var(--color-primary-normal)" }}
           >
             <span className="font-bold">OK</span>

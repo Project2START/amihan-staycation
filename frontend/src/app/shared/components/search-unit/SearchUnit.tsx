@@ -198,7 +198,7 @@ export default function SearchUnit() {
                         }
                       }}
                     />
-                    <div className="hidden mt-[0.75rem] absolute top-2 left-2 text-xs lg:block lg:text-sm">
+                    <div className="hidden mt-[0.75rem] absolute top-2 right-2 text-xs lg:block lg:text-sm">
                       <button
                         type="button"
                         onClick={onResetDates}
@@ -268,7 +268,7 @@ export default function SearchUnit() {
           <button
             type="button"
             onClick={onSearch}
-            className="w-full whitespace-nowrap primary-button-link hover-animation rounded-[5px] h-[100%] px-4 lg:px-[1.5rem] lg:text-base hover-animation lg:hover:bg-primary-normal/80"
+            className="w-full whitespace-nowrap primary-button-link hover-animation rounded-[5px] h-[100%] px-4 lg:px-[1.5rem] lg:text-base lg:hover:bg-primary-normal/80"
           >
             <span className="font-bold">Search</span>
           </button>

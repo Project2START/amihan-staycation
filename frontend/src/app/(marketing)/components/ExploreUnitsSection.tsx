@@ -36,7 +36,10 @@ export default async function ExploreUnitsSection() {
                 index >= 2 ? "hidden lg:block" : ""
               }`}
             >
-              <Link href={`/units/${product.id}`} className="block group">
+              <Link
+                href={`/units/${product.id}`}
+                className="block group hover-animation lg:hover:opacity-[0.8]"
+              >
                 <div className="relative bg-[#f5f8fa] p-2 md:p-2.5">
                   {product.photos?.[0] ? (
                     <UnitImage
@@ -95,7 +98,10 @@ export default async function ExploreUnitsSection() {
 
       <div className="mt-8 flex justify-center md:mt-10 lg:mt-12">
         <div className="inline-flex flex-col items-center gap-1 text-xs md:text-sm lg:text-base">
-          <Link href="/units" className="font-semibold text-secondary-normal">
+          <Link
+            href="/units"
+            className="font-semibold text-secondary-normal hover-animation lg:hover:opacity-[0.5]"
+          >
             View All Units
           </Link>
           <span className="h-[1px] w-full bg-secondary-normal/70" />

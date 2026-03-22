@@ -15,12 +15,15 @@ function HeaderContent() {
         <ImageMainLogo />
 
         <div className="flex items-center gap-2 text-xs md:hidden">
-          <Link href="/sign-up" className="primary-button-link px-4 py-2.5">
+          <Link
+            href="/sign-up"
+            className="primary-button-link px-4 py-2.5 hover-animation lg:hover:bg-primary-normal/80"
+          >
             Sign Up
           </Link>
           <Link
             href="/sign-in"
-            className="primary-button-link bg-transparent px-4 py-2.5 text-primary-normal text-shadow-lg"
+            className="primary-button-link bg-transparent px-4 py-2.5 text-primary-normal text-shadow-lg hover-animation lg:hover:opacity-[0.5]"
           >
             Sign In
           </Link>
@@ -53,13 +56,13 @@ function HeaderContent() {
           <div className="flex items-center text-xs lg:text-sm xl:text-base">
             <Link
               href="/sign-up"
-              className="primary-button-link px-5 py-2 lg:px-7 lg:py-3"
+              className="primary-button-link px-5 py-2 lg:px-7 lg:py-3 hover-animation lg:hover:bg-primary-normal/80"
             >
               Sign Up
             </Link>
             <Link
               href="/sign-in"
-              className="primary-button-link bg-transparent px-5 py-2 text-primary-normal text-shadow-lg lg:px-7 lg:py-3"
+              className="primary-button-link bg-transparent px-5 py-2 text-primary-normal text-shadow-lg lg:px-7 lg:py-3 hover-animation lg:hover:opacity-[0.5]"
             >
               Sign In
             </Link>

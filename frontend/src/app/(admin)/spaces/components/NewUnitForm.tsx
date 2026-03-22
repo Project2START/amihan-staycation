@@ -176,7 +176,7 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
             </div>
             <div className="flex flex-col mt-[1rem] lg:col-span-2 lg:mt-[1.25rem]">
               <span className="font-bold">About</span>
-              <div className="mt-[0.5rem] h-[7rem] lg:h-[8.5rem]">
+              <div className="mt-[0.5rem] h-[7rem] lg:h-[10rem]">
                 <textarea
                   {...register("about")}
                   id="unit-about"

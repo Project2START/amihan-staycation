@@ -65,7 +65,10 @@ export default async function ProductDetails({
             </span>
           </div>
         ) : (
-          <Link href={`/reviews?productId=${id}`}>
+          <Link
+            href={`/reviews?productId=${id}`}
+            className="hover-animation lg:hover:opacity-[0.5]"
+          >
             <div className="flex items-center mt-[0.5rem]">
               <Rating
                 value={Number(averageRating.toFixed(1))}

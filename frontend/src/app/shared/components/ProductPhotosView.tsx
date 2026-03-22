@@ -55,8 +55,14 @@ export default function ProductPhotosView({
                 enableClickOutside={true}
               >
                 <PhotoFullView
+                  key={activeImage ?? "photo-full-view"}
                   photoSrc={activeImgSrc.image_url}
+                  initialIndex={Math.max(photoIndex, 0)}
                   onCloseDialog={() => setFullView(false)}
+                  images={photos.map((photo) => ({
+                    src: photo.image_url,
+                    alt: photo.alt,
+                  }))}
                 />
               </DialogBaseContent>
             </div>

@@ -206,7 +206,7 @@ export default function SignUpForm() {
                 type="checkbox"
                 checked={agreeTerms}
                 onChange={(e) => setAgreeTerms(e.target.checked)}
-                className="accent-secondary-normal scale-125 mt-[0.25rem] lg:hover:cursor-pointer"
+                className="accent-secondary-normal scale-125 mt-[0.25rem] cursor-pointer hover-animation lg:hover:opacity-80"
                 disabled={loading}
                 aria-label="Agree to terms and privacy policy"
               />

@@ -163,7 +163,23 @@ class BookingService {
           : false;
 
         if (isOlderThanExpiry || hasCheckInPassed) {
-          await bookingRepository.update(booking.id, { status: "expired" });
+          const updatedBooking = await bookingRepository.update(booking.id, {
+            status: "expired",
+          });
+
+          await notificationRepository.create({
+            hasRead: false,
+            isPublic: false,
+            title: "📋 Booking Expired",
+            message:
+              "Your booking has expired. Please contact us if you have any questions or would like to make a new reservation.",
+            pathId: updatedBooking.id ?? "",
+            pathType: "booking",
+            userDestinationId: updatedBooking.userId,
+            userOwnerId: updatedBooking.adminId,
+          });
+
+          await notifyUser(updatedBooking.userId);
           expired++;
         }
         continue;
@@ -171,7 +187,22 @@ class BookingService {
 
       if (booking.status === "confirmed") {
         if (checkInDateTime && now >= checkInDateTime) {
-          await bookingRepository.update(booking.id, { status: "checked_in" });
+          const updatedBooking = await bookingRepository.update(booking.id, {
+            status: "checked_in",
+          });
+
+          await notificationRepository.create({
+            hasRead: false,
+            isPublic: false,
+            title: "✅ Checked In",
+            message: "You have been successfully checked in. Enjoy your stay!",
+            pathId: updatedBooking.id ?? "",
+            pathType: "booking",
+            userDestinationId: updatedBooking.userId,
+            userOwnerId: updatedBooking.adminId,
+          });
+
+          await notifyUser(updatedBooking.userId);
           checkedIn++;
         }
         continue;

@@ -1,7 +1,7 @@
 "use client";
 
 import { Checkbox, Switch } from "@mantine/core";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { BookingSchema } from "../schema/bookings.schema";
 import { getPoolAccessDates } from "@/app/shared/lib/getPoolAccessDates";
@@ -74,6 +74,7 @@ export default function PoolAccess({
             color="var(--color-primary-normal)"
             withThumbIndicator={false}
             disabled={typeof poolAccessDates === "string"}
+            className="hover-animation lg:hover:opacity-[0.5]"
           />
         </div>
 

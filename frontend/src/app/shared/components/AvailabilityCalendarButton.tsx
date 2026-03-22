@@ -125,7 +125,7 @@ export default function AvailabilityCalendarButton({
 
       <button
         onClick={handleOpen}
-        className="hidden md:flex fixed bottom-6 right-5 lg:right-7 h-11 lg:h-12 items-center gap-2 px-4 lg:px-5 rounded-xl bg-primary-normal text-white border border-primary-normal shadow-xl hover:bg-primary-dark transition-colors cursor-pointer z-50"
+        className="hidden md:flex fixed bottom-6 right-5 lg:right-7 h-11 lg:h-12 items-center gap-2 px-4 lg:px-5 rounded-xl bg-primary-normal text-white border border-primary-normal shadow-xl hover:bg-primary-dark transition-colors cursor-pointer z-50 hover-animation lg:hover:bg-primary-normal/90"
         aria-label="View availability calendar"
       >
         <LuCalendarDays size={20} />

@@ -266,7 +266,7 @@ export default function TestimonialsSection() {
 
         {loading && (
           <div>
-            <div className="rounded-xl border border-secondary-normal/10 bg-white px-4 py-8 text-center text-sm text-gray-500">
+            <div className="rounded-xl border border-secondary-normal/10 bg-white px-4 py-8 text-center text-sm text-gray-500 md:py-21">
               Loading testimonials...
             </div>
           </div>

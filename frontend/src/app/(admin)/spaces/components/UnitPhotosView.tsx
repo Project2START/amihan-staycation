@@ -26,7 +26,7 @@ export default function UnitPhotosView() {
 
   return (
     <div className="bg-[#efefef] rounded-lg">
-      <div className="w-full relative h-[10.5rem]">
+      <div className="w-full relative h-[10.5rem] lg:h-[18rem]">
         {activeImgSrc && (
           <>
             <PhotoViewActions

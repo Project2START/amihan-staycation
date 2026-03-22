@@ -102,7 +102,7 @@ export default function AddUnitAttributes({ onClose }: UnitAttributeProps) {
 
   return (
     <div className="px-[1.5rem] pt-[2rem] pb-[1.5rem]">
-      <h2 className="text-center">Add Unit Attribute</h2>
+      <h2 className="text-center text-xl">Add Unit Attribute</h2>
       <div>
         <div className="flex flex-col mt-[1rem]">
           <span className="font-bold">Name</span>
@@ -158,8 +158,8 @@ export default function AddUnitAttributes({ onClose }: UnitAttributeProps) {
         </div>
         <div className="flex flex-col mt-[1rem]">
           <span className="font-bold">Icon</span>
-          <div className="mt-[0.5rem] p-[0.75rem] overflow-auto bg-gray-300 rounded-lg">
-            <ul className="grid grid-flow-col grid-rows-2 gap-4">
+          <div className="mt-[0.5rem] p-[0.75rem] overflow-auto bg-gray-300 rounded-lg lg:h-[10rem]">
+            <ul className="grid grid-flow-col grid-rows-2 gap-4 lg:grid-rows-3">
               {currentAttributeIcons.map(({ id }) => {
                 if (newAttr.iconId === id) {
                   return (

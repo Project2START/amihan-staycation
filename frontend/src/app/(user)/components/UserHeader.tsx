@@ -134,7 +134,7 @@ export default function UserHeader() {
                 <Link
                   href="/profile"
                   onClick={() => setIsProfileMenuOpen(false)}
-                  className="block text-sm text-secondary-normal underline underline-offset-2"
+                  className="block text-sm text-secondary-normal underline underline-offset-2 hover-animation lg:hover:opacity-80"
                 >
                   View profile
                 </Link>
@@ -142,7 +142,7 @@ export default function UserHeader() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-md bg-reject-normal py-2 font-bold text-white"
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-md bg-reject-normal py-2 font-bold text-white hover-animation lg:hover:opacity-80"
                 >
                   <LuLogOut className="text-base" />
                   <span className="text-sm">Log Out</span>

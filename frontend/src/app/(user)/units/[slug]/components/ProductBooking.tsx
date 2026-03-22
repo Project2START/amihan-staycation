@@ -79,7 +79,7 @@ export default function ProductBooking({ productId }: { productId: string }) {
       ) : (
         <Link
           href={user ? bookingHref : signInRedirectHref}
-          className="w-[80%] rounded-lg bg-primary-normal py-[1rem] text-center text-xs font-bold text-white md:w-full md:py-[1.05rem] md:text-sm"
+          className="w-[80%] rounded-lg bg-primary-normal py-[1rem] text-center text-xs font-bold text-white md:w-full md:py-[1.05rem] md:text-sm hover-animation lg:hover:bg-primary-normal/80"
         >
           Book Now
         </Link>

@@ -154,7 +154,7 @@ function ProductDesktopLayout({ product }: { product: Product }) {
           <div className="space-y-3">
             <Link
               href="/units"
-              className="inline-flex items-center gap-2 rounded-full border border-secondary-normal/20 bg-white px-4 py-2 text-xs font-semibold tracking-wide transition hover:bg-primary-light/40"
+              className="inline-flex items-center gap-2 rounded-full border border-secondary-normal/20 bg-white px-4 py-2 text-xs font-semibold tracking-wide hover-animation lg:hover:opacity-[0.5]"
             >
               <MdArrowBackIos className="text-[0.7rem]" />
               Back to units
