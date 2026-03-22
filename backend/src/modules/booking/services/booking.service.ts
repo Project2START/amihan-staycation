@@ -133,6 +133,27 @@ const buildDateTime = (date: string, time: string): Date => {
   return new Date(`${date}T${time}`);
 };
 
+const toDayKey = (value: Date) => {
+  const yyyy = value.getFullYear();
+  const mm = String(value.getMonth() + 1).padStart(2, "0");
+  const dd = String(value.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
+
+const getSecondsOfDay = (value: Date) =>
+  value.getHours() * 60 * 60 + value.getMinutes() * 60 + value.getSeconds();
+
+const getConfiguredCheckInSeconds = () => {
+  const [hoursRaw = "0", minutesRaw = "0", secondsRaw = "0"] =
+    BOOKING_CHECK_IN_TIME.split(":");
+
+  const hours = Number(hoursRaw) || 0;
+  const minutes = Number(minutesRaw) || 0;
+  const seconds = Number(secondsRaw) || 0;
+
+  return hours * 60 * 60 + minutes * 60 + seconds;
+};
+
 class BookingService {
   async runAutomatedStatusTransitions(now: Date = new Date()) {
     const bookings = await bookingRepository.findForStatusAutomation();
@@ -563,6 +584,11 @@ class BookingService {
         dates.add(`${yyyy}-${mm}-${dd}`);
         current.setDate(current.getDate() + 1);
       }
+    }
+
+    const now = new Date();
+    if (getSecondsOfDay(now) >= getConfiguredCheckInSeconds()) {
+      dates.add(toDayKey(now));
     }
 
     return Array.from(dates);
