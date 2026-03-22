@@ -116,7 +116,7 @@ export default function UnitImagesDraggable({
             className={
               isActive
                 ? "outline-3 outline-primary-normal rounded-lg"
-                : undefined
+                : "hover-animation lg:hover:opacity-80"
             }
           >
             <UnitImage src={item.src} style="w-[7rem] h-[4rem]" />
@@ -128,7 +128,9 @@ export default function UnitImagesDraggable({
           type="button"
           onClick={() => handleActiveImage(item.id)}
           className={
-            isActive ? "outline-3 outline-primary-normal rounded-lg" : undefined
+            isActive
+              ? "outline-3 outline-primary-normal rounded-lg"
+              : "hover-animation lg:hover:opacity-80"
           }
         >
           <UnitImage src={item.src} style="w-[7rem] h-[4rem]" />

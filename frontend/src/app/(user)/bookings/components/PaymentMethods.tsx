@@ -138,7 +138,7 @@ export default function PaymentMethods() {
               key={method.id}
               type="button"
               onClick={() => handleSelect(index)}
-              className={`relative h-[2.5rem] w-[2.5rem] flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
+              className={`relative h-[2.5rem] w-[2.5rem] flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors hover-animation lg:hover:opacity-50 ${
                 index === selectedIndex
                   ? "border-primary-normal"
                   : "border-secondary-normal/30"

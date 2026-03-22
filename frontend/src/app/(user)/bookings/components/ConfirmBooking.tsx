@@ -22,7 +22,7 @@ export default function ConfirmBooking({
         <input
           type="checkbox"
           {...register("agree_terms")}
-          className="accent-secondary-normal scale-125 mt-[0.25rem]"
+          className="accent-secondary-normal scale-125 mt-[0.25rem] cursor-pointer hover-animation lg:hover:opacity-80"
           disabled={confirmLoading}
           //   style={{ width: "1rem", height: "1rem" }}
         />
@@ -30,11 +30,11 @@ export default function ConfirmBooking({
           By confirming this booking, you acknowledge that all information
           provided is accurate and final. Please review your details carefully,
           as incorrect information may affect your reservation. See our{" "}
-          <Link href={"/about/terms-and-conditions"}>
+          <Link href={"/terms-and-conditions"}>
             <span className="underline font-bold">Terms & Conditions</span>
           </Link>{" "}
           and{" "}
-          <Link href={"/about/privacy-policy"}>
+          <Link href={"/privacy-policy"}>
             <span className="underline font-bold">Privacy Policy.</span>
           </Link>
         </p>
@@ -42,7 +42,7 @@ export default function ConfirmBooking({
       <div className="flex justify-center gap-x-10 font-bold mt-[1.5rem]">
         <button
           type="button"
-          className="text-primary-normal py-[0.5rem] px-[1.5rem] rounded-lg"
+          className="text-primary-normal py-[0.5rem] px-[1.5rem] rounded-lg hover-animation lg:hover:opacity-80"
           onClick={prevStep}
           disabled={confirmLoading}
         >
@@ -50,7 +50,7 @@ export default function ConfirmBooking({
         </button>
         <LoadingOverlay loading={confirmLoading}>
           <button
-            className="bg-primary-normal text-white py-[0.5rem] px-[2.5rem] rounded-lg"
+            className="bg-primary-normal text-white py-[0.5rem] px-[2.5rem] rounded-lg hover-animation lg:hover:bg-primary-normal/80"
             disabled={!agree_terms || confirmLoading}
           >
             <span>Confirm Booking</span>

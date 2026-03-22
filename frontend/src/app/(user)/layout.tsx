@@ -3,6 +3,7 @@ import FooterMain from "@/app/shared/components/FooterMain";
 import RoleGuard from "./guard/RoleGuard";
 import { cookies } from "next/headers";
 import UserHeader from "./components/UserHeader";
+import UserAvailabilityCalendar from "./components/UserAvailabilityCalendar";
 
 export default async function UserLayout({
   children,
@@ -13,12 +14,11 @@ export default async function UserLayout({
   const userId = cookieStore.get("user_id")?.value;
 
   return (
-    <>
-      <RoleGuard userId={userId}>
-        <UserHeader />
-        <main>{children}</main>
-        <FooterMain />
-      </RoleGuard>
-    </>
+    <RoleGuard userId={userId}>
+      <UserHeader />
+      <main>{children}</main>
+      <UserAvailabilityCalendar />
+      <FooterMain />
+    </RoleGuard>
   );
 }

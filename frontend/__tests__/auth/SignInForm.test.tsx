@@ -13,6 +13,7 @@ jest.mock("../../src/app/(auth)/sign-in/api/signIn");
 const pushMock = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 describe("SignInForm Component", () => {

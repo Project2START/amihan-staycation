@@ -2,6 +2,7 @@ import { expressMiddleware } from "@as-integrations/express5";
 import app, { httpServer, server } from "./app";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { createContext } from "./graphql/context";
+import { startBookingStatusCron } from "./jobs/bookingStatusCron";
 
 const PORT = Number(process.env.PORT) || 5000;
 
@@ -24,6 +25,8 @@ async function startServer() {
   await new Promise<void>((resolve) =>
     httpServer.listen({ port: PORT }, resolve),
   );
+
+  startBookingStatusCron();
 
   console.log(`🚀 Server ready at http://localhost:${PORT}`);
 }

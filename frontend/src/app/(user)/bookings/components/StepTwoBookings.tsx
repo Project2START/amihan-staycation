@@ -29,16 +29,18 @@ export default function StepTwoBookings() {
   });
 
   return (
-    <div className="h-[60vh] px-[0.75rem] py-[1.5rem] overflow-y-auto shadow-[inset_0_12px_12px_-12px_rgba(0,0,0,0.2),inset_0_-12px_12px_-12px_rgba(0,0,0,0.2)]">
+    <div className="h-[60vh] px-[0.75rem] py-[1.5rem] overflow-y-auto shadow-[inset_0_12px_12px_-12px_rgba(0,0,0,0.2),inset_0_-12px_12px_-12px_rgba(0,0,0,0.2)] lg:px-[1rem] lg:py-[1.75rem]">
       <div>
-        <h2 className="text-center font-normal mb-[1rem]">Additional Guests</h2>
+        <h2 className="text-center text-base font-normal mb-[1rem] lg:text-xl lg:mb-[1.25rem] lg:mb-[1.5rem]">
+          Additional Guests
+        </h2>
       </div>
-      <div className="flex flex-col gap-y-10">
+      <div className="flex flex-col gap-y-10 lg:gap-y-12">
         {fields.map((field, index) => {
           return (
             <div
               key={field.id}
-              className="border-2 border-secondary-normal/30 rounded-lg p-[1rem] flex flex-col gap-y-5 relative"
+              className="border-2 border-secondary-normal/30 rounded-lg p-[1rem] flex flex-col gap-y-5 relative lg:p-[1.25rem] lg:gap-y-6"
             >
               <button
                 type="button"
@@ -62,11 +64,11 @@ export default function StepTwoBookings() {
                       ? `additionalGuestName${index}-error`
                       : undefined
                   }
-                  className="w-full h-full border-2 rounded-lg border-secondary-normal/30 p-[0.5rem] input-base-focus"
+                  className="w-full h-full border-2 rounded-lg border-secondary-normal/30 p-[0.5rem] input-base-focus lg:p-[0.75rem]"
                 />
                 {errors.additional_guests?.[index]?.name && (
                   <p
-                    className="text-red-900 text-[0.65rem]"
+                    className="text-red-900 text-[0.65rem] lg:text-xs"
                     id="guestName-error"
                   >
                     {errors.additional_guests[index].name.message}
@@ -88,11 +90,11 @@ export default function StepTwoBookings() {
                       : undefined
                   }
                   onWheel={(e) => e.currentTarget.blur()}
-                  className="w-full h-full border-2 rounded-lg border-secondary-normal/30 p-[0.5rem] input-base-focus"
+                  className="w-full h-full border-2 rounded-lg border-secondary-normal/30 p-[0.5rem] input-base-focus lg:p-[0.75rem]"
                 />
                 {errors.additional_guests?.[index]?.age && (
                   <p
-                    className="text-red-900 text-[0.65rem]"
+                    className="text-red-900 text-[0.65rem] lg:text-xs"
                     id="guestAge-error"
                   >
                     {errors.additional_guests[index].age.message}
@@ -138,7 +140,7 @@ export default function StepTwoBookings() {
           onClick={() => {
             append(value);
           }}
-          className="px-[3rem] py-[0.5rem] rounded-lg border-2 border-secondary-normal/30"
+          className="px-[3rem] py-[0.5rem] rounded-lg border-2 border-secondary-normal/30 lg:px-[3.5rem] lg:py-[0.75rem] hover-animation lg:text-sm lg:hover:opacity-80"
         >
           <span>Add Guest</span>
         </button>

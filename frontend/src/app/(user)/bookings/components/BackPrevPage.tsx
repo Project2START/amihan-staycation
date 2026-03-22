@@ -25,8 +25,8 @@ export default function BackPrevPage() {
           setGoBackDialog(false);
         }}
       >
-        <div className="px-[2rem] pt-[1.5rem] pb-[1rem] text-sm">
-          <p className="text-center flex items-center">
+        <div className="p-5 text-sm lg:p-7">
+          <p className="text-center flex items-center justify-center lg:text-base">
             {/* <span className="text-reject-normal text-2xl">
                   <IoIosAlert />
                 </span> */}
@@ -36,7 +36,7 @@ export default function BackPrevPage() {
               <strong>Your changes won’t be saved.</strong>
             </span>
           </p>
-          <div className="flex justify-center gap-x-8 items-center mt-[1rem]">
+          <div className="flex justify-center gap-x-8 items-center mt-[1rem] lg:text-base">
             <div>
               <button type="button" onClick={() => setGoBackDialog(false)}>
                 No

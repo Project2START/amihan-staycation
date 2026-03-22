@@ -14,9 +14,11 @@ export default function Rating({
   className = "",
 }: RatingProps) {
   return (
-    <div className={`flex items-center gap-x-1 ${className}`}>
+    <div
+      className={`text-sm flex items-center gap-x-1 ${className} xl:text-lg`}
+    >
       <span className={textColor}>{value}</span>
-      <span className={`text-sm ${starColor}`}>
+      <span className={`${starColor}`}>
         <FaStar />
       </span>
     </div>

@@ -14,7 +14,7 @@ export default async function verifyGuest(req: NextRequest) {
     const role = payload.user_role;
     const userId = payload.user_id;
 
-    if (role === "user" && userId) {
+    if ((role === "user" || role === "agent") && userId) {
       const response = NextResponse.redirect(new URL(`/units`, req.url));
 
       response.cookies.set("user_id", `${userId}`, {
@@ -26,7 +26,6 @@ export default async function verifyGuest(req: NextRequest) {
       });
 
       return response;
-      // return NextResponse.redirect(new URL(`/units?user=${userId}`, req.url));
     }
     if (role === "admin" && userId) {
       const response = NextResponse.redirect(new URL(`/spaces`, req.url));
@@ -40,7 +39,6 @@ export default async function verifyGuest(req: NextRequest) {
       });
 
       return response;
-      // return NextResponse.redirect(new URL(`/spaces?user=${userId}`, req.url));
     }
   } catch (err) {
     return NextResponse.rewrite(notForYouPage);

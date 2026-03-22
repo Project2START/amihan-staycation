@@ -61,7 +61,7 @@ describe("MyBookings component", () => {
     render(<MyBookings />);
 
     expect(
-      screen.getByText(/you currently have no bookings/i),
+      screen.getByText(/no pending reservations right now/i),
     ).toBeInTheDocument();
   });
 

@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, Product, Photo } from "@prisma/client";
+import { Prisma, PrismaClient, Product, Photo, Booking } from "@prisma/client";
 import {
   AppError,
   ConflictError,
@@ -51,10 +51,87 @@ class ProductRepository {
     try {
       return await prisma.product.findMany({
         where: { userId: id },
+        orderBy: { createdAt: "desc" },
         include: { photos: { orderBy: { order_index: "asc" } } },
       });
     } catch (error) {
       throw new AppError("Could not fetch products. Please try again");
+    }
+  }
+
+  async findAllByOwnerIds(ownerIds: string[]): Promise<ProductWithPhotos[]> {
+    if (ownerIds.length === 0) {
+      return [];
+    }
+
+    try {
+      return await prisma.product.findMany({
+        where: { userId: { in: ownerIds } },
+        include: { photos: { orderBy: { order_index: "asc" } } },
+      });
+    } catch (error) {
+      throw new AppError("Could not fetch products. Please try again");
+    }
+  }
+
+  async findSuccessfulBookingCountsByProductIds(
+    productIds: string[],
+  ): Promise<Record<string, number>> {
+    if (productIds.length === 0) {
+      return {};
+    }
+
+    try {
+      const grouped = await prisma.booking.groupBy({
+        by: ["productId"],
+        where: {
+          productId: { in: productIds },
+          status: "checked_out",
+        },
+        _count: {
+          _all: true,
+        },
+      });
+
+      return grouped.reduce<Record<string, number>>((acc, row) => {
+        if (!row.productId) {
+          return acc;
+        }
+
+        acc[row.productId] = row._count._all;
+        return acc;
+      }, {});
+    } catch (error) {
+      throw new AppError(
+        "Could not fetch product popularity. Please try again",
+      );
+    }
+  }
+
+  async findAvailabilityBlockingByProductIds(
+    productIds: string[],
+  ): Promise<Pick<Booking, "productId" | "check_period">[]> {
+    if (productIds.length === 0) {
+      return [];
+    }
+
+    try {
+      return await prisma.booking.findMany({
+        where: {
+          productId: { in: productIds },
+          status: {
+            in: ["pending", "action_required", "confirmed", "checked_in"],
+          },
+        },
+        select: {
+          productId: true,
+          check_period: true,
+        },
+      });
+    } catch (error) {
+      throw new AppError(
+        "Could not fetch product availability. Please try again",
+      );
     }
   }
 

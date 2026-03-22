@@ -12,12 +12,15 @@ export default function NavigationBottomSpaces() {
   const [addNew, setAddNew] = useState<boolean>(false);
 
   const pathname = usePathname();
+  const visibleNavItems = navList.filter(
+    (item) => item.path !== "/payment-methods",
+  );
 
   // Check if on Spaces page
   const isOnSpacesPage = pathname === "/spaces";
 
   return (
-    <div className="fixed bottom-0 left-0 w-full z-999">
+    <div className="fixed bottom-0 left-0 w-full z-999 lg:hidden">
       <nav className="relative px-[1.5rem] py-[0.75rem] text-gray-500 bg-white shadow-[0_0_15px]">
         <ul className="flex items-center justify-between">
           {/* Plus Button - Only visible on Spaces page */}
@@ -48,8 +51,9 @@ export default function NavigationBottomSpaces() {
             </li>
           )}
 
-          {navList.map((list) => {
+          {visibleNavItems.map((list) => {
             const isActive = pathname === list.path;
+            const Icon = list.icon;
 
             return (
               <li key={list.id}>
@@ -65,7 +69,7 @@ export default function NavigationBottomSpaces() {
                           : { color: "inherit" }
                       }
                     >
-                      {list.icon}
+                      <Icon />
                     </span>
                     <span
                       className="text-xs mt-[0.5rem] transition-colors"

@@ -57,7 +57,10 @@ export default function UploadFileParentAdditional({
         fieldName={`additional_guests.${index}.valid_id`}
       />
       {errors.additional_guests?.[index]?.valid_id && (
-        <p className="text-red-900 text-[0.65rem]" id="guestValidId-error">
+        <p
+          className="text-red-900 text-[0.65rem] lg:text-xs"
+          id="guestValidId-error"
+        >
           Valid ID is required
         </p>
       )}

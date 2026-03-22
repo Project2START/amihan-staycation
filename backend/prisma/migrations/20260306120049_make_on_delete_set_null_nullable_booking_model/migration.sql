@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "bookings" ALTER COLUMN "userId" DROP NOT NULL,
+ALTER COLUMN "adminId" DROP NOT NULL,
+ALTER COLUMN "productId" DROP NOT NULL;

@@ -31,8 +31,32 @@ class ProductController {
     });
   }
 
-  async getProducts(_: Request, res: Response) {
-    const products = await productService.getAll();
+  async getProducts(req: Request, res: Response) {
+    const user = (req as any).user;
+
+    const checkIn =
+      typeof req.query.checkIn === "string" ? req.query.checkIn : undefined;
+    const checkOut =
+      typeof req.query.checkOut === "string" ? req.query.checkOut : undefined;
+    const adults =
+      typeof req.query.adults === "string"
+        ? Number(req.query.adults)
+        : undefined;
+    const children =
+      typeof req.query.children === "string"
+        ? Number(req.query.children)
+        : undefined;
+
+    const products = await productService.getAll(
+      user?.user_role,
+      user?.user_id,
+      {
+        checkIn,
+        checkOut,
+        adults: Number.isFinite(adults) ? adults : undefined,
+        children: Number.isFinite(children) ? children : undefined,
+      },
+    );
 
     res.status(200).json({
       message: "Products successfully fetched",

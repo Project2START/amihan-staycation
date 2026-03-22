@@ -1,7 +1,8 @@
 import React from "react";
-import HeaderAdmin from "./components/HeaderAdmin";
 import { cookies } from "next/headers";
 import ProtectedPagesGuard from "./ui/ProtectedPagesGuard";
+import AdminAvailabilityCalendar from "./components/AdminAvailabilityCalendar";
+import AdminDesktopShell from "./components/AdminDesktopShell";
 
 export default async function AdminLayout({
   children,
@@ -14,8 +15,8 @@ export default async function AdminLayout({
   return (
     <>
       <ProtectedPagesGuard userId={userId}>
-        <HeaderAdmin />
-        <main className="grow">{children}</main>
+        <AdminDesktopShell>{children}</AdminDesktopShell>
+        <AdminAvailabilityCalendar />
       </ProtectedPagesGuard>
     </>
   );

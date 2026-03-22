@@ -8,6 +8,73 @@ import {
 } from "../../../shared/helpers/appErrors";
 import { generateFilePath } from "../../../shared/helpers/generators/generateFilePath";
 import { getSupabaseImagesPath } from "../../../shared/helpers/getters/getSupabaseImagesPath";
+import { agentsService } from "../../agents/services/agents.service";
+import { bookingRepository } from "../../booking/repositories/bookings.repository";
+import { Prisma } from "@prisma/client";
+import { reviewRepository } from "../../review/repositories/review.repository";
+
+interface ProductSearchFilters {
+  checkIn?: string;
+  checkOut?: string;
+  adults?: number;
+  children?: number;
+}
+
+type BookingCheckPeriod = {
+  check_in?: string;
+  check_out?: string;
+};
+
+type ProductSortMetrics = {
+  isAvailable: boolean;
+  popularity: number;
+  rating: number;
+  ratingCount: number;
+};
+
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+const hasDateOverlap = (
+  searchCheckIn: string,
+  searchCheckOut: string,
+  bookingPeriod: Prisma.JsonValue,
+) => {
+  if (!bookingPeriod || typeof bookingPeriod !== "object") {
+    return false;
+  }
+
+  const { check_in, check_out } = bookingPeriod as BookingCheckPeriod;
+
+  if (!check_in || !check_out) {
+    return false;
+  }
+
+  // Conflict rule: searchCheckIn < bookingCheckOut AND searchCheckOut > bookingCheckIn
+  return searchCheckIn < check_out && searchCheckOut > check_in;
+};
+
+const toDateOnlyString = (date: Date) => date.toISOString().slice(0, 10);
+
+const getDefaultAvailabilityWindow = () => {
+  const now = new Date();
+  const checkIn = toDateOnlyString(now);
+  const checkOutDate = new Date(now);
+  checkOutDate.setDate(checkOutDate.getDate() + 1);
+
+  return {
+    checkIn,
+    checkOut: toDateOnlyString(checkOutDate),
+  };
+};
+
+const weightedRatingScore = (rating: number, ratingCount: number) => {
+  // Simple confidence weighting: products with more reviews are favored when ratings are close.
+  if (ratingCount === 0) {
+    return 0;
+  }
+
+  return rating * Math.log10(ratingCount + 1);
+};
 
 class ProductService {
   async create(
@@ -91,20 +158,277 @@ class ProductService {
 
     return rest;
   }
-  async getAll() {
-    const products = await productRepository.findAll();
+  async getAll(role?: string, userId?: string, filters?: ProductSearchFilters) {
+    const hasCheckIn = Boolean(filters?.checkIn);
+    const hasCheckOut = Boolean(filters?.checkOut);
 
-    return products.map((product) => {
+    if (hasCheckIn !== hasCheckOut) {
+      throw new BadRequestError(
+        "Both checkIn and checkOut are required for date filtering",
+      );
+    }
+
+    if (filters?.checkIn && !DATE_ONLY_PATTERN.test(filters.checkIn)) {
+      throw new BadRequestError("checkIn must use YYYY-MM-DD format");
+    }
+
+    if (filters?.checkOut && !DATE_ONLY_PATTERN.test(filters.checkOut)) {
+      throw new BadRequestError("checkOut must use YYYY-MM-DD format");
+    }
+
+    if (
+      filters?.checkIn &&
+      filters?.checkOut &&
+      filters.checkIn >= filters.checkOut
+    ) {
+      throw new BadRequestError("checkOut must be after checkIn");
+    }
+
+    const minAdults =
+      typeof filters?.adults === "number" && filters.adults > 0
+        ? Math.floor(filters.adults)
+        : 0;
+
+    const minChildren =
+      typeof filters?.children === "number" && filters.children > 0
+        ? Math.floor(filters.children)
+        : 0;
+
+    const minGuests = minAdults + minChildren;
+
+    const shouldFilterByDate = Boolean(filters?.checkIn && filters?.checkOut);
+
+    let baseProducts;
+
+    if (role === "agent") {
+      if (!userId) {
+        throw new ForbiddenError("Unauthorized access");
+      }
+
+      const agent = await agentsService.getAgentByUserId(userId);
+
+      if (!agent) {
+        throw new NotFoundError("User agent not found");
+      }
+
+      baseProducts = await productRepository.findAllByOwnerIds([agent.adminId]);
+    } else if (role === "admin") {
+      if (!userId) {
+        throw new ForbiddenError("Unauthorized access");
+      }
+
+      baseProducts = await productRepository.findAllById(userId);
+    } else {
+      baseProducts = await productRepository.findAll();
+    }
+
+    let filteredProducts = baseProducts;
+
+    if (minGuests > 0) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.maxPersons >= minGuests,
+      );
+    }
+
+    if (shouldFilterByDate) {
+      const productIds = filteredProducts.map((product) => product.id);
+
+      const blockingBookings =
+        await bookingRepository.findBlockingByProductIds(productIds);
+
+      const blockingProductIds = new Set(
+        blockingBookings
+          .filter((booking) => {
+            return hasDateOverlap(
+              filters!.checkIn!,
+              filters!.checkOut!,
+              booking.check_period,
+            );
+          })
+          .map((booking) => booking.productId)
+          .filter((productId): productId is string => Boolean(productId)),
+      );
+
+      filteredProducts = filteredProducts.filter(
+        (product) => !blockingProductIds.has(product.id),
+      );
+    }
+
+    const filteredProductIds = filteredProducts.map((product) => product.id);
+    const [popularityByProductId, reviewRows, availabilityRows] =
+      await Promise.all([
+        productRepository.findSuccessfulBookingCountsByProductIds(
+          filteredProductIds,
+        ),
+        reviewRepository.findRatingRowsByProductIds(filteredProductIds, false),
+        productRepository.findAvailabilityBlockingByProductIds(
+          filteredProductIds,
+        ),
+      ]);
+
+    const ratingAggregateByProductId = reviewRows.reduce<
+      Record<string, { total: number; count: number }>
+    >((acc, row) => {
+      const resolvedProductId = row.productId ?? row.booking?.productId;
+
+      if (!resolvedProductId) {
+        return acc;
+      }
+
+      if (!acc[resolvedProductId]) {
+        acc[resolvedProductId] = { total: 0, count: 0 };
+      }
+
+      acc[resolvedProductId].total += row.rating;
+      acc[resolvedProductId].count += 1;
+
+      return acc;
+    }, {});
+
+    const availabilityWindow = shouldFilterByDate
+      ? {
+          checkIn: filters!.checkIn!,
+          checkOut: filters!.checkOut!,
+        }
+      : getDefaultAvailabilityWindow();
+
+    const unavailableProductIds = new Set(
+      availabilityRows
+        .filter((booking) => {
+          if (!booking.productId) {
+            return false;
+          }
+
+          return hasDateOverlap(
+            availabilityWindow.checkIn,
+            availabilityWindow.checkOut,
+            booking.check_period as Prisma.JsonValue,
+          );
+        })
+        .map((booking) => booking.productId)
+        .filter((productId): productId is string => Boolean(productId)),
+    );
+
+    const productsWithMetrics = filteredProducts.map((product) => {
       const { createdAt, updatedAt, ...rest } = product;
-      return rest;
+
+      const ratingAggregate = ratingAggregateByProductId[product.id];
+      const ratingCount = ratingAggregate?.count ?? 0;
+      const rating = ratingCount > 0 ? ratingAggregate.total / ratingCount : 0;
+      const popularity = popularityByProductId[product.id] ?? 0;
+      const isAvailable = !unavailableProductIds.has(product.id);
+
+      return {
+        ...rest,
+        isAvailable,
+        popularity,
+        rating: Number(rating.toFixed(1)),
+        ratingCount,
+      };
     });
+
+    const hasActiveSearch = Boolean(
+      filters?.checkIn || filters?.checkOut || minGuests > 0,
+    );
+
+    productsWithMetrics.sort((a, b) => {
+      const metricA: ProductSortMetrics = {
+        isAvailable: a.isAvailable,
+        popularity: a.popularity,
+        rating: a.rating,
+        ratingCount: a.ratingCount,
+      };
+      const metricB: ProductSortMetrics = {
+        isAvailable: b.isAvailable,
+        popularity: b.popularity,
+        rating: b.rating,
+        ratingCount: b.ratingCount,
+      };
+
+      if (hasActiveSearch) {
+        if (metricA.isAvailable !== metricB.isAvailable) {
+          return metricA.isAvailable ? -1 : 1;
+        }
+
+        if (metricA.popularity !== metricB.popularity) {
+          return metricB.popularity - metricA.popularity;
+        }
+      } else {
+        if (metricA.popularity !== metricB.popularity) {
+          return metricB.popularity - metricA.popularity;
+        }
+      }
+
+      const weightedA = weightedRatingScore(
+        metricA.rating,
+        metricA.ratingCount,
+      );
+      const weightedB = weightedRatingScore(
+        metricB.rating,
+        metricB.ratingCount,
+      );
+
+      if (weightedA !== weightedB) {
+        return weightedB - weightedA;
+      }
+
+      if (metricA.rating !== metricB.rating) {
+        return metricB.rating - metricA.rating;
+      }
+
+      if (hasActiveSearch) {
+        return a.name.localeCompare(b.name);
+      }
+
+      if (metricA.isAvailable !== metricB.isAvailable) {
+        return metricA.isAvailable ? -1 : 1;
+      }
+
+      return a.name.localeCompare(b.name);
+    });
+
+    return productsWithMetrics;
   }
   async getAllById(id: string) {
     const products = await productRepository.findAllById(id);
 
+    const productIds = products.map((product) => product.id);
+    const reviewRows = await reviewRepository.findRatingRowsByProductIds(
+      productIds,
+      false,
+    );
+
+    const ratingAggregateByProductId = reviewRows.reduce<
+      Record<string, { total: number; count: number }>
+    >((acc, row) => {
+      const resolvedProductId = row.productId ?? row.booking?.productId;
+
+      if (!resolvedProductId) {
+        return acc;
+      }
+
+      if (!acc[resolvedProductId]) {
+        acc[resolvedProductId] = { total: 0, count: 0 };
+      }
+
+      acc[resolvedProductId].total += row.rating;
+      acc[resolvedProductId].count += 1;
+
+      return acc;
+    }, {});
+
     return products.map((product) => {
       const { createdAt, updatedAt, ...rest } = product;
-      return rest;
+
+      const ratingAggregate = ratingAggregateByProductId[product.id];
+      const ratingCount = ratingAggregate?.count ?? 0;
+      const rating = ratingCount > 0 ? ratingAggregate.total / ratingCount : 0;
+
+      return {
+        ...rest,
+        rating: Number(rating.toFixed(1)),
+        ratingCount,
+      };
     });
   }
   async update(

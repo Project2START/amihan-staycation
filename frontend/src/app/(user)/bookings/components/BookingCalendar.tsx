@@ -9,22 +9,59 @@ import { AnimatePresence, motion } from "motion/react";
 import ClickOutside from "@/app/shared/ui/ClickOutside";
 import CalendarBooking from "@/app/shared/components/CalendarBooking";
 import { DatesRangeValue } from "@mantine/dates";
+import { gql } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client/react";
+
+const GET_BOOKED_DATES = gql`
+  query GetBookedDatesByProduct($productId: String!) {
+    bookedDatesByProduct(productId: $productId)
+  }
+`;
 
 export default function BookingCalendar() {
   const [openCalendar, setOpenCalendar] = useState(false);
+  const [disabledDates, setDisabledDates] = useState<Date[]>([]);
+  const [isCalendarLoading, setIsCalendarLoading] = useState(false);
 
   const {
     formState: { errors },
     control,
     setFocus,
+    getValues,
   } = useFormContext<BookingSchema>();
 
-  const handleOpenCalendar = () => {
+  const [fetchBookedDates] = useLazyQuery<{
+    bookedDatesByProduct: string[];
+  }>(GET_BOOKED_DATES, {
+    fetchPolicy: "network-only",
+  });
+
+  const handleOpenCalendar = async () => {
     setOpenCalendar(true);
+
+    const productId = getValues("product_id");
+    if (productId) {
+      setIsCalendarLoading(true);
+      try {
+        const { data } = await fetchBookedDates({ variables: { productId } });
+        if (data?.bookedDatesByProduct) {
+          setDisabledDates(
+            data.bookedDatesByProduct.map((date: string) => new Date(date)),
+          );
+        } else {
+          setDisabledDates([]);
+        }
+      } finally {
+        setIsCalendarLoading(false);
+      }
+    } else {
+      setDisabledDates([]);
+    }
   };
 
   const handleCloseCalendar = () => {
     setOpenCalendar(false);
+    setIsCalendarLoading(false);
   };
 
   useEffect(() => {
@@ -45,7 +82,7 @@ export default function BookingCalendar() {
               <button
                 ref={field.ref}
                 type="button"
-                className="flex justify-center input-base relative"
+                className="flex justify-center input-base relative lg:text-base"
                 onClick={handleOpenCalendar}
               >
                 {!checkPeriod ? (
@@ -64,15 +101,15 @@ export default function BookingCalendar() {
                   </div>
                 )}
 
-                <div className="absolute right-5 top-[50%] translate-y-[-50%] opacity-50">
-                  <span className="text-lg">
+                <div className="absolute right-5 top-[50%] translate-y-[-50%] opacity-50 lg:right-6">
+                  <span className="text-lg lg:text-xl">
                     <LuCalendarDays />
                   </span>
                 </div>
               </button>
               {errors.check_period && (
                 <p
-                  className="text-red-900 text-[0.65rem]"
+                  className="text-red-900 text-[0.65rem] lg:text-xs"
                   id="guestCheckPeriod-error"
                 >
                   Check in and check out date is required
@@ -89,21 +126,31 @@ export default function BookingCalendar() {
                     className="absolute w-[100%] top-[100%] z-999"
                   >
                     <ClickOutside onClickOutside={handleCloseCalendar}>
-                      <CalendarBooking
-                        defaultValue={[
-                          checkPeriod?.check_in ?? null,
-                          checkPeriod?.check_out ?? null,
-                        ]}
-                        onCalendarChange={(value: DatesRangeValue<string>) => {
-                          if (value[0] && value[1]) {
-                            handleCloseCalendar();
-                            field.onChange({
-                              check_in: value[0],
-                              check_out: value[1],
-                            });
-                          }
-                        }}
-                      />
+                      {isCalendarLoading ? (
+                        <div className="bg-white p-[1.5rem] rounded-lg overflow-hidden min-w-0 shadow-xl/30 w-full lg:p-[1.75rem]">
+                          <div className="h-[16rem] w-full animate-pulse rounded-md bg-secondary-normal/10 lg:h-[18rem]" />
+                        </div>
+                      ) : (
+                        <CalendarBooking
+                          hasPresets={false}
+                          disabledDates={disabledDates}
+                          defaultValue={[
+                            checkPeriod?.check_in ?? null,
+                            checkPeriod?.check_out ?? null,
+                          ]}
+                          onCalendarChange={(
+                            value: DatesRangeValue<string>,
+                          ) => {
+                            if (value[0] && value[1]) {
+                              handleCloseCalendar();
+                              field.onChange({
+                                check_in: value[0],
+                                check_out: value[1],
+                              });
+                            }
+                          }}
+                        />
+                      )}
                     </ClickOutside>
                   </motion.div>
                 )}

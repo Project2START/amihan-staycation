@@ -8,20 +8,39 @@ import productRoutes from "./modules/product/product.routes";
 import registreeRoutes from "./modules/registree/registree.routes";
 import paymentMethodRoutes from "./modules/paymentMethod/paymentMethod.routes";
 import bookingRoutes from "./modules/booking/booking.routes";
+import agentRoutes from "./modules/agents/agents.routes";
+import notificationRoutes from "./modules/notification/notification.routes";
+import reviewRoutes from "./modules/review/review.routes";
 import { ApolloServer } from "@apollo/server";
 import cookieParser from "cookie-parser";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import session from "express-session";
 import { resolvers, typeDefs } from "./graphql/schema";
 import http from "http";
-// import { MyContext } from "./graphql/context";
-
+import { Server, Socket } from "socket.io";
+import { getVerifiedUserFromSocket } from "./shared/helpers/getVerifiedUserFromSocket";
+import { notificationRepository } from "./modules/notification/repositories/notification.repository";
+import {
+  globalApiRateLimiter,
+  globalGraphqlRateLimiter,
+  trustProxyValue,
+} from "./middleware/rateLimit";
 const app = express();
 
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.set("trust proxy", trustProxyValue);
+
+app.use(cors({ origin: process.env.FRONTEND_HOST, credentials: true }));
+
 app.use(express.json());
 
 app.use(cookieParser());
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({
+    status: "ok",
+    uptime: process.uptime(),
+  });
+});
 
 app.use(
   session({
@@ -31,13 +50,40 @@ app.use(
   }),
 );
 
+app.use("/api", globalApiRateLimiter);
+app.use("/graphql", globalGraphqlRateLimiter);
+
 app.use("/api/registrees", registreeRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/paymentMethods", paymentMethodRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/agents", agentRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 export const httpServer = http.createServer(app);
+
+export const io = new Server(httpServer, {
+  cors: { origin: process.env.FRONTEND_HOST, credentials: true },
+});
+
+io.on("connection", (socket: Socket) => {
+  socket.on("subscribe", async (data) => {
+    const user = getVerifiedUserFromSocket(socket);
+
+    if (data.type === "notifications") {
+      socket.join(`notifications:${user.user_id}`);
+
+      const unreadNotifCount =
+        await notificationRepository.countUnreadByDestination(
+          user.user_id ?? "",
+        );
+
+      socket.emit("notification:unread-count", { count: unreadNotifCount });
+    }
+  });
+});
 
 export const server = new ApolloServer({
   typeDefs,

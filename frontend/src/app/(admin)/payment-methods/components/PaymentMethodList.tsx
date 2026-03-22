@@ -46,22 +46,38 @@ export default function PaymentMethodList({
   return (
     <>
       {paymentMethods.length === 0 ? (
-        <div className="flex items-center justify-center h-[60vh]">
-          <p className="text-center font-bold text-lg text-gray-300">
-            No payment methods yet. <br /> Tap the + button to add one.
-          </p>
+        <div className="flex items-center justify-center h-[60vh] md:h-[52vh] rounded-xl md:border md:border-secondary-normal/10 md:bg-white">
+          <div className="text-center px-4">
+            <p className="text-center font-bold text-lg md:text-xl text-gray-400 md:text-secondary-normal">
+              No payment methods yet.
+            </p>
+            <p className="text-xs md:text-sm text-gray-400 mt-2">
+              Add a method to start accepting direct payments.
+            </p>
+          </div>
         </div>
       ) : (
-        <ul className="flex flex-col gap-y-5 text-secondary-normal">
-          {paymentMethods.map((method) => (
-            <li key={method.id}>
-              <PaymentMethodItem
-                method={method}
-                onClick={() => setSelectedMethod(method)}
-              />
-            </li>
-          ))}
-        </ul>
+        <div className="md:rounded-xl md:border md:border-secondary-normal/10 md:bg-white md:p-5 lg:p-6 md:shadow-sm">
+          <div className="hidden md:flex items-center justify-between mb-5 lg:mb-6">
+            <h2 className="text-base lg:text-lg font-semibold text-secondary-normal">
+              Configured Methods
+            </h2>
+            <span className="text-xs lg:text-sm text-gray-500">
+              {paymentMethods.length} total
+            </span>
+          </div>
+
+          <ul className="flex flex-col gap-y-5 md:gap-4 lg:gap-5 text-secondary-normal">
+            {paymentMethods.map((method) => (
+              <li key={method.id}>
+                <PaymentMethodItem
+                  method={method}
+                  onClick={() => setSelectedMethod(method)}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       <PaymentMethodDetail

@@ -31,7 +31,10 @@ class PaymentMethodRepository {
 
   async findAllByUserId(userId: string): Promise<PaymentMethod[]> {
     try {
-      return await prisma.paymentMethod.findMany({ where: { userId } });
+      return await prisma.paymentMethod.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+      });
     } catch (error) {
       throw new AppError("Could not fetch payment methods. Please try again");
     }

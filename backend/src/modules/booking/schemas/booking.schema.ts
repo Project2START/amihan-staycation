@@ -10,8 +10,6 @@ export const NATIONALITY_MAX_LENGTH = 50;
 export const CONTACT_NUMBER_MIN_LENGTH = 8;
 export const CONTACT_NUMBER_MAX_LENGTH = 15;
 export const ADDITIONAL_GUESTS_MAX = 10;
-export const PAYMENT_TYPE_MIN_LENGTH = 2;
-export const PAYMENT_TYPE_MAX_LENGTH = 50;
 export const STATUS_MIN_LENGTH = 2;
 export const STATUS_MAX_LENGTH = 20;
 export const STANDARD_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -274,10 +272,7 @@ export const bookingSchema = z.object({
     }
     return val;
   }, z.array(additionalGuestSchema).max(ADDITIONAL_GUESTS_MAX, `You have exceeded the maximum number of additional guests.`).optional()),
-  payment_type: z
-    .string()
-    .min(PAYMENT_TYPE_MIN_LENGTH, "Payment type is too short.")
-    .max(PAYMENT_TYPE_MAX_LENGTH, "Payment type is too long."),
+
   agree_terms: z.preprocess(
     (val) => {
       if (typeof val === "string") {
@@ -293,10 +288,10 @@ export const bookingSchema = z.object({
   product_id: z
     .string()
     .max(UUID_MAX, `Product ID must be at most ${UUID_MAX} characters.`),
-  //   status: z
-  //     .string()
-  //     .min(STATUS_MIN_LENGTH, "Status cannot be empty.")
-  //     .max(STATUS_MAX_LENGTH, "Status is too long."),
+  payment_method_id: z
+    .string()
+    .max(UUID_MAX, `Payment method ID must be at most ${UUID_MAX} characters.`)
+    .optional(),
 });
 
 export type BookingDTO = z.infer<typeof bookingSchema>;

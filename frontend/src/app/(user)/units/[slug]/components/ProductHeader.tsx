@@ -12,7 +12,7 @@ export default function ProductHeader({ name }: { name: string }) {
       <div className="flex-1/4">
         <PrimaryBackButton
           onClick={() => {
-            router.push(`/units`);
+            router.back();
           }}
           style="text-xl"
         />

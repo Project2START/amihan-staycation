@@ -32,7 +32,7 @@ export default function ProductPhotosView({
 
   return (
     <div className="bg-[#efefef] rounded-lg">
-      <div className="w-full relative h-[13.5rem]">
+      <div className="w-full relative h-[13.5rem] lg:h-[25rem]">
         {activeImgSrc && (
           <>
             <div className="px-[0.25rem] py-[0.75rem] flex justify-between items-center w-full h-[2rem] absolute top-0 left-0 z-10 bg-gradient-to-b from-[rgb(0,0,0)] to-[rgba(0,0,0, 0.75)]">
@@ -55,8 +55,14 @@ export default function ProductPhotosView({
                 enableClickOutside={true}
               >
                 <PhotoFullView
+                  key={activeImage ?? "photo-full-view"}
                   photoSrc={activeImgSrc.image_url}
+                  initialIndex={Math.max(photoIndex, 0)}
                   onCloseDialog={() => setFullView(false)}
+                  images={photos.map((photo) => ({
+                    src: photo.image_url,
+                    alt: photo.alt,
+                  }))}
                 />
               </DialogBaseContent>
             </div>

@@ -21,6 +21,7 @@ export default function WithVehicle({ name }: { name: any }) {
           }}
           color="var(--color-primary-normal)"
           withThumbIndicator={false}
+          className="hover-animation lg:hover:opacity-[0.5]"
         />
       </div>
 

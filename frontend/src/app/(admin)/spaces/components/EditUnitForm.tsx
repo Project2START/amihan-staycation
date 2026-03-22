@@ -202,11 +202,11 @@ export default function EditUnitForm({
             </div>
             <div className="flex flex-col mt-[1rem]">
               <span className="font-bold">About</span>
-              <div className="mt-[0.5rem] h-[7rem]">
+              <div className="mt-[0.5rem] h-[7rem] lg:h-[10rem]">
                 <textarea
                   {...register("about")}
                   id="unit-about"
-                  className="resize-none w-full h-full border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] input-base-focus"
+                  className="resize-none w-full h-full border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] input-base-focus "
                   placeholder="Tell something about this unit..."
                   aria-describedby={
                     errors.about ? "unitAbout-error" : undefined

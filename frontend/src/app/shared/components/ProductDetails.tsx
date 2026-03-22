@@ -1,29 +1,93 @@
 import Rating from "@/app/shared/components/Rating";
+import { HOST } from "@/app/shared/constants/config";
 import { Product } from "../../(admin)/spaces/[slug]/components/Product";
 import { formatMoney } from "@/app/shared/lib/formatMoney";
 import IconLabel from "@/app/shared/components/IconLabel";
 import ClampedParagraph from "@/app/shared/components/ClampedParagraph";
+import Link from "next/link";
 
-export default function ProductDetails({
+type ProductReviewSummaryResponse = {
+  reviews?: Array<{
+    rating: number;
+    isHidden: boolean;
+  }>;
+};
+
+export default async function ProductDetails({
   price,
   about,
   attributes,
   maxPersons,
-}: Pick<Product, "about" | "attributes" | "maxPersons" | "price">) {
+  id,
+}: Pick<Product, "about" | "attributes" | "maxPersons" | "price" | "id">) {
+  let averageRating = 0;
+  let reviewCount = 0;
+
+  if (HOST) {
+    try {
+      const response = await fetch(`${HOST}/api/reviews/product/${id}`, {
+        cache: "no-store",
+      });
+
+      if (response.ok) {
+        const data: ProductReviewSummaryResponse = await response.json();
+        const visibleReviews = (data.reviews ?? []).filter(
+          (review) => !review.isHidden,
+        );
+
+        reviewCount = visibleReviews.length;
+
+        if (reviewCount > 0) {
+          const total = visibleReviews.reduce(
+            (sum, review) => sum + review.rating,
+            0,
+          );
+          averageRating = total / reviewCount;
+        }
+      }
+    } catch {
+      averageRating = 0;
+      reviewCount = 0;
+    }
+  }
+
   return (
     <div className="text-xs grid gap-y-7 my-[1rem]">
       <div className="flex items-start justify-between">
-        <div className="flex items-center mt-[0.5rem]">
-          <Rating value={4.5} textColor="font-bold" />
-          <button className="underline ml-[0.5rem]">
-            <span>Based on 5 reviews</span>
-          </button>
-        </div>
+        {reviewCount === 0 ? (
+          <div className="flex items-center mt-[0.5rem]">
+            <Rating
+              value={Number(averageRating.toFixed(1))}
+              textColor="font-bold"
+            />
+            <span className="ml-[0.5rem] xl:text-base">
+              No review as of the moment
+            </span>
+          </div>
+        ) : (
+          <Link
+            href={`/reviews?productId=${id}`}
+            className="hover-animation lg:hover:opacity-[0.5]"
+          >
+            <div className="flex items-center mt-[0.5rem]">
+              <Rating
+                value={Number(averageRating.toFixed(1))}
+                textColor="font-bold"
+              />
+              <span className="underline ml-[0.5rem] xl:text-base">
+                Based on {reviewCount} review{reviewCount === 1 ? "" : "s"}
+              </span>
+            </div>
+          </Link>
+        )}
+
         <div className="flex flex-col">
-          <span className="text-lg font-bold">
+          <span className="text-lg font-bold xl:text-xl">
             {formatMoney(price, { decimals: 2, symbol: "₱" })}
           </span>
-          <span>1 night, {maxPersons} persons max</span>
+          <span className="xl:text-base">
+            1 night, {maxPersons} persons max
+          </span>
         </div>
       </div>
       <div>

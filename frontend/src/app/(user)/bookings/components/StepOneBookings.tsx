@@ -20,7 +20,9 @@ export default function StepOneBookings() {
   return (
     <div className="h-[60vh] px-[0.75rem] py-[1.5rem] overflow-y-auto shadow-[inset_0_12px_12px_-12px_rgba(0,0,0,0.2),inset_0_-12px_12px_-12px_rgba(0,0,0,0.2)]">
       <div>
-        <h2 className="text-center font-normal mb-[1rem]">Primary Guest</h2>
+        <h2 className="text-center font-normal mb-[1rem] text-base lg:text-xl">
+          Primary Guest
+        </h2>
       </div>
       <div className="flex flex-col gap-y-5">
         {/* CHECK IN / CHECK OUT */}

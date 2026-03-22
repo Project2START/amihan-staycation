@@ -7,10 +7,43 @@ import { validateSchema } from "../../middleware/validateSchema";
 import { bookingSchema } from "./schemas/booking.schema";
 import { asyncHandler } from "../../shared/helpers/asyncHandler";
 import { bookingController } from "./controllers/booking.controller";
+import { bookingUpdateSchema } from "./schemas/bookingUpdate.schema";
 
 const router = Router();
 
 const upload = createUpload();
+
+router.get(
+  "/user/all",
+  checkAuth,
+  checkRole(["user", "agent"]),
+  asyncHandler(bookingController.getAllBookingsUser),
+);
+
+router.get(
+  "/:id/history",
+  checkAuth,
+  checkRole(["user", "admin", "agent"]),
+  asyncHandler(bookingController.getBookingHistory),
+);
+
+router.get(
+  "/me",
+  checkAuth,
+  checkRole(["user", "agent"]),
+  asyncHandler(bookingController.getMyBookings),
+);
+
+router.post(
+  "/history/respond",
+  checkAuth,
+  checkRole(["user", "agent"]),
+  upload.fields([
+    { name: "valid_id", maxCount: 1 },
+    { name: "security_deposit", maxCount: 1 },
+  ]),
+  asyncHandler(bookingController.respondToHistory),
+);
 
 router.post(
   "/",
@@ -23,6 +56,14 @@ router.post(
   ]),
   validateSchema(bookingSchema),
   asyncHandler(bookingController.createBooking),
+);
+
+router.patch(
+  "/:id",
+  checkAuth,
+  checkRole(["admin"]),
+  validateSchema(bookingUpdateSchema),
+  asyncHandler(bookingController.updateBooking),
 );
 
 export default router;

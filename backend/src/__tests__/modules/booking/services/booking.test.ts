@@ -2,14 +2,29 @@ import { bookingService } from "../../../../modules/booking/services/booking.ser
 import { bookingRepository } from "../../../../modules/booking/repositories/bookings.repository";
 import { productService } from "../../../../modules/product/services/product.service";
 import { uploadFileToSupabase } from "../../../../shared/helpers/uploadFileToSupabase";
+import { notificationRepository } from "../../../../modules/notification/repositories/notification.repository";
 import {
   BadRequestError,
   NotFoundError,
 } from "../../../../shared/helpers/appErrors";
+import { io } from "../../../../app";
 
 jest.mock("../../../../modules/booking/repositories/bookings.repository");
 jest.mock("../../../../modules/product/services/product.service");
 jest.mock("../../../../shared/helpers/uploadFileToSupabase");
+jest.mock(
+  "../../../../modules/notification/repositories/notification.repository",
+);
+jest.mock("../../../../shared/helpers/notifyUser", () => ({
+  notifyUser: jest.fn(),
+}));
+jest.mock("../../../../app", () => ({
+  io: {
+    to: jest.fn(() => ({
+      emit: jest.fn(),
+    })),
+  },
+}));
 
 describe("BookingService", () => {
   beforeEach(() => jest.clearAllMocks());
@@ -44,7 +59,15 @@ describe("BookingService", () => {
       publicUrl: "pu1",
       filePath: "fp1",
     });
-    (bookingRepository.create as jest.Mock).mockResolvedValue(undefined);
+    (bookingRepository.create as jest.Mock).mockResolvedValue({
+      id: "b1",
+      userId: "u1",
+      adminId: "a1",
+    });
+    (notificationRepository.create as jest.Mock).mockResolvedValue(undefined);
+    (
+      notificationRepository.countUnreadByDestination as jest.Mock
+    ).mockResolvedValue(0);
 
     const files = {
       valid_id: [{ originalname: "id.jpg" } as any],
@@ -60,16 +83,35 @@ describe("BookingService", () => {
     ).resolves.toBeUndefined();
 
     expect(bookingRepository.create).toHaveBeenCalled();
+    expect(notificationRepository.create).toHaveBeenCalled();
+    expect(io.to).toHaveBeenCalled();
   });
 
-  it("formats bookings returned by repository in getAllByAdmin", async () => {
+  it("sorts bookings returned by repository in getAllByAdmin", async () => {
     const raw = [
-      { id: "b1", createdAt: new Date(), updatedAt: new Date(), foo: "bar" },
+      {
+        id: "b1",
+        status: "pending",
+        check_period: { check_in: "2026-03-25", check_out: "2026-03-26" },
+        createdAt: new Date("2026-03-20T10:00:00.000Z"),
+      },
+      {
+        id: "b2",
+        status: "action_required",
+        check_period: { check_in: "2026-03-26", check_out: "2026-03-27" },
+        createdAt: new Date("2026-03-21T10:00:00.000Z"),
+      },
+      {
+        id: "b3",
+        status: "pending",
+        check_period: { check_in: "2026-03-24", check_out: "2026-03-25" },
+        createdAt: new Date("2026-03-19T10:00:00.000Z"),
+      },
     ];
     (bookingRepository.findAllByAdminId as jest.Mock).mockResolvedValue(raw);
 
     const result = await bookingService.getAllByAdmin("a1");
 
-    expect(result).toEqual([{ id: "b1", foo: "bar" }]);
+    expect(result.map((booking) => booking.id)).toEqual(["b2", "b3", "b1"]);
   });
 });

@@ -42,7 +42,7 @@ export default function UploadFilePhoto({
   return (
     <div>
       {url ? (
-        <div className="w-full border-2 border-secondary-normal/30 rounded-lg py-[0.25rem] mt-[0.5rem] h-[8rem]">
+        <div className="w-full border-2 border-secondary-normal/30 rounded-lg py-[0.25rem] mt-[0.5rem] h-[8rem] lg:h-[12rem]">
           <div className="w-full h-full flex items-center justify-center">
             <div className="relative rounded-lg w-[40%] h-full">
               <button type="button" onClick={handleOpenFullView}>
@@ -88,7 +88,7 @@ export default function UploadFilePhoto({
                   onClick={() => {
                     fileInputRef.current?.click();
                   }}
-                  className="w-full border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] h-[8rem]"
+                  className="w-full border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] h-[8rem] lg:h-[12rem]"
                 >
                   <div className="w-full h-full flex items-center justify-center">
                     <div className="flex items-center gap-x-2 opacity-50">

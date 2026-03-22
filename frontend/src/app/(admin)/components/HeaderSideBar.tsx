@@ -36,7 +36,6 @@ export default function HeaderSideBar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const router = useRouter();
-
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.users.data);
 
@@ -104,7 +103,14 @@ export default function HeaderSideBar() {
                 <div>
                   <div className="flex gap-x-3 items-center border-b-2 border-secondary-normal/30 pb-[1rem]">
                     {user?.avatar_url ? (
-                      <div></div>
+                      <div className="relative w-[3rem] h-[3rem] rounded-full overflow-hidden border-2 border-gray-300">
+                        <Image
+                          src={user.avatar_url}
+                          alt="Profile"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
                     ) : (
                       <div className="flex items-center justify-center w-[3rem] h-[3rem] rounded-full border-2 border-gray-300 p-[0.5rem]">
                         <span className="text-gray-500 text-xl">

@@ -38,7 +38,10 @@ export default function UploadFileParent() {
         fieldName="valid_id"
       />
       {errors.valid_id && (
-        <p className="text-red-900 text-[0.65rem]" id="guestValidId-error">
+        <p
+          className="text-red-900 text-[0.65rem] lg:text-xs"
+          id="guestValidId-error"
+        >
           Valid ID is required
         </p>
       )}

@@ -13,7 +13,7 @@ export default function AddPaymentMethod() {
       {/* Floating add button */}
       <button
         onClick={() => setOpenDialog(true)}
-        className="fixed bottom-25 right-6 w-12 h-12 rounded-full bg-primary-normal text-white flex items-center justify-center shadow-xl  cursor-pointer z-50"
+        className="fixed bottom-25 right-6 w-12 h-12 rounded-full bg-primary-normal text-white flex items-center justify-center shadow-xl cursor-pointer z-50 md:hidden"
         aria-label="Add payment method"
       >
         <FiPlus size={24} />

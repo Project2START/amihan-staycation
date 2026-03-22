@@ -11,18 +11,95 @@ export const bookingTypeDefs = `#graphql
 
     type Product {
         name: String
+        id: String
+        price: Float
+        maxPersons: Int
     }
 
-    type Booking {
+    type PaymentMethod {
+        payment_method: String
+        account_name: String
+        account_number: String
+        image_url: String
+        id: String
+    }
+
+    type PoolAccess {
+        am: Boolean
+        pm: Boolean
+        date: String
+    }
+
+    type Pool {
+        hasAccess: Boolean
+        access: [PoolAccess]
+    }
+
+    type AdditionalGuest {
+        age: Int
+        name: String
+        pool_access: Pool
+        with_vehicle: Boolean
+        below_three_feet: Boolean
+        image_valid_id_url: String
+    }
+
+    type AdminBookings {
         contact_number: String
         name: String
         check_period: CheckPeriod
         status: String!
+        createdAt: String
+        guest_count: Int
         user: User
         product: Product
+        id: String!
+    }
+
+    type UserBookings {
+        status: String!
+        id: String!
+    }
+
+    type BookingHistory {
+    message: String
+    hasUserResponded: Boolean!
+    ownerName: String
+    }
+
+    type Booking {
+        id: String!
+        status: String!
+        status_message: String
+        createdAt: String
+        product: Product
+        check_period: CheckPeriod
+        name: String
+        age: Int
+        nationality: String
+        contact_number: String
+        pool_access: Pool
+        with_vehicle: Boolean
+        image_valid_id_url: String
+        additional_guests: [AdditionalGuest]
+        image_payment_proof_url: String
+        userId: String
+        paymentMethod: PaymentMethod
+        history: [BookingHistory]
+    }
+
+    type UnitOption {
+        id: String!
+        name: String!
     }
 
     extend type Query {
-        bookingsByAdmin: [Booking]
+        bookingsByAdmin: [AdminBookings]
+        bookingsByAgent(agentId: String!): [AdminBookings]
+        bookingById(id: String!): Booking
+        bookingsByUser: [UserBookings]
+        bookedDatesByProduct(productId: String!): [String]
+        unitsByRole: [UnitOption]
+        bookedDatesByAllProducts: [String]
     }
     `;

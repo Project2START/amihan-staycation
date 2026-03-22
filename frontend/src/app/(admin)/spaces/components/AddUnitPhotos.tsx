@@ -54,7 +54,7 @@ export default function AddUnitPhotos() {
             handleOpenUnitPhotos();
           }
         }}
-        className="border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] h-[7rem]"
+        className="border-2 border-secondary-normal/30 rounded-lg p-[0.75rem] mt-[0.5rem] h-[7rem] lg:h-[10rem]"
       >
         <div className="w-full h-full flex items-center justify-center">
           <div className="flex items-center gap-x-2 opacity-50">

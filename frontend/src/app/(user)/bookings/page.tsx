@@ -5,7 +5,9 @@ export default function Bookings() {
   return (
     <div>
       <BookingsGuard>
-        <BookingsForm />
+        <div className="lg:flex lg:justify-center">
+          <BookingsForm />
+        </div>
       </BookingsGuard>
     </div>
   );

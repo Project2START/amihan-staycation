@@ -41,7 +41,7 @@ router.get(
 router.get(
   "/public_products",
   checkAuth,
-  checkRole(["user"]),
+  checkRole(["user", "agent"]),
   asyncHandler(paymentMethodController.getAllByProductId),
 );
 

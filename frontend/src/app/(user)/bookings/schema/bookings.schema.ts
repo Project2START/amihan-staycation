@@ -157,10 +157,12 @@ export const bookingSchema = z.object({
   payment_type: z
     .string("Payment type is required.")
     .min(PAYMENT_TYPE_MIN_LENGTH, "Payment type is too short.")
-    .max(PAYMENT_TYPE_MAX_LENGTH, "Payment type is too long."),
+    .max(PAYMENT_TYPE_MAX_LENGTH, "Payment type is too long.")
+    .optional(),
   payment_proof: photoFileSchema,
   agree_terms: z.boolean(),
   product_id: z.uuid("Invalid product ID."),
+  payment_method_id: z.uuid("Invalid payment method ID.").optional(),
   // status: z
   //   .string("Status is required.")
   //   .min(STATUS_MIN_LENGTH, "Status cannot be empty.")

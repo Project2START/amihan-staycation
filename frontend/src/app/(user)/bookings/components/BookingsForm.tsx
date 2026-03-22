@@ -40,6 +40,24 @@ const stepFields: Record<number, (keyof BookingSchema)[]> = {
 
 const maxStep = 3;
 const minStep = 0;
+const stepMeta = [
+  {
+    title: "Guest Details",
+    description: "Primary guest information and stay dates.",
+  },
+  {
+    title: "Additional Guests",
+    description: "Companion details and optional documents.",
+  },
+  {
+    title: "Payment Proof",
+    description: "Upload the required proof of payment.",
+  },
+  {
+    title: "Review & Confirm",
+    description: "Verify your booking information before submitting.",
+  },
+];
 
 export default function BookingsForm() {
   const [step, setStep] = useState(0);
@@ -131,9 +149,6 @@ export default function BookingsForm() {
       await axios.post(`${HOST}/api/bookings/`, formData, {
         withCredentials: true,
       });
-      // CustomToast.show("Booking confirmed successfully", {
-      //   indicator: "success",
-      // });
       setConfirmationDialog(true);
     } catch (error) {
       CustomToast.show(errorHandler(error).message, { indicator: "error" });
@@ -185,105 +200,188 @@ export default function BookingsForm() {
     }
   };
 
+  const activeStepMeta = stepMeta[step] || stepMeta[maxStep];
+
   return (
-    <div className="px-[1rem] pt-[1.5rem] pb-[1rem] text-xs text-secondary-normal">
+    <div className="mx-auto w-full max-w-[1200px] px-4 py-6 text-xs text-secondary-normal sm:px-6 lg:px-8 lg:py-10 lg:text-sm">
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <div>
-            <div className="mb-[1rem] flex justify-between items-center">
-              {step === minStep && (
-                <div className="flex-1/3">
-                  <BackPrevPage />
-                </div>
-              )}
+          <div className="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8 xl:grid-cols-[320px_minmax(0,1fr)] xl:gap-10">
+            <aside className="hidden lg:flex lg:flex-col lg:rounded-2xl lg:border lg:border-gray-100 lg:bg-gradient-to-br lg:from-primary-bg/80 lg:to-white lg:p-6 lg:shadow-sm">
+              <div className="mb-6">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-normal/70">
+                  Booking Flow
+                </p>
+                <h2 className="mt-2 text-2xl font-semibold text-secondary-normal">
+                  Reserve Your Stay
+                </h2>
+              </div>
 
-              <h1 className="text-nowrap grow-1 text-center">
-                {step === maxStep ? "Booking Summary" : "Book Your Stay"}
-              </h1>
-              {step === minStep && <div className="flex-1/3"></div>}
-            </div>
-            <div>
-              <Stepper
-                color="var(--color-primary-normal)"
-                size="xs"
-                active={step}
-                onStepClick={setStep}
-                style={{ marginBottom: "1.5rem" }}
-              >
-                <Stepper.Step allowStepSelect={false}>
-                  <motion.div
-                    initial={{ opacity: 0, translateX: "-5%" }}
-                    animate={{ opacity: 1, translateX: "0%" }}
-                    exit={{ opacity: 0, translateX: "-5%" }}
-                    key="user-booking-step-one"
-                    data-testid="user-booking-step-one"
-                  >
-                    <StepOneBookings />
-                  </motion.div>
-                </Stepper.Step>
+              <div className="space-y-4">
+                {stepMeta.map((item, index) => {
+                  const isActive = index === step;
+                  const isCompleted = index < step;
 
-                <Stepper.Step allowStepSelect={false}>
-                  <motion.div
-                    initial={{ opacity: 0, translateX: "-5%" }}
-                    animate={{ opacity: 1, translateX: "0%" }}
-                    exit={{ opacity: 0, translateX: "-5%" }}
-                    key="user-booking-step-two"
-                    data-testid="user-booking-step-two"
-                  >
-                    <StepTwoBookings />
-                  </motion.div>
-                </Stepper.Step>
+                  return (
+                    <div
+                      key={item.title}
+                      className="rounded-xl border border-transparent px-3 py-3 transition-colors duration-200"
+                      style={{
+                        backgroundColor: isActive
+                          ? "var(--color-primary-bg)"
+                          : "transparent",
+                        borderColor: isActive
+                          ? "var(--color-primary-normal)"
+                          : "transparent",
+                      }}
+                    >
+                      <div className="mb-1 flex items-center gap-2">
+                        <span
+                          className="inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold"
+                          style={{
+                            backgroundColor:
+                              isCompleted || isActive
+                                ? "var(--color-primary-normal)"
+                                : "#e5e7eb",
+                            color:
+                              isCompleted || isActive ? "#ffffff" : "#6b7280",
+                          }}
+                        >
+                          {index + 1}
+                        </span>
+                        <p
+                          className="text-sm font-semibold"
+                          style={{
+                            color: isActive
+                              ? "var(--color-primary-normal)"
+                              : "var(--color-secondary-normal)",
+                          }}
+                        >
+                          {item.title}
+                        </p>
+                      </div>
+                      <p className="text-xs leading-relaxed text-secondary-normal/80">
+                        {item.description}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </aside>
 
-                <Stepper.Step allowStepSelect={false}>
-                  <motion.div
-                    initial={{ opacity: 0, translateX: "-5%" }}
-                    animate={{ opacity: 1, translateX: "0%" }}
-                    exit={{ opacity: 0, translateX: "-5%" }}
-                    key="user-booking-step-three"
-                    data-testid="user-booking-step-three"
-                  >
-                    <StepThreeBookings />
-                  </motion.div>
-                </Stepper.Step>
+            <div className="min-w-0 rounded-2xl bg-white p-0 lg:border lg:border-gray-100 lg:px-8 lg:py-7 lg:shadow-sm xl:px-10 xl:py-8">
+              <div className="mb-4 flex items-center justify-between lg:mb-6">
+                {step === minStep ? (
+                  <div className="flex-1/3">
+                    <BackPrevPage />
+                  </div>
+                ) : (
+                  <div className="flex-1/3"></div>
+                )}
 
-                <Stepper.Completed>
-                  <motion.div
-                    initial={{ opacity: 0, translateX: "-5%" }}
-                    animate={{ opacity: 1, translateX: "0%" }}
-                    exit={{ opacity: 0, translateX: "-5%" }}
-                    key="user-booking-step-completed"
-                    data-testid="user-booking-step-completed"
-                  >
-                    <StepFourBookings />
-                  </motion.div>
-                </Stepper.Completed>
-              </Stepper>
-            </div>
-            <div>
-              {step !== maxStep ? (
-                <div className="flex justify-evenly gap-x-5 font-bold">
-                  <button
-                    type="button"
-                    className="flex-1/2 text-primary-normal py-[0.5rem]"
-                    onClick={prevStep}
-                    disabled={step === minStep}
-                  >
-                    <span>Back</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex-1/2 bg-primary-normal text-white py-[0.5rem] rounded-lg"
-                    onClick={onHandleSubmitStep}
-                  >
-                    <span>Next</span>
-                  </button>
-                </div>
-              ) : (
-                <ConfirmBooking
-                  confirmLoading={confirmLoading}
-                  prevStep={prevStep}
-                />
-              )}
+                <h1 className="flex-1/3 text-nowrap text-center text-xl font-semibold text-secondary-normal lg:text-3xl xl:text-[2rem]">
+                  {step === maxStep ? "Booking Summary" : "Book Your Stay"}
+                </h1>
+
+                <div className="flex-1/3"></div>
+              </div>
+
+              <div className="mb-3 rounded-xl border border-gray-100 bg-white px-3 py-3 lg:hidden">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-primary-normal/70">
+                  Step {step + 1}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-secondary-normal">
+                  {activeStepMeta.title}
+                </p>
+                <p className="mt-0.5 text-[11px] text-secondary-normal/80">
+                  {activeStepMeta.description}
+                </p>
+              </div>
+
+              <div>
+                <Stepper
+                  color="var(--color-primary-normal)"
+                  size="sm"
+                  active={step}
+                  onStepClick={setStep}
+                  style={{ marginBottom: "2rem" }}
+                >
+                  <Stepper.Step allowStepSelect={false}>
+                    <motion.div
+                      initial={{ opacity: 0, translateX: "-5%" }}
+                      animate={{ opacity: 1, translateX: "0%" }}
+                      exit={{ opacity: 0, translateX: "-5%" }}
+                      key="user-booking-step-one"
+                      data-testid="user-booking-step-one"
+                    >
+                      <StepOneBookings />
+                    </motion.div>
+                  </Stepper.Step>
+
+                  <Stepper.Step allowStepSelect={false}>
+                    <motion.div
+                      initial={{ opacity: 0, translateX: "-5%" }}
+                      animate={{ opacity: 1, translateX: "0%" }}
+                      exit={{ opacity: 0, translateX: "-5%" }}
+                      key="user-booking-step-two"
+                      data-testid="user-booking-step-two"
+                    >
+                      <StepTwoBookings />
+                    </motion.div>
+                  </Stepper.Step>
+
+                  <Stepper.Step allowStepSelect={false}>
+                    <motion.div
+                      initial={{ opacity: 0, translateX: "-5%" }}
+                      animate={{ opacity: 1, translateX: "0%" }}
+                      exit={{ opacity: 0, translateX: "-5%" }}
+                      key="user-booking-step-three"
+                      data-testid="user-booking-step-three"
+                    >
+                      <StepThreeBookings />
+                    </motion.div>
+                  </Stepper.Step>
+
+                  <Stepper.Completed>
+                    <motion.div
+                      initial={{ opacity: 0, translateX: "-5%" }}
+                      animate={{ opacity: 1, translateX: "0%" }}
+                      exit={{ opacity: 0, translateX: "-5%" }}
+                      key="user-booking-step-completed"
+                      data-testid="user-booking-step-completed"
+                    >
+                      <StepFourBookings />
+                    </motion.div>
+                  </Stepper.Completed>
+                </Stepper>
+              </div>
+
+              <div>
+                {step !== maxStep ? (
+                  <div className="flex justify-evenly gap-x-4 font-bold lg:justify-end lg:gap-x-5 xl:gap-x-6">
+                    <button
+                      type="button"
+                      className="flex-1 py-[0.65rem] text-primary-normal disabled:cursor-not-allowed disabled:opacity-50 hover-animation lg:hover:opacity-80 lg:max-w-[140px] lg:rounded-lg lg:border lg:border-primary-normal"
+                      onClick={prevStep}
+                      disabled={step === minStep}
+                    >
+                      <span>Back</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="flex-1 rounded-lg bg-primary-normal py-[0.65rem] text-white lg:max-w-[180px] hover-animation lg:hover:bg-primary-normal/80"
+                      onClick={onHandleSubmitStep}
+                    >
+                      <span>Next</span>
+                    </button>
+                  </div>
+                ) : (
+                  <ConfirmBooking
+                    confirmLoading={confirmLoading}
+                    prevStep={prevStep}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </form>
@@ -293,23 +391,24 @@ export default function BookingsForm() {
         onCloseDialog={() => setConfirmationDialog(false)}
         enableClickOutside={false}
       >
-        <div className="p-6 flex flex-col items-center text-center">
+        <div className="flex flex-col items-center p-6 text-center lg:p-7">
           <div className="mb-4 flex items-center flex-col gap-3">
             <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
               <AiOutlineCheckCircle className="h-6 w-6 text-green-600" />
             </div>
-            <h2 className="text-lg font-semibold">Booking Confirmed</h2>
+            <h2 className="text-lg font-semibold lg:text-xl">
+              Booking Confirmed
+            </h2>
           </div>
 
-          <p className="text-sm text-secondary-normal mb-3">
-            Thank you — we will contact you via email or notify you here in the
-            app.
+          <p className="text-sm text-secondary-normal mb-3 lg:text-base">
+            Thank you — we will notify you here in the app for any updates.
           </p>
 
           <button
             type="button"
             onClick={handleConfirmationOk}
-            className="px-16 py-2 rounded-lg text-white"
+            className="px-16 py-2 rounded-lg text-white hover-animation lg:py-3 lg:text-base lg:hover:opacity-80"
             style={{ backgroundColor: "var(--color-primary-normal)" }}
           >
             <span className="font-bold">OK</span>

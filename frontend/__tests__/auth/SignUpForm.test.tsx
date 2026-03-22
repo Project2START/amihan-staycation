@@ -16,6 +16,7 @@ jest.mock("../../src/app/(auth)/sign-up/api/signUp");
 const pushMock = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 describe("SignUpForm Component", () => {
@@ -26,7 +27,7 @@ describe("SignUpForm Component", () => {
   let confirmPasswordInput: HTMLInputElement;
   let submitButton: HTMLInputElement;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     render(<SignUpForm />);
     firstNameInput = screen.getByPlaceholderText(/first name/i);
     lastNameInput = screen.getByPlaceholderText(/last name/i);
@@ -34,6 +35,10 @@ describe("SignUpForm Component", () => {
     passwordInput = screen.getByPlaceholderText(/^password$/i); // matches the "Password" field
     confirmPasswordInput = screen.getByPlaceholderText(/confirm password/i);
     submitButton = screen.getByRole("button", { name: /sign up/i });
+    const agreeTermsCheckbox = screen.getByRole("checkbox", {
+      name: /agree to terms and privacy policy/i,
+    });
+    await userEvent.click(agreeTermsCheckbox);
   });
 
   describe("Form Validation", () => {
@@ -53,7 +58,7 @@ describe("SignUpForm Component", () => {
       await userEvent.click(submitButton);
       const errorRegex = new RegExp(
         `Email cannot exceed ${EMAIL_MAX_LENGTH} characters`,
-        "i"
+        "i",
       );
       const error = await screen.findByText(errorRegex);
       expect(error).toBeInTheDocument();
@@ -64,7 +69,7 @@ describe("SignUpForm Component", () => {
       expect(
         await screen.findByText(/at least 2 characters/i, {
           selector: "#firstName-error",
-        })
+        }),
       ).toBeInTheDocument();
     });
     it("shows error when first name exceeds maximum length", async () => {
@@ -72,7 +77,7 @@ describe("SignUpForm Component", () => {
       await userEvent.click(submitButton);
       const errorRegex = new RegExp(
         `Exceeded ${NAME_MAX_LENGTH} characters`,
-        "i"
+        "i",
       );
       const error = await screen.findByText(errorRegex);
       expect(error).toBeInTheDocument();
@@ -102,7 +107,7 @@ describe("SignUpForm Component", () => {
       expect(
         await screen.findByText(/at least 2 characters/i, {
           selector: "#lastName-error",
-        })
+        }),
       ).toBeInTheDocument();
     });
 
@@ -111,7 +116,7 @@ describe("SignUpForm Component", () => {
       await userEvent.click(submitButton);
       const errorRegex = new RegExp(
         `Exceeded ${NAME_MAX_LENGTH} characters`,
-        "i"
+        "i",
       );
       const error = await screen.findByText(errorRegex, {
         selector: "#lastName-error",
@@ -144,7 +149,7 @@ describe("SignUpForm Component", () => {
       expect(passwordInput.value).toBe("");
       await userEvent.click(submitButton);
       expect(
-        await screen.findByText(/password must be at least 8 characters/i)
+        await screen.findByText(/password must be at least 8 characters/i),
       ).toBeInTheDocument();
     });
 
@@ -153,7 +158,7 @@ describe("SignUpForm Component", () => {
       await userEvent.click(submitButton);
       const errorRegex = new RegExp(
         `Password cannot exceed ${PASSWORD_MAX_LENGTH} characters`,
-        "i"
+        "i",
       );
       const error = await screen.findByText(errorRegex);
       expect(error).toBeInTheDocument();
@@ -164,7 +169,7 @@ describe("SignUpForm Component", () => {
       await userEvent.click(submitButton);
       const errorRegex = new RegExp(
         `Password must be at least ${PASSWORD_MIN_LENGTH} characters`,
-        "i"
+        "i",
       );
       const error = await screen.findByText(errorRegex);
       expect(error).toBeInTheDocument();
@@ -278,8 +283,8 @@ describe("SignUpForm Component", () => {
 
       expect(
         await screen.findByText(
-          /Email already in use. Please provide a different one./i
-        )
+          /Email already in use. Please provide a different one./i,
+        ),
       ).toBeInTheDocument();
     });
     it("shows error when sign up fails due to network error", async () => {
@@ -321,8 +326,8 @@ describe("SignUpForm Component", () => {
 
       expect(
         await screen.findByText(
-          /something went wrong. please try again later./i
-        )
+          /something went wrong. please try again later./i,
+        ),
       ).toBeInTheDocument();
     });
   });

@@ -4,21 +4,16 @@ import PrimaryBackButton from "@/app/shared/components/PrimaryBackButton";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CiSettings } from "react-icons/ci";
 import { GoPencil } from "react-icons/go";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { deleteUnitProduct } from "../../api/deleteUnitProduct";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
-import { IoIosAlert } from "react-icons/io";
 import { Product } from "./Product";
 import ProductEdit from "./ProductEdit";
-import { useAppSelector } from "@/lib/hooks";
 
 export default function ProductHeader({ product }: { product: Product }) {
-  const user = useAppSelector((state) => state.users.data);
-
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [editDialog, setEditDialog] = useState(false);
 
@@ -50,37 +45,36 @@ export default function ProductHeader({ product }: { product: Product }) {
   };
 
   return (
-    <div className="flex justify-between items-center py-[1.5rem]">
-      <div className="flex-1/4">
+    <div className="flex items-center justify-between gap-3 py-[1.5rem]">
+      <div className="w-[3rem] shrink-0">
         <PrimaryBackButton
           onClick={() => {
-            router.push(`/spaces`);
+            router.back();
           }}
           style="text-xl"
         />
       </div>
-      <div className="flex-2/4 overflow-x-hidden">
-        <h1 className="text-center truncate" title={name}>
+
+      <div className="min-w-0 flex-1 overflow-x-hidden">
+        <h1 className="text-center truncate lg:text-3xl" title={name}>
           {name}
         </h1>
       </div>
-      <div className="flex-1/4 flex justify-center items-center gap-x-3">
-        <div>
-          <button>
-            <span className="text-xl text-gray-500">
-              <CiSettings />
-            </span>
-          </button>
-        </div>
-        <div>
-          <button onClick={() => setEditDialog(true)}>
+
+      <div className="w-auto shrink-0">
+        <div className="flex items-center justify-center gap-x-3 md:hidden">
+          <button
+            type="button"
+            aria-label="edit unit"
+            onClick={() => setEditDialog(true)}
+          >
             <span className="text-xl text-gray-500">
               <GoPencil />
             </span>
           </button>
-        </div>
-        <div>
           <button
+            type="button"
+            aria-label="delete unit"
             onClick={() => {
               setDeleteDialog(true);
             }}
@@ -88,6 +82,30 @@ export default function ProductHeader({ product }: { product: Product }) {
             <span className="text-xl text-reject-normal">
               <RiDeleteBin6Line />
             </span>
+          </button>
+        </div>
+
+        <div className="hidden items-center gap-2 md:flex lg:gap-2.5">
+          <button
+            type="button"
+            onClick={() => setEditDialog(true)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-primary-normal/25 bg-primary-light/35 px-3 py-1.5 text-xs font-semibold text-secondary-normal transition hover-animation hover:opacity-60 "
+            aria-label="edit unit"
+          >
+            <GoPencil className="text-sm" />
+            Edit
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setDeleteDialog(true);
+            }}
+            className="inline-flex items-center gap-1.5 rounded-full border border-reject-normal/20 bg-reject-normal/10 px-3 py-1.5 text-xs font-semibold text-reject-normal transition hover:bg-reject-normal/20"
+            aria-label="delete unit"
+          >
+            <RiDeleteBin6Line className="text-sm" />
+            Delete
           </button>
         </div>
       </div>
@@ -98,11 +116,11 @@ export default function ProductHeader({ product }: { product: Product }) {
           setDeleteDialog(false);
         }}
       >
-        <div className="px-[2rem] pt-[1.5rem] pb-[1rem] text-sm">
-          <p className="text-center flex items-center">
-            <span className="text-reject-normal text-2xl">
+        <div className="px-[2rem] pt-[1.5rem] pb-[1rem] text-sm lg:pt-10 lg:text-base">
+          <p className="text-center flex items-center flex justify-center">
+            {/* <span className="text-reject-normal text-2xl lg:mr-2">
               <IoIosAlert />
-            </span>
+            </span> */}
             <span>
               Do you want to delete this unit?{" "}
               <b>This action can't be undone.</b>

@@ -7,6 +7,11 @@ import {
 
 const prisma = new PrismaClient();
 
+export type PrismaTx = Omit<
+  PrismaClient,
+  "$connect" | "$disconnect" | "$transaction" | "$extends" | "$on"
+>;
+
 class UserRepository {
   async create(data: Prisma.UsersCreateInput): Promise<Users> {
     try {
@@ -15,7 +20,6 @@ class UserRepository {
       if (error.code === "P2002") {
         throw new ConflictError("Email already exists");
       }
-      console.log(error);
       throw new AppError("Could not create user. Please try again.");
     }
   }
@@ -31,7 +35,6 @@ class UserRepository {
     try {
       return await prisma.users.findUnique({ where: { google_id: googleId } });
     } catch (error) {
-      console.log(error);
       throw new AppError(
         "Could not fetch user by Google ID. Please try again.",
       );
@@ -45,9 +48,14 @@ class UserRepository {
     }
   }
 
-  async update(id: string, data: Prisma.UsersUpdateInput): Promise<Users> {
+  async update(
+    id: string,
+    data: Prisma.UsersUpdateInput,
+    tx?: PrismaTx,
+  ): Promise<Users> {
+    const db = tx ?? prisma;
     try {
-      return await prisma.users.update({ where: { id }, data });
+      return await db.users.update({ where: { id }, data });
     } catch (error: any) {
       if (error.code === "P2025") {
         throw new NotFoundError("User not found");
