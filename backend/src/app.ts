@@ -20,7 +20,14 @@ import http from "http";
 import { Server, Socket } from "socket.io";
 import { getVerifiedUserFromSocket } from "./shared/helpers/getVerifiedUserFromSocket";
 import { notificationRepository } from "./modules/notification/repositories/notification.repository";
+import {
+  globalApiRateLimiter,
+  globalGraphqlRateLimiter,
+  trustProxyValue,
+} from "./middleware/rateLimit";
 const app = express();
+
+app.set("trust proxy", trustProxyValue);
 
 app.use(cors({ origin: process.env.FRONTEND_HOST, credentials: true }));
 
@@ -35,6 +42,9 @@ app.use(
     saveUninitialized: false,
   }),
 );
+
+app.use("/api", globalApiRateLimiter);
+app.use("/graphql", globalGraphqlRateLimiter);
 
 app.use("/api/registrees", registreeRoutes);
 app.use("/api/users", userRoutes);

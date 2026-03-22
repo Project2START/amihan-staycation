@@ -13,6 +13,10 @@ import { checkAuth } from "../../middleware/checkAuth";
 import { checkRole } from "../../middleware/checkRole";
 import { userController } from "./controllers/user.controller";
 import { createUpload } from "../../middleware/upload";
+import {
+  passwordResetRateLimiter,
+  strictAuthRateLimiter,
+} from "../../middleware/rateLimit";
 
 const upload = createUpload();
 
@@ -20,26 +24,31 @@ const router = Router();
 
 router.post(
   "/sign-up",
+  strictAuthRateLimiter,
   validateSchema(userSignUpSchema),
   asyncHandler(userAuthController.signUp),
 );
 router.post(
   "/sign-in",
+  strictAuthRateLimiter,
   validateSchema(userSignInSchema),
   asyncHandler(userAuthController.signIn),
 );
 router.post(
   "/password-reset/request",
+  passwordResetRateLimiter,
   validateSchema(passwordResetRequestSchema),
   asyncHandler(userAuthController.requestPasswordReset),
 );
 router.post(
   "/password-reset/validate-token",
+  passwordResetRateLimiter,
   validateSchema(passwordResetValidateTokenSchema),
   asyncHandler(userAuthController.validatePasswordResetToken),
 );
 router.post(
   "/password-reset/complete",
+  passwordResetRateLimiter,
   validateSchema(passwordResetCompleteSchema),
   asyncHandler(userAuthController.completePasswordReset),
 );
