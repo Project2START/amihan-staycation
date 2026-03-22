@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Users {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @updatedAt
+  role        String   @default("user")
+  auth_version Int     @default(0)
+  first_name  String?
+  last_name   String?
+  email       String   @unique
+  password    String?
+  nationality String   @default("Filipino")
+  google_id   String?  @unique
+  avatar_url  String?
+
+  products Product[]
+  payment_methods PaymentMethod[]
+  
+  userBookings  Booking[] @relation("BookingUser")
+  adminBookings  Booking[] @relation("BookingAdmin")
+
+  agentAdmin Agent[] @relation("AgentAdmin")
+  agentUser Agent? @relation("AgentUser")
+
+  notifications Notification[]
+  
+  reviews Review[]
+  importedReviews Review[] @relation("ImportedByUser")
+  passwordResetToken PasswordResetToken?
+
+  @@map("users")
+}
+
+model PasswordResetToken {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String   @unique @db.Uuid
+  tokenHash          String
+  expiresAt          DateTime
+  usedAt             DateTime?
+  requestCount       Int      @default(0)
+  requestWindowStart DateTime @default(now())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tokenHash])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
+}
+
+model Registrees {
+  first_name        String
+  last_name         String
+  password          String
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email             String
+  verificationCode  String
+  codeExpiry        DateTime
+  nextAllowedResend DateTime
+  resendCount       Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("registrees")
+}
+
+model Product {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String   @db.VarChar(100)
+  price      Float
+  maxPersons Int
+  about      String?  @db.VarChar(1000)
+  attributes Json?    // array of objects: { name, iconId, quantity }
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userId     String   @db.Uuid 
+  user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  photos     Photo[]
+  bookings   Booking[]
+  reviews    Review[]
+
+  @@map("products")
+}
+
+model Photo {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  image_url  String
+  alt        String
+  order_index Int
+  productId   String   @db.Uuid
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("photos")
+}
+
+model PaymentMethod {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  payment_method  String
+  account_name    String
+  account_number  String
+  image_url       String
+  createdAt       DateTime @default(now())
+
+  userId     String   @db.Uuid
+  user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bookings   Booking[]  
+
+  @@map("payment_methods")
+}
+
+model Booking {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  additional_guests  Json
+  age             Int
+  agree_terms     Boolean @default(false)
+  check_period    Json
+  contact_number  String
+  name            String
+  nationality     String
+  image_payment_proof_url     String
+  pool_access     Json
+  status          String @default("pending")
+  status_message  String?
+  checkedOutAt    DateTime?
+  image_valid_id_url    String
+  with_vehicle    Boolean @default(false)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user            Users?    @relation("BookingUser", fields: [userId], references: [id], onDelete: SetNull)
+  userId          String?   @db.Uuid
+
+  admin           Users?    @relation("BookingAdmin", fields: [adminId], references: [id], onDelete: SetNull)
+  adminId         String?   @db.Uuid
+
+  product         Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId       String?   @db.Uuid
+
+  paymentMethod   PaymentMethod?  @relation(fields: [paymentMethodId], references: [id], onDelete: SetNull)
+  paymentMethodId String?   @db.Uuid 
+
+  history BookingHistory[]
+
+  reviews Review[]
+
+  @@map("bookings")
+}
+
+model BookingHistory {
+  id  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  message String?
+  valid_id_url String?
+  payment_proof_url String?
+  action_items   Json?
+  hasUserResponded  Boolean
+  userName  String
+  ownerName String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  bookingId  String   @db.Uuid
+  booking    Booking    @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("bookings_history")
+}
+
+model Agent {
+  
+  id       String @id @default(uuid()) @db.Uuid
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  isDeleted Boolean @default(false)
+
+  user     Users  @relation("AgentUser", fields: [userId], references: [id], onDelete: Cascade)
+  userId   String @db.Uuid @unique
+
+  admin    Users  @relation("AgentAdmin", fields: [adminId], references: [id], onDelete: Cascade)
+  adminId  String @db.Uuid
+
+  @@map("agents")
+}
+
+model Notification {
+  id       String @id @default(uuid()) @db.Uuid
+  title String
+  message String
+
+  createdAt  DateTime @default(now())
+
+  userOwner     Users?  @relation(fields: [userOwnerId], references: [id], onDelete: SetNull)
+  userOwnerId   String? @db.Uuid
+
+  userDestinationId   String? @db.Uuid
+
+  isPublic  Boolean
+
+  pathId  String
+  pathType  String
+
+  hasRead Boolean
+
+  @@map("notifications")
+}
+
+enum ReviewSource {
+  GOOGLE
+  FACEBOOK
+  DIRECT_MESSAGE
+  GUESTBOOK
+  OTHER
+}
+
+model Review {
+  id       String @id @default(uuid()) @db.Uuid
+
+  // In-app review fields
+  bookingId      String? @db.Uuid
+  booking        Booking?      @relation(fields: [bookingId], references: [id])
+  productId      String? @db.Uuid
+  product        Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
+  userId         String? @db.Uuid
+  user           Users?         @relation(fields: [userId], references: [id])
+
+  // Imported review fields
+  reviewerName   String?
+  source         ReviewSource?
+  originalDate   DateTime?
+  importedBy     String? @db.Uuid
+  importedByUser Users?         @relation("ImportedByUser", fields: [importedBy], references: [id])
+
+  // Shared fields
+  rating         Int           // 1–5
+  comment        String?
+  isImported     Boolean       @default(false)
+  isHidden       Boolean       @default(false)  // for admin moderation
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([bookingId])
+  @@index([productId])
+  @@index([userId])
+  @@index([isImported])
+  @@index([source])
+}

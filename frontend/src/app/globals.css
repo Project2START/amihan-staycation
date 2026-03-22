@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-normal: #24b4a7;
+  --color-secondary-normal: #0b5173;
+  --color-tertiary-normal: #279bc0;
+  --color-success-normal: #64be73;
+  --color-reject-normal: #a9463f;
+  --color-yellow-normal: #e2d118;
+  --color-primary-opacity: rgba(36, 180, 167, 0.3);
+  --color-secondary-opacity: rgba(11, 81, 115, 0.3);
+}
+
+/* spaces */
+@layer components {
+  .input-base {
+    @apply w-full border-2 border-secondary-normal/30 rounded-md px-[0.5rem] py-[0.75rem] focus:outline-none focus:ring-1 focus:ring-secondary-normal/50 transition;
+    @apply lg:px-[0.75rem] lg:py-[1rem];
+  }
+  .input-base-focus {
+    @apply focus:outline-none focus:ring-1 focus:ring-secondary-normal/50 transition;
+  }
+  .hover-animation {
+    @apply transition duration-300 ease-in-out;
+  }
+  .primary-button-link {
+    @apply flex justify-center items-center text-center text-xs px-[3rem] py-[0.75rem] bg-primary-normal font-bold rounded-xl text-white md:px-[3rem] lg:px-[5rem] lg:py-[1rem] lg:text-sm;
+  }
+  .vertical_center {
+    @apply absolute top-[50%] translate-y-[-50%];
+  }
+  .horizontal_center {
+    @apply absolute left-[50%] translate-x-[-50%];
+  }
+  .horver_center {
+    @apply absolute top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%];
+  }
+}
+
+@layer base {
+  h1 {
+    @apply text-xl font-bold; /* adjust size as needed */
+  }
+  h2 {
+    @apply text-lg font-bold; /* adjust size as needed */
+  }
+  h3 {
+    @apply text-sm font-bold;
+  }
+
+  @media (min-width: theme("screens.md")) {
+    h2 {
+      @apply text-xl font-bold;
+    }
+    h3 {
+      @apply text-base font-bold;
+    }
+  }
+
+  @media (min-width: theme("screens.lg")) {
+    h2 {
+      @apply text-4xl font-bold;
+    }
+    h3 {
+      @apply text-2xl font-bold;
+    }
+  }
+  a,
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    @apply cursor-pointer;
+  }
+  button:disabled,
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    cursor: default;
+    opacity: 50%;
+  }
+  /* a:hover,
+  button:hover,
+  input:hover,
+  select:hover,
+  textarea:hover {
+    opacity: 80%;
+  } */
+}
+
+/* booking */
+@layer components {
+  /* Smooth pulse animation for active filters */
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.85;
+    }
+  }
+
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Smooth scroll snap */
+  .snap-x {
+    scroll-snap-type: x mandatory;
+  }
+
+  .snap-start {
+    scroll-snap-align: start;
+  }
+}
+
+/* Smooth scroll for the filter container */
+@supports (scroll-behavior: smooth) {
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+}
+
+
