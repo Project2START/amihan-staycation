@@ -27,8 +27,6 @@ async function startServer() {
   );
 
   startBookingStatusCron();
-
-  console.log(`🚀 Server ready at http://localhost:${PORT}`);
 }
 
 startServer().catch((err) => {
