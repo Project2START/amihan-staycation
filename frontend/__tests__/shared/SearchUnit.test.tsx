@@ -1,6 +1,16 @@
 import SearchUnit from "@/app/shared/components/search-unit/SearchUnit";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({ push: jest.fn(), replace: jest.fn() }),
+  usePathname: () => "/",
+  useSearchParams: () => new URLSearchParams(),
+}));
+
+jest.mock("../../src/app/shared/components/CalendarBooking", () => () => (
+  <div data-testid="calendar-booking-mock">calendar</div>
+));
 
 describe("SearchUnit Component", () => {
   let dateRangeButton: HTMLInputElement;

@@ -14,7 +14,7 @@ export default function GoogleSignOption({
   }`;
 
   const handleNavigateOAuth = () => {
-    window.location.href = oauthUrl;
+    window.open(oauthUrl, "_self");
   };
   return (
     <div className="flex justify-center">

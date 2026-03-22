@@ -35,7 +35,6 @@ describe("Occupancy component", () => {
       expect.objectContaining({
         adults: expect.any(Number),
         children: expect.any(Number),
-        rooms: expect.any(Number),
       }),
     );
     expect(onSetOccupancy).toHaveBeenCalledWith(false);

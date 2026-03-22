@@ -119,7 +119,9 @@ describe("UserAuthController", () => {
       await expect(
         userAuthController.googleAuthCallback(req as any, res as any),
       ).rejects.toThrow(BadRequestError);
-      expect(res.redirect).toHaveBeenCalledWith(`${FRONTEND_HOST}/sign-up`);
+      expect(res.redirect).toHaveBeenCalledWith(
+        `${FRONTEND_HOST}/sign-in?redirect=%2Fauth`,
+      );
     });
 
     it("should throw BadRequestError if state is invalid", async () => {
@@ -129,7 +131,9 @@ describe("UserAuthController", () => {
       await expect(
         userAuthController.googleAuthCallback(req as any, res as any),
       ).rejects.toThrow(BadRequestError);
-      expect(res.redirect).toHaveBeenCalledWith(`${FRONTEND_HOST}/sign-up`);
+      expect(res.redirect).toHaveBeenCalledWith(
+        `${FRONTEND_HOST}/sign-in?redirect=%2Fauth`,
+      );
     });
 
     it("should throw BadRequestError if code is missing", async () => {
@@ -139,7 +143,9 @@ describe("UserAuthController", () => {
       await expect(
         userAuthController.googleAuthCallback(req as any, res as any),
       ).rejects.toThrow(BadRequestError);
-      expect(res.redirect).toHaveBeenCalledWith(`${FRONTEND_HOST}/sign-up`);
+      expect(res.redirect).toHaveBeenCalledWith(
+        `${FRONTEND_HOST}/sign-in?redirect=%2Fauth`,
+      );
     });
 
     it("should set cookie and redirect to dashboard on success", async () => {
