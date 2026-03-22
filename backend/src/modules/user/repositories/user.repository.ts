@@ -68,7 +68,6 @@ class UserRepository {
     try {
       return await prisma.users.delete({ where: { id } });
     } catch (error: any) {
-      console.log(error);
       if (error.code === "P2025") {
         throw new NotFoundError("User not found");
       }
