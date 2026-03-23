@@ -3,8 +3,6 @@ import { jwtVerify } from "jose";
 
 export default async function verifyUser(req: NextRequest) {
   const auth_token = req.cookies.get("auth_token")?.value;
-
-  console.log(auth_token);
   const notForYouPage = new URL("/not-found", req.url);
 
   if (!auth_token) return NextResponse.rewrite(notForYouPage);
