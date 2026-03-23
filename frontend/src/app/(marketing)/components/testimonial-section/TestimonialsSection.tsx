@@ -271,21 +271,21 @@ export default function TestimonialsSection() {
             </div>
           </div>
         )}
-        <div
-          className={`grid gap-3 sm:gap-4 md:gap-5 ${
-            itemsPerView <= 2
-              ? "grid-cols-1 md:grid-cols-2"
-              : itemsPerView === 3
-                ? "grid-cols-3"
-                : "grid-cols-4"
-          }`}
-        >
-          {visibleItems.length === 0 && !loading ? (
-            <div className="rounded-xl border border-secondary-normal/10 bg-white px-4 py-8 text-center text-sm text-gray-500">
-              No reviews available yet.
-            </div>
-          ) : (
-            visibleItems.map((item) => {
+        {visibleItems.length === 0 && !loading ? (
+          <div className="opacity-50 font-bold rounded-xl border border-secondary-normal/10 bg-white px-4 py-8 text-center text-sm text-gray-500 lg:py-24">
+            No reviews available yet.
+          </div>
+        ) : (
+          <div
+            className={`grid gap-3 sm:gap-4 md:gap-5 ${
+              itemsPerView <= 2
+                ? "grid-cols-1 md:grid-cols-2"
+                : itemsPerView === 3
+                  ? "grid-cols-3"
+                  : "grid-cols-4"
+            }`}
+          >
+            {visibleItems.map((item) => {
               const isExpanded = !!expandedIds[item.id];
               const isLong = item.quote.length > COMMENT_PREVIEW_LENGTH;
               const preview = isExpanded
@@ -369,9 +369,9 @@ export default function TestimonialsSection() {
                   </div>
                 </article>
               );
-            })
-          )}
-        </div>
+            })}
+          </div>
+        )}
 
         <button
           type="button"
