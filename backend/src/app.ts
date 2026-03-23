@@ -31,7 +31,6 @@ app.set("trust proxy", trustProxyValue);
 
 app.use(cors({ origin: process.env.FRONTEND_HOST, credentials: true }));
 
-console.log(process.env.FRONTEND_HOST);
 app.use(express.json());
 
 app.use(cookieParser());
