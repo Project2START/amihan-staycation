@@ -27,6 +27,8 @@ class UserAuthController {
 
     res.cookie("auth_token", jwt_token, cookieOptions(24 * 60 * 60 * 1000));
 
+    console.log(jwt_token, req.secure);
+
     res.status(201).json({ message: "Account successfully created" });
   }
   async signIn(req: Request, res: Response) {
