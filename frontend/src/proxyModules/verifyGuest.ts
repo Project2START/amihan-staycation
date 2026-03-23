@@ -41,6 +41,7 @@ export default async function verifyGuest(req: NextRequest) {
       return response;
     }
   } catch (err) {
+    console.log(err);
     return NextResponse.rewrite(notForYouPage);
   }
 }
