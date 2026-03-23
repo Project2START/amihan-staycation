@@ -27,10 +27,11 @@ import {
 } from "./middleware/rateLimit";
 const app = express();
 
-// app.set("trust proxy", trustProxyValue);
+app.set("trust proxy", trustProxyValue);
 
 app.use(cors({ origin: process.env.FRONTEND_HOST, credentials: true }));
 
+console.log(process.env.FRONTEND_HOST);
 app.use(express.json());
 
 app.use(cookieParser());
@@ -42,13 +43,13 @@ app.get("/health", (_req, res) => {
   });
 });
 
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET || "Strong_Secret_Key",
-//     resave: false,
-//     saveUninitialized: false,
-//   }),
-// );
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "Strong_Secret_Key",
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
 
 app.use("/api", globalApiRateLimiter);
 app.use("/graphql", globalGraphqlRateLimiter);

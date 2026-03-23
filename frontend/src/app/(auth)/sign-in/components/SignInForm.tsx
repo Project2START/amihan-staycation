@@ -49,7 +49,7 @@ export default function SignInForm() {
     try {
       await signIn(data);
       setError("");
-      router.push(redirectPath ?? "/auth");
+      // router.push(redirectPath ?? "/auth");
     } catch (error) {
       setError(errorHandler(error).message);
     } finally {
