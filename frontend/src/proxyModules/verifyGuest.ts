@@ -20,14 +20,6 @@ export default async function verifyGuest(req: NextRequest) {
 
       const response = NextResponse.redirect(new URL(`/units`, req.url));
 
-      response.cookies.set("user_id", `${userId}`, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        path: "/",
-        maxAge: 24 * 60 * 60 * 1000,
-      });
-
       return response;
     }
     if (role === "admin" && userId) {
