@@ -51,17 +51,17 @@ export default function NotificationItem({
   const timeAgo = formatTimeAgo(createdAt);
 
   const getPath = (): string => {
-    for (const path of paths) {
-      if (path.pathType === "review") {
-        return `${path.path}/${notification.pathId}/reviews/create`;
-      }
+    const matchedPath = paths.find((path) => path.pathType === pathType);
 
-      if (path.pathType === pathType) {
-        return `${path.path}/${notification.pathId}`;
-      }
+    if (!matchedPath) {
+      return "";
     }
 
-    return "";
+    if (pathType === "review") {
+      return `${matchedPath.path}/${notification.pathId}/reviews/create`;
+    }
+
+    return `${matchedPath.path}/${notification.pathId}`;
   };
 
   const path = getPath();
