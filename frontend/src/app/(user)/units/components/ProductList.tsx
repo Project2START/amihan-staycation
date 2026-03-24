@@ -1,34 +1,33 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import ProductItem, {
   IProductItemProps,
 } from "@/app/shared/components/ProductItem";
 import { HOST } from "@/app/shared/constants/config";
-import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+import { Skeleton } from "@mui/material";
+import ErrorClient from "@/app/shared/components/ErrorClient";
 
-interface ProductListProps {
-  searchParams?: Record<string, string | string[] | undefined>;
-}
-
-const getFirstValue = (value: string | string[] | undefined) => {
-  if (Array.isArray(value)) {
-    return value[0];
-  }
-
-  return value;
+const getFirstValue = (value: string | null) => {
+  return value ?? undefined;
 };
 
-export default async function ProductList({ searchParams }: ProductListProps) {
-  const cookieStore = await cookies();
+export default function ProductList() {
+  const searchParams = useSearchParams();
+  const [products, setProducts] = useState<IProductItemProps[]>([]);
+  const [suggestedProducts, setSuggestedProducts] = useState<
+    IProductItemProps[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  const token = cookieStore.get("auth_token")?.value;
-
-  const query = new URLSearchParams();
-
-  const checkIn = getFirstValue(searchParams?.checkIn);
-  const checkOut = getFirstValue(searchParams?.checkOut);
-  const adults = getFirstValue(searchParams?.adults);
-  const children = getFirstValue(searchParams?.children);
-  const searched = getFirstValue(searchParams?.searched);
+  const router = useRouter();
+  const checkIn = getFirstValue(searchParams.get("checkIn"));
+  const checkOut = getFirstValue(searchParams.get("checkOut"));
+  const adults = getFirstValue(searchParams.get("adults"));
+  const children = getFirstValue(searchParams.get("children"));
+  const searched = getFirstValue(searchParams.get("searched"));
 
   const hasActiveSearch =
     searched === "1" ||
@@ -37,48 +36,105 @@ export default async function ProductList({ searchParams }: ProductListProps) {
     Boolean(adults) ||
     Boolean(children);
 
-  if (checkIn) query.set("checkIn", checkIn);
-  if (checkOut) query.set("checkOut", checkOut);
-  if (adults) query.set("adults", adults);
-  if (children) query.set("children", children);
+  useEffect(() => {
+    let mounted = true;
 
-  const fetchUrl = query.toString()
-    ? `${HOST}/api/products?${query.toString()}`
-    : `${HOST}/api/products`;
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(false);
 
-  const result = await fetch(fetchUrl, {
-    cache: "no-cache",
-    headers: token ? { Cookie: `auth_token=${token}` } : {},
-  });
+      try {
+        const query = new URLSearchParams();
+        if (checkIn) query.set("checkIn", checkIn);
+        if (checkOut) query.set("checkOut", checkOut);
+        if (adults) query.set("adults", adults);
+        if (children) query.set("children", children);
 
-  if (!result.ok) {
-    return notFound();
-  }
+        const fetchUrl = query.toString()
+          ? `${HOST}/api/products?${query.toString()}`
+          : `${HOST}/api/products`;
 
-  const parsedProducts: { message: string; products: IProductItemProps[] } =
-    await result.json();
+        const result = await fetch(fetchUrl, {
+          cache: "no-cache",
+          credentials: "include",
+        });
 
-  const totalProducts = parsedProducts.products?.length ?? 0;
+        if (!result.ok) {
+          if (mounted) setError(true);
+          return;
+        }
 
-  let suggestedProducts: IProductItemProps[] = [];
-
-  if (hasActiveSearch && totalProducts === 0) {
-    try {
-      const suggestionsResult = await fetch(`${HOST}/api/products`, {
-        cache: "no-cache",
-        headers: token ? { Cookie: `auth_token=${token}` } : {},
-      });
-
-      if (suggestionsResult.ok) {
-        const suggestionsParsed: {
+        const parsedProducts: {
           message: string;
           products: IProductItemProps[];
-        } = await suggestionsResult.json();
+        } = await result.json();
 
-        suggestedProducts = (suggestionsParsed.products ?? []).slice(0, 3);
+        if (mounted) {
+          setProducts(parsedProducts.products ?? []);
+        }
+
+        const totalProducts = parsedProducts.products?.length ?? 0;
+        const isActiveSearch =
+          searched === "1" ||
+          Boolean(checkIn) ||
+          Boolean(checkOut) ||
+          Boolean(adults) ||
+          Boolean(children);
+
+        if (isActiveSearch && totalProducts === 0) {
+          try {
+            const suggestionsResult = await fetch(`${HOST}/api/products`, {
+              cache: "no-cache",
+              credentials: "include",
+            });
+
+            if (suggestionsResult.ok) {
+              const suggestionsParsed: {
+                message: string;
+                products: IProductItemProps[];
+              } = await suggestionsResult.json();
+
+              if (mounted) {
+                setSuggestedProducts(
+                  (suggestionsParsed.products ?? []).slice(0, 3),
+                );
+              }
+            }
+          } catch {}
+        }
+      } catch {
+        if (mounted) setError(true);
+      } finally {
+        if (mounted) setLoading(false);
       }
-    } catch {}
+    };
+
+    fetchProducts();
+
+    return () => {
+      mounted = false;
+    };
+  }, [checkIn, checkOut, adults, children, searched]);
+
+  if (loading) {
+    return (
+      <div className="my-[1rem] grid w-full gap-y-8 md:mt-[2rem] md:w-[55%]">
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div className="grid gap-y-5" key={i}>
+            <Skeleton variant="rounded" animation="wave" height={200} />
+            <Skeleton variant="rounded" animation="wave" height={30} />
+            <Skeleton variant="rounded" animation="wave" height={60} />
+          </div>
+        ))}
+      </div>
+    );
   }
+
+  if (error) {
+    return <ErrorClient onRetry={() => router.refresh()} />;
+  }
+
+  const totalProducts = products.length;
 
   return (
     <div className="grid gap-y-8 mt-[2rem] md:w-[55%]">
@@ -89,8 +145,8 @@ export default async function ProductList({ searchParams }: ProductListProps) {
         </p>
       ) : null}
 
-      {parsedProducts.products && parsedProducts.products.length !== 0 ? (
-        parsedProducts.products.map((product) => {
+      {products && products.length !== 0 ? (
+        products.map((product) => {
           const {
             id,
             name,

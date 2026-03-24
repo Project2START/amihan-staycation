@@ -1,5 +1,5 @@
 import React from "react";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import ProtectedPagesGuard from "./ui/ProtectedPagesGuard";
 import AdminAvailabilityCalendar from "./components/AdminAvailabilityCalendar";
 import AdminDesktopShell from "./components/AdminDesktopShell";
@@ -9,8 +9,8 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const userId = cookieStore.get("user_id")?.value;
+  const headersList = await headers();
+  const userId = headersList.get("x-user-id") ?? undefined;
 
   return (
     <>

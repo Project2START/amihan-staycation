@@ -8,10 +8,7 @@ export default function NotFound() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div>
-        <HeaderAuth />
-      </div>
+    <div className="min-h-[80vh] flex flex-col">
       <div className="text-secondary-normal text-sm text-center p-6 grow-1 flex flex-col justify-center items-center">
         <h1 className="mb-4">404 - Page Not Found</h1>
         <p className="mb-4">
@@ -31,9 +28,6 @@ export default function NotFound() {
             Home
           </Link>
         </div>
-      </div>
-      <div>
-        <FooterMain />
       </div>
     </div>
   );

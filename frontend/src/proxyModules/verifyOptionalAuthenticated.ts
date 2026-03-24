@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-export default async function verifyAuthenticated(req: NextRequest) {
+export default async function verifyOptionalAuthenticated(req: NextRequest) {
   const auth_token = req.cookies.get("auth_token")?.value;
-  const notForYouPage = new URL("/not-found", req.url);
 
-  if (!auth_token) return NextResponse.rewrite(notForYouPage);
+  if (!auth_token) return NextResponse.next();
 
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
@@ -22,10 +21,10 @@ export default async function verifyAuthenticated(req: NextRequest) {
       return NextResponse.next({
         request: { headers: requestHeaders },
       });
-    } else {
-      return NextResponse.rewrite(notForYouPage);
     }
-  } catch (err) {
-    return NextResponse.rewrite(notForYouPage);
+
+    return NextResponse.next();
+  } catch {
+    return NextResponse.next();
   }
 }

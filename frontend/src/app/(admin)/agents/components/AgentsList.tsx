@@ -1,6 +1,10 @@
-import fetchWithAuth from "@/app/shared/lib/fetchWithAuth";
-import { notFound } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
+import fetchWithAuthClient from "@/app/shared/lib/fetchWithAuthClient";
 import AgentsItem from "./AgentsItem";
+import { Skeleton } from "@mui/material";
+import NotFoundClient from "@/app/shared/components/NotFoundClient";
 
 export interface IAgent {
   avatar_url: string;
@@ -9,20 +13,74 @@ export interface IAgent {
   name: string;
   userId: string;
 }
-export default async function AgentsList() {
-  const result = await fetchWithAuth("api/agents/", {
-    cache: "no-cache",
-    method: "GET",
-  });
 
-  if (!result.ok) {
-    return notFound();
+export default function AgentsList() {
+  const [agents, setAgents] = useState<IAgent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchAgents = async () => {
+      try {
+        const result = await fetchWithAuthClient("api/agents/", {
+          cache: "no-cache",
+          method: "GET",
+        });
+
+        if (!result.ok) {
+          if (mounted) setError(true);
+          return;
+        }
+
+        const parsedResult: { message: string; agents: IAgent[] } =
+          await result.json();
+
+        if (mounted) {
+          setAgents(parsedResult.agents ?? []);
+        }
+      } catch {
+        if (mounted) setError(true);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchAgents();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex-1 overflow-hidden">
+        <div className="grid gap-y-5 md:h-full md:grid-rows-[auto_1fr]">
+          <div className="rounded-xl border border-secondary-normal/15 bg-white/90 p-4 md:p-5">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Skeleton variant="rounded" height={26} />
+              <Skeleton variant="rounded" height={26} />
+              <Skeleton variant="rounded" height={26} />
+            </div>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <Skeleton variant="rounded" height={118} />
+            <Skeleton variant="rounded" height={118} />
+            <Skeleton variant="rounded" height={118} />
+            <Skeleton variant="rounded" height={118} />
+            <Skeleton variant="rounded" height={118} />
+            <Skeleton variant="rounded" height={118} />
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  const parsedResult: { message: string; agents: IAgent[] } =
-    await result.json();
-
-  const agents = parsedResult.agents;
+  if (error) {
+    return <NotFoundClient />;
+  }
 
   return (
     <div className="flex-1 overflow-y-auto">

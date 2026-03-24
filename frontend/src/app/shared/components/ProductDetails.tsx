@@ -55,15 +55,20 @@ export default async function ProductDetails({
     <div className="text-xs grid gap-y-7 my-[1rem]">
       <div className="flex items-start justify-between">
         {reviewCount === 0 ? (
-          <div className="flex items-center mt-[0.5rem]">
-            <Rating
-              value={Number(averageRating.toFixed(1))}
-              textColor="font-bold"
-            />
-            <span className="ml-[0.5rem] xl:text-base">
-              No review as of the moment
-            </span>
-          </div>
+          <Link
+            href={`/reviews?productId=${id}`}
+            className="hover-animation lg:hover:opacity-[0.5]"
+          >
+            <div className="flex items-center mt-[0.5rem]">
+              <Rating
+                value={Number(averageRating.toFixed(1))}
+                textColor="font-bold"
+              />
+              <span className="underline ml-[0.5rem] xl:text-base">
+                No review as of the moment
+              </span>
+            </div>
+          </Link>
         ) : (
           <Link
             href={`/reviews?productId=${id}`}

@@ -20,7 +20,12 @@ export default async function verifyRegistree(req: NextRequest) {
       id: registree_id,
     });
 
-    return NextResponse.next();
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-registree-id", registree_id ?? "");
+
+    return NextResponse.next({
+      request: { headers: requestHeaders },
+    });
   } catch (err) {
     const notForYouPage = new URL("/not-found", req.url);
 

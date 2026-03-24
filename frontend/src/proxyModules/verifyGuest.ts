@@ -15,6 +15,9 @@ export default async function verifyGuest(req: NextRequest) {
     const userId = payload.user_id;
 
     if ((role === "user" || role === "agent") && userId) {
+      const requestHeaders = new Headers(req.headers);
+      requestHeaders.set("x-user-id", `${userId}`);
+
       const response = NextResponse.redirect(new URL(`/units`, req.url));
 
       response.cookies.set("user_id", `${userId}`, {
@@ -28,20 +31,14 @@ export default async function verifyGuest(req: NextRequest) {
       return response;
     }
     if (role === "admin" && userId) {
-      const response = NextResponse.redirect(new URL(`/spaces`, req.url));
+      const requestHeaders = new Headers(req.headers);
+      requestHeaders.set("x-user-id", `${userId}`);
 
-      response.cookies.set("user_id", `${userId}`, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        path: "/",
-        maxAge: 24 * 60 * 60 * 1000,
-      });
+      const response = NextResponse.redirect(new URL(`/spaces`, req.url));
 
       return response;
     }
   } catch (err) {
-    console.log(err);
     return NextResponse.rewrite(notForYouPage);
   }
 }

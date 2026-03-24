@@ -1,6 +1,4 @@
-import { Suspense } from "react";
 import EditFormFiller from "./components/EditFormFiller";
-import EditFormSkeleton from "./components/EditFormSkeleton";
 
 export default async function PaymentMethodsSlugPage({
   params,
@@ -11,9 +9,7 @@ export default async function PaymentMethodsSlugPage({
 
   return (
     <div>
-      <Suspense fallback={<EditFormSkeleton />}>
-        <EditFormFiller slug={slug} />
-      </Suspense>
+      <EditFormFiller slug={slug} />
     </div>
   );
 }

@@ -111,14 +111,21 @@ export const createRateLimiter = (
 export const globalApiRateLimiter = createRateLimiter({
   name: "global-api",
   windowMs: Number(process.env.RATE_LIMIT_GLOBAL_WINDOW_MS ?? 15 * 60 * 1000),
-  max: Number(process.env.RATE_LIMIT_GLOBAL_MAX ?? 100),
+  max: Number(process.env.RATE_LIMIT_GLOBAL_MAX ?? 300),
   keyPrefix: "api",
+  skip: (req) => {
+    return (
+      req.path === "/users/sign-in" ||
+      req.path === "/users/sign-up" ||
+      req.path.startsWith("/users/password-reset")
+    );
+  },
 });
 
 export const globalGraphqlRateLimiter = createRateLimiter({
   name: "global-graphql",
   windowMs: Number(process.env.RATE_LIMIT_GRAPHQL_WINDOW_MS ?? 15 * 60 * 1000),
-  max: Number(process.env.RATE_LIMIT_GRAPHQL_MAX ?? 80),
+  max: Number(process.env.RATE_LIMIT_GRAPHQL_MAX ?? 200),
   keyPrefix: "graphql",
 });
 

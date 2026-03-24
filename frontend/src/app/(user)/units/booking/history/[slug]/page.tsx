@@ -1,6 +1,11 @@
-import fetchWithAuth from "@/app/shared/lib/fetchWithAuth";
-import { notFound } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import fetchWithAuthClient from "@/app/shared/lib/fetchWithAuthClient";
 import History from "./components/History";
+import HistoryLoading from "./loading";
+import NotFoundClient from "@/app/shared/components/NotFoundClient";
 
 export interface IBookingHistory {
   message: string | null;
@@ -15,31 +20,74 @@ export interface IBookingHistory {
   bookingId: string;
 }
 
-export default async function HistorySlugPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+export default function HistorySlugPage() {
+  const params = useParams();
+  const slug = params.slug as string;
 
-  const result = await fetchWithAuth(`api/bookings/${slug}/history`, {
-    cache: "no-cache",
-    method: "GET",
-  });
+  const [history, setHistory] = useState<IBookingHistory[]>([]);
+  const [bookingStatus, setBookingStatus] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  if (!result.ok) {
-    return notFound();
+  useEffect(() => {
+    if (!slug) {
+      setError(true);
+      setLoading(false);
+      return;
+    }
+
+    let mounted = true;
+
+    const fetchHistory = async () => {
+      try {
+        const result = await fetchWithAuthClient(
+          `api/bookings/${slug}/history`,
+          {
+            cache: "no-cache",
+            method: "GET",
+          },
+        );
+
+        if (!result.ok) {
+          if (mounted) setError(true);
+          return;
+        }
+
+        const parsed: {
+          message: string;
+          history: IBookingHistory[];
+          bookingStatus: string;
+        } = await result.json();
+
+        if (mounted) {
+          setHistory(parsed.history);
+          setBookingStatus(parsed.bookingStatus);
+        }
+      } catch {
+        if (mounted) setError(true);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchHistory();
+
+    return () => {
+      mounted = false;
+    };
+  }, [slug]);
+
+  if (loading) {
+    return <HistoryLoading />;
   }
 
-  const parsed: {
-    message: string;
-    history: IBookingHistory[];
-    bookingStatus: string;
-  } = await result.json();
+  if (error) {
+    return <NotFoundClient />;
+  }
 
   return (
     <>
-      <History history={parsed.history} bookingStatus={parsed.bookingStatus} />
+      <History history={history} bookingStatus={bookingStatus} />
     </>
   );
 }
