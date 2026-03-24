@@ -18,13 +18,13 @@ export default async function verifyUser(req: NextRequest) {
     if ((role === "user" || role === "agent") && userId) {
       const response = NextResponse.next();
 
-      response.cookies.set("user_id", `${userId}`, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        path: "/",
-        maxAge: 24 * 60 * 60 * 1000,
-      });
+      // response.cookies.set("user_id", `${userId}`, {
+      //   httpOnly: true,
+      //   secure: true,
+      //   sameSite: "none",
+      //   path: "/",
+      //   maxAge: 24 * 60 * 60 * 1000,
+      // });
 
       return response;
     } else {
