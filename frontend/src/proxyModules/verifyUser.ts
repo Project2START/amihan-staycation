@@ -16,14 +16,11 @@ export default async function verifyUser(req: NextRequest) {
     const userId = payload.user_id;
 
     if ((role === "user" || role === "agent") && userId) {
-      const response = NextResponse.next();
+      const requestHeaders = new Headers(req.headers);
+      requestHeaders.set("x-user-id", `${userId}`);
 
-      response.cookies.set("user_id", `${userId}`, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        path: "/",
-        maxAge: 24 * 60 * 60 * 1000,
+      const response = NextResponse.next({
+        request: { headers: requestHeaders },
       });
 
       return response;

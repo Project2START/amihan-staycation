@@ -1,14 +1,11 @@
-import React, { Suspense } from "react";
-import HistoryLoading from "./loading";
+import React from "react";
 
-export default async function HistoryLayout({
+export default function HistoryLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-[calc(100vh-72px)] flex-col">
-      <Suspense fallback={<HistoryLoading />}>{children}</Suspense>
-    </div>
+    <div className="flex min-h-[calc(100vh-72px)] flex-col">{children}</div>
   );
 }

@@ -12,9 +12,15 @@ export default async function verifyAdmin(req: NextRequest) {
     const { payload } = await jwtVerify(auth_token, secret);
 
     const role = payload.user_role;
+    const userId = payload.user_id;
 
-    if (role === "admin") {
-      return NextResponse.next();
+    if (role === "admin" && userId) {
+      const requestHeaders = new Headers(req.headers);
+      requestHeaders.set("x-user-id", `${userId}`);
+
+      return NextResponse.next({
+        request: { headers: requestHeaders },
+      });
     } else {
       return NextResponse.rewrite(notForYouPage);
     }

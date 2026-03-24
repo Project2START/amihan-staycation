@@ -4,6 +4,7 @@ import verifyAdmin from "./proxyModules/verifyAdmin";
 import verifyGuest from "./proxyModules/verifyGuest";
 import verifyUser from "./proxyModules/verifyUser";
 import verifyAuthenticated from "./proxyModules/verifyAuthenticated";
+import verifyOptionalAuthenticated from "./proxyModules/verifyOptionalAuthenticated";
 
 const isPathMatch = (path: string, basePath: string) =>
   path === basePath || path.startsWith(`${basePath}/`);
@@ -54,6 +55,10 @@ export async function proxy(req: NextRequest) {
     AUTHENTICATED_PATHS.some((basePath) => isPathMatch(currentPath, basePath))
   ) {
     return await verifyAuthenticated(req);
+  }
+
+  if (isPathMatch(currentPath, "/units")) {
+    return await verifyOptionalAuthenticated(req);
   }
 
   if (

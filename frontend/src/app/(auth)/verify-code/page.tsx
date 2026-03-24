@@ -1,12 +1,12 @@
 import EmailIcon from "@mui/icons-material/Email";
 import ResendVerifyLink from "./components/ResendVerifyCode";
 import CodeInput from "./components/CodeInput";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import HeaderPromptAuth from "@/app/shared/components/HeaderPromptAuth";
 
 export default async function VerifyInfoPage() {
-  const cookieStore = await cookies();
-  const registree_id = cookieStore.get("registree_id")?.value;
+  const headersList = await headers();
+  const registree_id = headersList.get("x-registree-id") ?? undefined;
 
   return (
     <>
