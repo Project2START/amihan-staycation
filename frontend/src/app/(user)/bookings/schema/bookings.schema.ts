@@ -162,7 +162,7 @@ export const bookingSchema = z.object({
   payment_proof: photoFileSchema,
   agree_terms: z.boolean(),
   product_id: z.uuid("Invalid product ID."),
-  payment_method_id: z.uuid("Invalid product ID.").optional(),
+  payment_method_id: z.uuid("Invalid payment method ID.").optional(),
   // status: z
   //   .string("Status is required.")
   //   .min(STATUS_MIN_LENGTH, "Status cannot be empty.")
