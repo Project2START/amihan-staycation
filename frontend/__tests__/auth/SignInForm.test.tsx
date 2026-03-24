@@ -10,9 +10,9 @@ import { signIn } from "@/app/(auth)/sign-in/api/signIn";
 
 jest.mock("../../src/app/(auth)/sign-in/api/signIn");
 
-const pushMock = jest.fn();
+const replaceMock = jest.fn();
 jest.mock("next/navigation", () => ({
-  useRouter: () => ({ push: pushMock }),
+  useRouter: () => ({ replace: replaceMock }),
   useSearchParams: () => new URLSearchParams(),
 }));
 
@@ -121,7 +121,7 @@ describe("SignInForm Component", () => {
       await userEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(pushMock).toHaveBeenCalledWith("/auth");
+        expect(replaceMock).toHaveBeenCalledWith("/auth");
       });
     });
     it("shows error when sign in fails due to invalid credentials", async () => {
@@ -138,7 +138,7 @@ describe("SignInForm Component", () => {
       await userEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(pushMock).not.toHaveBeenCalled();
+        expect(replaceMock).not.toHaveBeenCalled();
       });
 
       expect(
@@ -157,7 +157,7 @@ describe("SignInForm Component", () => {
       await userEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(pushMock).not.toHaveBeenCalled();
+        expect(replaceMock).not.toHaveBeenCalled();
       });
 
       expect(await screen.findByText(/network error/i)).toBeInTheDocument();
@@ -173,7 +173,7 @@ describe("SignInForm Component", () => {
       await userEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(pushMock).not.toHaveBeenCalled();
+        expect(replaceMock).not.toHaveBeenCalled();
       });
 
       expect(
