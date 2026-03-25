@@ -53,7 +53,7 @@ describe("RegistreeController.register", () => {
     (registreeService.create as jest.Mock).mockRejectedValue(error);
 
     await expect(registreeController.register(req, res)).rejects.toThrow(
-      "DB failure"
+      "DB failure",
     );
 
     // Ensure nothing else was called
