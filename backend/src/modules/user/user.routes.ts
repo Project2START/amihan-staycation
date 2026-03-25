@@ -60,6 +60,8 @@ router.get(
   asyncHandler(userAuthController.googleAuthCallback),
 );
 
+router.get("/me", checkAuth, asyncHandler(userAuthController.me));
+
 router.get(
   "/:id",
   checkAuth,

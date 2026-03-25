@@ -31,7 +31,7 @@ describe("UserAuthController", () => {
   // ------------------------
   describe("signUp", () => {
     it("should sign up a user, set cookie, and return 201", async () => {
-      const mockUser = { id: "u1", role: "user" };
+      const mockUser = { id: "u1", role: "user", auth_version: 1 };
       (userAuthService.signUp as jest.Mock).mockResolvedValue(mockUser);
       (signToken as jest.Mock).mockReturnValue("jwt-token");
       (cookieOptions as jest.Mock).mockReturnValue({ httpOnly: true });
@@ -42,7 +42,11 @@ describe("UserAuthController", () => {
 
       expect(userAuthService.signUp).toHaveBeenCalledWith(req.body);
       expect(signToken).toHaveBeenCalledWith(
-        { user_id: mockUser.id, user_role: mockUser.role },
+        {
+          user_id: mockUser.id,
+          user_role: mockUser.role,
+          auth_version: mockUser.auth_version,
+        },
         "24h",
       );
       expect(res.cookie).toHaveBeenCalledWith("auth_token", "jwt-token", {
@@ -51,6 +55,10 @@ describe("UserAuthController", () => {
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
         message: "Account successfully created",
+        user: {
+          id: mockUser.id,
+          role: mockUser.role,
+        },
       });
     });
   });
@@ -60,7 +68,7 @@ describe("UserAuthController", () => {
   // ------------------------
   describe("signIn", () => {
     it("should sign in a user, set cookie, and return 201", async () => {
-      const mockUser = { id: "u1", role: "user" };
+      const mockUser = { id: "u1", role: "user", auth_version: 1 };
       (userAuthService.signIn as jest.Mock).mockResolvedValue(mockUser);
       (signToken as jest.Mock).mockReturnValue("jwt-token");
       (cookieOptions as jest.Mock).mockReturnValue({ httpOnly: true });
@@ -71,7 +79,11 @@ describe("UserAuthController", () => {
 
       expect(userAuthService.signIn).toHaveBeenCalledWith(req.body);
       expect(signToken).toHaveBeenCalledWith(
-        { user_id: mockUser.id, user_role: mockUser.role },
+        {
+          user_id: mockUser.id,
+          user_role: mockUser.role,
+          auth_version: mockUser.auth_version,
+        },
         "24h",
       );
       expect(res.cookie).toHaveBeenCalledWith("auth_token", "jwt-token", {
@@ -80,6 +92,10 @@ describe("UserAuthController", () => {
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
         message: "Account successfully signed it",
+        user: {
+          id: mockUser.id,
+          role: mockUser.role,
+        },
       });
     });
   });
@@ -149,7 +165,7 @@ describe("UserAuthController", () => {
     });
 
     it("should set cookie and redirect to dashboard on success", async () => {
-      const mockUser = { id: "u1", role: "user" };
+      const mockUser = { id: "u1", role: "user", auth_version: 1 };
       (userAuthService.googleAuthCallback as jest.Mock).mockResolvedValue(
         mockUser,
       );
@@ -167,7 +183,9 @@ describe("UserAuthController", () => {
       expect(res.cookie).toHaveBeenCalledWith("auth_token", "jwt-token", {
         httpOnly: true,
       });
-      expect(res.redirect).toHaveBeenCalledWith(`${FRONTEND_HOST}/auth`);
+      expect(res.redirect).toHaveBeenCalledWith(
+        `${FRONTEND_HOST}/sign-in/google-callback?redirect=%2Fauth`,
+      );
     });
   });
 });

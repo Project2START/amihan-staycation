@@ -54,12 +54,20 @@ export default function SignUpForm() {
     setLoading(true);
 
     try {
-      await signUp(rest);
+      const user = await signUp(rest);
+
+      await fetch("/api/auth/registree", {
+        method: "POST",
+        body: JSON.stringify({ registree_id: user.registree_id }),
+      });
+
       setError("");
+
       localStorage.setItem(
         "registree_client_resendCountdown",
         JSON.stringify(new Date(Date.now() + 30 * 1000)),
       );
+
       router.push(verifyCodeHref);
     } catch (error) {
       const errMessage = errorHandler(error);

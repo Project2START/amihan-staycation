@@ -47,8 +47,17 @@ export default function SignInForm() {
     setLoading(true);
 
     try {
-      await signIn(data);
+      const result = await signIn(data);
+
+      const user = result.user;
+
+      await fetch("/api/auth/register-cookies", {
+        method: "POST",
+        body: JSON.stringify({ id: user.id, role: user.role }),
+      });
+
       setError("");
+
       router.replace(redirectPath ?? "/auth");
     } catch (error) {
       setError(errorHandler(error).message);

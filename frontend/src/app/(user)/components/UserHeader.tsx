@@ -44,6 +44,11 @@ export default function UserHeader() {
   const handleLogout = async () => {
     try {
       await logout();
+
+      await fetch("/api/auth/clear-cookies", {
+        method: "DELETE",
+      });
+
       dispatch(resetUser());
       router.replace("/sign-in");
     } catch (err) {

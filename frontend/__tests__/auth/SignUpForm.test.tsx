@@ -28,6 +28,11 @@ describe("SignUpForm Component", () => {
   let submitButton: HTMLInputElement;
 
   beforeEach(async () => {
+    (global.fetch as jest.Mock) = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true }),
+    });
+
     render(<SignUpForm />);
     firstNameInput = screen.getByPlaceholderText(/first name/i);
     lastNameInput = screen.getByPlaceholderText(/last name/i);
@@ -39,6 +44,10 @@ describe("SignUpForm Component", () => {
       name: /agree to terms and privacy policy/i,
     });
     await userEvent.click(agreeTermsCheckbox);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe("Form Validation", () => {

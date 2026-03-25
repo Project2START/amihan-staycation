@@ -30,7 +30,7 @@ export default function CodeInput({ id }: { id?: string }) {
 
     setLoading(true);
     try {
-      await axios.post(
+      const result = await axios.post(
         `${HOST}/api/users/sign-up`,
         {
           id,
@@ -38,8 +38,25 @@ export default function CodeInput({ id }: { id?: string }) {
         },
         { withCredentials: true },
       );
+
+      const user = result.data.user;
+
+      await fetch("/api/auth/register-cookies", {
+        method: "POST",
+        body: JSON.stringify({
+          role: user.role,
+          id: user.id,
+        }),
+      });
+
       setErrorLabel("");
+
       localStorage.removeItem("registree_client_resendCountdown");
+
+      await fetch("/api/auth/registree/clear-cookies", {
+        method: "DELETE",
+      });
+
       router.push(redirectPath ?? "/auth");
     } catch (error) {
       const errorResult = errorHandler(error);
