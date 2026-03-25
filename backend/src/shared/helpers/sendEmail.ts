@@ -48,7 +48,40 @@ export async function sendEmail({
     });
 
     return info;
-  } catch (error) {
+  } catch (error: any) {
+    console.error("[sendEmail] Error sending email:");
+    if (error instanceof Error) {
+      console.error("Message:", error.message);
+      if (error.stack) console.error("Stack:", error.stack);
+    }
+    if (error?.response) {
+      console.error("SMTP Response:", error.response);
+    }
+    if (error?.code) {
+      console.error("Error Code:", error.code);
+    }
+    if (error?.command) {
+      console.error("SMTP Command:", error.command);
+    }
+    if (error?.errno) {
+      console.error("Errno:", error.errno);
+    }
+    if (error?.address) {
+      console.error("Address:", error.address);
+    }
+    if (error?.port) {
+      console.error("Port:", error.port);
+    }
+    // Log the full error object for deep inspection
+    console.error("Full error object:", error);
+    // Log SMTP-related environment variables for debugging
+    console.error("SMTP ENV CONFIG:", {
+      SMTP_HOST: process.env.SMTP_HOST,
+      SMTP_PORT: process.env.SMTP_PORT,
+      SMTP_SECURE: process.env.SMTP_SECURE,
+      SMTP_USER: process.env.SMTP_USER,
+      SMTP_PASS: process.env.SMTP_PASS ? "[HIDDEN]" : undefined,
+    });
     throw new AppError("Email could not be sent. Please try again later.");
   }
 }
