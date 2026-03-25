@@ -81,7 +81,7 @@ export default function AgentsList() {
     );
   }
 
-  if (!error) {
+  if (error) {
     return <ErrorClient onRetry={() => router.refresh()} />;
   }
 
