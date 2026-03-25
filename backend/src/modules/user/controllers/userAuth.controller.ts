@@ -27,7 +27,10 @@ class UserAuthController {
 
     res.cookie("auth_token", jwt_token, cookieOptions(24 * 60 * 60 * 1000));
 
-    res.status(201).json({ message: "Account successfully created" });
+    res.status(201).json({
+      message: "Account successfully created",
+      user: { id: user.id, role: user.role },
+    });
   }
   async signIn(req: Request, res: Response) {
     const user = await userAuthService.signIn(req.body);
@@ -41,7 +44,10 @@ class UserAuthController {
 
     res.cookie("auth_token", jwt_token, cookieOptions(24 * 60 * 60 * 1000));
 
-    res.status(201).json({ message: "Account successfully signed it" });
+    res.status(201).json({
+      message: "Account successfully signed it",
+      user: { id: user.id, role: user.role },
+    });
   }
   async googleAuth(req: Request, res: Response) {
     const state = generateSecureRandom();
@@ -90,9 +96,20 @@ class UserAuthController {
 
     req.session.redirectPath = undefined;
 
-    return res.redirect(`${process.env.FRONTEND_HOST}${redirectPath}`);
+    const frontendRedirect = `${process.env.FRONTEND_HOST}/sign-in/google-callback?redirect=${encodeURIComponent(redirectPath)}`;
 
-    // throw new ForbiddenError("You do not have permission to sign in");
+    return res.redirect(frontendRedirect);
+  }
+  async me(req: Request, res: Response) {
+    const requester = (req as any).user;
+
+    res.status(200).json({
+      message: "User session successfully fetched",
+      user: {
+        id: requester.user_id,
+        role: requester.user_role,
+      },
+    });
   }
   async logout(_: Request, res: Response) {
     const cookieOptions = {

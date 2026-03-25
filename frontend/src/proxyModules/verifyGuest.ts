@@ -1,44 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { jwtVerify } from "jose";
 
 export default async function verifyGuest(req: NextRequest) {
-  const auth_token = req.cookies.get("auth_token")?.value;
-  const notForYouPage = new URL("/not-found", req.url);
-  const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+  const userId = req.cookies.get("id")?.value;
+  const role = req.cookies.get("role")?.value;
 
-  if (!auth_token) return NextResponse.next();
+  if (!userId) return NextResponse.next();
 
-  try {
-    const { payload } = await jwtVerify(auth_token || "", secret);
+  if ((role === "user" || role === "agent") && userId) {
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-user-id", `${userId}`);
 
-    const role = payload.user_role;
-    const userId = payload.user_id;
+    const response = NextResponse.redirect(new URL(`/units`, req.url));
 
-    if ((role === "user" || role === "agent") && userId) {
-      const requestHeaders = new Headers(req.headers);
-      requestHeaders.set("x-user-id", `${userId}`);
+    return response;
+  }
+  if (role === "admin" && userId) {
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-user-id", `${userId}`);
 
-      const response = NextResponse.redirect(new URL(`/units`, req.url));
+    const response = NextResponse.redirect(new URL(`/spaces`, req.url));
 
-      response.cookies.set("user_id", `${userId}`, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        path: "/",
-        maxAge: 24 * 60 * 60 * 1000,
-      });
-
-      return response;
-    }
-    if (role === "admin" && userId) {
-      const requestHeaders = new Headers(req.headers);
-      requestHeaders.set("x-user-id", `${userId}`);
-
-      const response = NextResponse.redirect(new URL(`/spaces`, req.url));
-
-      return response;
-    }
-  } catch (err) {
-    return NextResponse.rewrite(notForYouPage);
+    return response;
   }
 }
