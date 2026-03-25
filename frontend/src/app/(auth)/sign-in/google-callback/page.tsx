@@ -2,17 +2,16 @@
 
 import { HOST } from "@/app/shared/constants/config";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 
 const getSafeRedirectPath = (path: string | null) => {
   if (!path) return "/auth";
   if (!path.startsWith("/")) return "/auth";
   if (path.startsWith("//")) return "/auth";
-
   return path;
 };
 
-export default function GoogleCallbackPage() {
+function GoogleCallbackInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectPath = getSafeRedirectPath(searchParams.get("redirect"));
@@ -58,5 +57,13 @@ export default function GoogleCallbackPage() {
     <div className="px-[2rem] py-[6rem] text-center text-secondary-normal">
       <p className="text-sm lg:text-base">Finalizing Google sign-in...</p>
     </div>
+  );
+}
+
+export default function GoogleCallbackPage() {
+  return (
+    <Suspense>
+      <GoogleCallbackInner />
+    </Suspense>
   );
 }
