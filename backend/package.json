@@ -30,6 +30,7 @@
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.10",
     "otp-generator": "^4.0.1",
+    "resend": "^6.9.4",
     "socket.io": "^4.8.3",
     "zod": "^4.1.12"
   },
