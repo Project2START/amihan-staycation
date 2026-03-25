@@ -7,7 +7,6 @@ export async function sendVerificationCode(
   verificationCode: string,
   email: string,
 ) {
-  console.log("Verification code " + verificationCode + "Email " + email);
   const templatePath = path.resolve(
     process.cwd(),
     "src/templates/emailVerification.html",
