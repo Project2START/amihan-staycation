@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import fetchWithAuthClient from "@/app/shared/lib/fetchWithAuthClient";
 import AgentsItem from "./AgentsItem";
 import { Skeleton } from "@mui/material";
-import NotFoundClient from "@/app/shared/components/NotFoundClient";
+import ErrorClient from "@/app/shared/components/ErrorClient";
+import { useRouter } from "next/navigation";
 
 export interface IAgent {
   avatar_url: string;
@@ -18,6 +19,8 @@ export default function AgentsList() {
   const [agents, setAgents] = useState<IAgent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     let mounted = true;
@@ -78,8 +81,8 @@ export default function AgentsList() {
     );
   }
 
-  if (error) {
-    return <NotFoundClient />;
+  if (!error) {
+    return <ErrorClient onRetry={() => router.refresh()} />;
   }
 
   return (
