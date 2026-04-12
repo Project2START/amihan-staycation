@@ -25,7 +25,7 @@ type ReviewsApiResult = ProductReviewsResponse & { message: string };
 export default function SharedReviewsContent({
   productId,
 }: {
-  productId: string | null;
+  productId: string | undefined;
 }) {
   const router = useRouter();
   const user = useAppSelector((state) => state.users.data);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Skeleton } from "@mui/material";
 import AddPaymentMethodDesktop from "./AddPaymentMethodDesktop";
 import PaymentMethodList from "./PaymentMethodList";
@@ -13,40 +13,51 @@ export default function PaymentMethods() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
+  const fetchPaymentMethods = useCallback(async () => {
+    try {
+      const result = await fetchWithAuthClient("api/paymentMethods/", {
+        cache: "no-cache",
+        method: "GET",
+      });
 
-    const fetchPaymentMethods = async () => {
-      try {
-        const result = await fetchWithAuthClient("api/paymentMethods/", {
-          cache: "no-cache",
-          method: "GET",
-        });
-
-        if (!result.ok) {
-          if (mounted) setError(true);
-          return;
-        }
-
-        const parsed: { message: string; payment_methods: IPaymentMethod[] } =
-          await result.json();
-
-        if (mounted) {
-          setPaymentMethods(parsed.payment_methods ?? []);
-        }
-      } catch {
-        if (mounted) setError(true);
-      } finally {
-        if (mounted) setLoading(false);
+      if (!result.ok) {
+        setError(true);
+        return;
       }
+
+      const parsed: { message: string; payment_methods: IPaymentMethod[] } =
+        await result.json();
+
+      setPaymentMethods(parsed.payment_methods ?? []);
+      setError(false);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPaymentMethods();
+  }, [fetchPaymentMethods]);
+
+  useEffect(() => {
+    const handlePaymentMethodsUpdated = () => {
+      fetchPaymentMethods();
     };
 
-    fetchPaymentMethods();
+    window.addEventListener(
+      "payment-methods:updated",
+      handlePaymentMethodsUpdated,
+    );
 
     return () => {
-      mounted = false;
+      window.removeEventListener(
+        "payment-methods:updated",
+        handlePaymentMethodsUpdated,
+      );
     };
-  }, []);
+  }, [fetchPaymentMethods]);
 
   if (loading) {
     return (

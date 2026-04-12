@@ -90,5 +90,6 @@ export const config = {
     "/agents/:path*",
     "/insights/:path*",
     "/my-bookings/:path*",
+    "/reviews/:path*",
   ],
 };

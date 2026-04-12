@@ -26,6 +26,20 @@
   color: rgba(128, 128, 128, 0.5);
 }
 
+/* Keep range highlighting visible when a disabled day is used as valid checkout. */
+.day[data-disabled][data-in-range] {
+  background-color: var(--color-secondary-opacity);
+  color: var(--color-secondary-normal);
+}
+
+.day[data-disabled][data-selected],
+.day[data-disabled][data-first-in-range],
+.day[data-disabled][data-last-in-range] {
+  background-color: var(--color-primary-normal);
+  color: white;
+  font-weight: bold;
+}
+
 .datePickerRoot {
   display: flex;
   flex-direction: column-reverse;

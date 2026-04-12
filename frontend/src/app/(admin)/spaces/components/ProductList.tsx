@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ProductItem, {
   IProductItemProps,
 } from "@/app/shared/components/ProductItem";
@@ -13,42 +13,47 @@ export default function ProductList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
+  const fetchProducts = useCallback(async () => {
+    try {
+      const result = await fetchWithAuthClient("api/products/admin", {
+        cache: "no-cache",
+        method: "GET",
+      });
 
-    const fetchProducts = async () => {
-      try {
-        const result = await fetchWithAuthClient("api/products/admin", {
-          cache: "no-cache",
-          method: "GET",
-        });
-
-        if (!result.ok) {
-          if (mounted) setError(true);
-          return;
-        }
-
-        const parsedProducts: {
-          message: string;
-          products: IProductItemProps[];
-        } = await result.json();
-
-        if (mounted) {
-          setProducts(parsedProducts.products ?? []);
-        }
-      } catch {
-        if (mounted) setError(true);
-      } finally {
-        if (mounted) setLoading(false);
+      if (!result.ok) {
+        setError(true);
+        return;
       }
+
+      const parsedProducts: {
+        message: string;
+        products: IProductItemProps[];
+      } = await result.json();
+
+      setProducts(parsedProducts.products ?? []);
+      setError(false);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    const handleSpacesUpdated = () => {
+      fetchProducts();
     };
 
-    fetchProducts();
+    window.addEventListener("spaces:updated", handleSpacesUpdated);
 
     return () => {
-      mounted = false;
+      window.removeEventListener("spaces:updated", handleSpacesUpdated);
     };
-  }, []);
+  }, [fetchProducts]);
 
   if (loading) {
     return (

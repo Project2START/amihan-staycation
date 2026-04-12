@@ -37,7 +37,29 @@ export default function CalendarBooking({
     setCalendarValue(defaultValue);
   }, [defaultValue]);
 
-  const hasDisabledDateBetween = (
+  const isDisabledDate = (date: string | Date) => {
+    if (!disabledDates?.length) return false;
+
+    const target = dayjs(date).startOf("day");
+
+    return disabledDates.some((d) => target.isSame(dayjs(d).startOf("day")));
+  };
+
+  const isDateInActiveRange = (date: string | Date) => {
+    if (!calendarValue[0] || !calendarValue[1]) return false;
+
+    const target = dayjs(date).startOf("day");
+    const rangeStart = dayjs(calendarValue[0]).startOf("day");
+    const rangeEnd = dayjs(calendarValue[1]).startOf("day");
+
+    return (
+      (target.isAfter(rangeStart) && target.isBefore(rangeEnd)) ||
+      target.isSame(rangeStart) ||
+      target.isSame(rangeEnd)
+    );
+  };
+
+  const hasBlockedDateInRangeMiddle = (
     startDate: string,
     endDate: string,
     blockedDates: Date[],
@@ -48,7 +70,8 @@ export default function CalendarBooking({
     return blockedDates.some((blockedDate) => {
       const blocked = dayjs(blockedDate).startOf("day");
 
-      // check_in is inclusive while check_out is exclusive.
+      // Block only dates inside the range middle.
+      // End boundary can still be allowed by checkout-specific rules.
       return blocked.isAfter(start) && blocked.isBefore(end);
     });
   };
@@ -69,15 +92,52 @@ export default function CalendarBooking({
           onChange={(value) => {
             if (readOnly) return;
 
+            const isSelectingRangeEnd = Boolean(
+              calendarValue[0] && !calendarValue[1],
+            );
+
+            // Keep disabled dates blocked as check-in starts.
+            if (value[0] && !value[1] && isDisabledDate(value[0])) {
+              return;
+            }
+
+            if (
+              isSelectingRangeEnd &&
+              calendarValue[0] &&
+              value[0] &&
+              value[1]
+            ) {
+              const expectedCheckIn = dayjs(calendarValue[0]).startOf("day");
+              const actualRangeStart = dayjs(value[0]).startOf("day");
+
+              // Prevent reversed picks from being reinterpreted as a new check-in.
+              if (!actualRangeStart.isSame(expectedCheckIn)) {
+                const adjustedValue: DatesRangeValue<string> = [
+                  calendarValue[0],
+                  null,
+                ];
+                setCalendarValue(adjustedValue);
+                onCalendarChange(adjustedValue);
+                return;
+              }
+            }
+
             if (value[0] && value[1] && disabledDates?.length) {
-              const containsDisabledDate = hasDisabledDateBetween(
+              const start = dayjs(value[0]).startOf("day");
+              const end = dayjs(value[1]).startOf("day");
+              const isForwardRange = end.isAfter(start);
+              const isBlockedEndBoundary = isDisabledDate(value[1]);
+              const hasBlockedMiddle = hasBlockedDateInRangeMiddle(
                 value[0],
                 value[1],
                 disabledDates,
               );
 
-              if (containsDisabledDate) {
-                const adjustedValue: DatesRangeValue<string> = [value[1], null];
+              if (
+                hasBlockedMiddle &&
+                !(isForwardRange && isBlockedEndBoundary)
+              ) {
+                const adjustedValue: DatesRangeValue<string> = [value[0], null];
                 setCalendarValue(adjustedValue);
                 onCalendarChange(adjustedValue);
                 return;
@@ -126,13 +186,32 @@ export default function CalendarBooking({
           excludeDate={
             disabledDates
               ? (date) => {
-                  const parsedDate = new Date(date);
-                  return disabledDates.some(
-                    (d) =>
-                      d.getFullYear() === parsedDate.getFullYear() &&
-                      d.getMonth() === parsedDate.getMonth() &&
-                      d.getDate() === parsedDate.getDate(),
+                  if (!isDisabledDate(date)) {
+                    return false;
+                  }
+
+                  // Allow disabled dates as checkout only for forward picks.
+                  const isSelectingRangeEnd = Boolean(
+                    calendarValue[0] && !calendarValue[1],
                   );
+
+                  if (isSelectingRangeEnd && calendarValue[0]) {
+                    const selectedCheckIn = dayjs(calendarValue[0]).startOf(
+                      "day",
+                    );
+                    const candidateCheckOut = dayjs(date).startOf("day");
+
+                    if (candidateCheckOut.isAfter(selectedCheckIn)) {
+                      return false;
+                    }
+                  }
+
+                  // Keep disabled dates renderable when they belong to the active range.
+                  if (isDateInActiveRange(date)) {
+                    return false;
+                  }
+
+                  return true;
                 }
               : undefined
           }

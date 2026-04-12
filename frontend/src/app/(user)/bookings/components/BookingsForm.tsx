@@ -359,14 +359,15 @@ export default function BookingsForm() {
               <div>
                 {step !== maxStep ? (
                   <div className="flex justify-evenly gap-x-4 font-bold lg:justify-end lg:gap-x-5 xl:gap-x-6">
-                    <button
-                      type="button"
-                      className="flex-1 py-[0.65rem] text-primary-normal disabled:cursor-not-allowed disabled:opacity-50 hover-animation lg:hover:opacity-80 lg:max-w-[140px] lg:rounded-lg lg:border lg:border-primary-normal"
-                      onClick={prevStep}
-                      disabled={step === minStep}
-                    >
-                      <span>Back</span>
-                    </button>
+                    {step !== minStep && (
+                      <button
+                        type="button"
+                        className="flex-1 py-[0.65rem] text-primary-normal disabled:cursor-not-allowed disabled:opacity-50 hover-animation lg:hover:opacity-80 lg:max-w-[140px] lg:rounded-lg lg:border lg:border-primary-normal"
+                        onClick={prevStep}
+                      >
+                        <span>Back</span>
+                      </button>
+                    )}
                     <button
                       type="button"
                       className="flex-1 rounded-lg bg-primary-normal py-[0.65rem] text-white lg:max-w-[180px] hover-animation lg:hover:bg-primary-normal/80"
