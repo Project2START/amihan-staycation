@@ -27,7 +27,15 @@ class AgentsService {
     if (agent && agent.isDeleted) {
       await prisma.$transaction(async (tx) => {
         await userRepository.update(agent.userId, { role: "agent" }, tx);
-        await agentsRepository.updateAgent(agent.id, { isDeleted: false }, tx);
+        await agentsRepository.updateAgent(
+          agent.id,
+          {
+            isDeleted: false,
+            createdAt: new Date(),
+            admin: { connect: { id: adminId } },
+          },
+          tx,
+        );
       });
     } else {
       const newAgent = await agentsRepository.createAgent({
@@ -89,6 +97,7 @@ class AgentsService {
         avatar_url: user.avatar_url,
         userId,
         id,
+        createdAt: agent.createdAt,
       };
     });
 

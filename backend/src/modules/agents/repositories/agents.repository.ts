@@ -49,6 +49,7 @@ class AgentsRepository {
       return await prisma.agent.findMany({
         where: { adminId, isDeleted: false },
         include: { user: true },
+        orderBy: { createdAt: "desc" },
       });
     } catch (error: any) {
       throw new AppError("Failed to find agents by admin id");

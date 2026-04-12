@@ -16,6 +16,7 @@ import { errorHandler } from "@/app/shared/lib/errorHandler";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import revalidatePathSpaces from "../_actions/revalidatePathSpaces";
+import { useRouter } from "next/navigation";
 
 export const unitDefaultAttributes = [
   { name: "Beds", iconId: "beds-1", quantity: 2 },
@@ -49,6 +50,7 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
   const [openAddAttr, setOpenAddAttr] = useState<boolean>(false);
   const [formError, setFormError] = useState<null | string>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   const methods = useForm<NewUnitSchema>({
     resolver: zodResolver(newUnitSchema),
@@ -97,6 +99,8 @@ export default function NewUnitForm({ onCloseDialog }: INewUnitProps) {
       onCloseDialog();
 
       await revalidatePathSpaces();
+      window.dispatchEvent(new Event("spaces:updated"));
+      router.refresh();
     } catch (error) {
       setFormError(errorHandler(error).message);
     } finally {

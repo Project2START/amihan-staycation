@@ -4,7 +4,7 @@ import { AppError } from "./appErrors";
 const oauth2Client = new google.auth.OAuth2(
   process.env.GMAIL_CLIENT_ID,
   process.env.GMAIL_CLIENT_SECRET,
-  "https://developers.google.com/oauthplayground",
+  process.env.GMAIL_REDIRECT_URI,
 );
 
 oauth2Client.setCredentials({
