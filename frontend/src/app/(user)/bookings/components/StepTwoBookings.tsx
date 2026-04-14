@@ -49,7 +49,7 @@ export default function StepTwoBookings() {
                 }}
                 className="absolute top-[-1rem] right-[-0.25rem] bg-white rounded-full"
               >
-                <span className="text-xl">
+                <span className="text-xl md:text-2xl lg:text-3xl">
                   <IoIosCloseCircle />
                 </span>
               </button>
@@ -140,6 +140,7 @@ export default function StepTwoBookings() {
           onClick={() => {
             append(value);
           }}
+          disabled={fields.length >= 10}
           className="px-[3rem] py-[0.5rem] rounded-lg border-2 border-secondary-normal/30 lg:px-[3.5rem] lg:py-[0.75rem] hover-animation lg:text-sm lg:hover:opacity-80"
         >
           <span>Add Guest</span>

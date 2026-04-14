@@ -21,7 +21,6 @@ import {
   Status,
 } from "@/app/(admin)/my-bookings/lib/getStatusInfo";
 import { MdAccessTime } from "react-icons/md";
-// import { useBookingStatus } from "@/app/(user)/components/BookingStatusContext";
 
 interface HistoryProps {
   history: IBookingHistory[];
@@ -29,8 +28,6 @@ interface HistoryProps {
 }
 
 export default function History({ history, bookingStatus }: HistoryProps) {
-  // const { refetch } = useBookingStatus();
-
   const router = useRouter();
 
   const isActionRequired = bookingStatus === "action_required";
@@ -137,8 +134,8 @@ export default function History({ history, bookingStatus }: HistoryProps) {
       CustomToast.show("Response submitted successfully", {
         indicator: "success",
       });
-      // refetch();
-      router.refresh();
+
+      router.back();
     } catch (error) {
       setFormError(errorHandler(error).message);
     } finally {

@@ -38,8 +38,6 @@ export default function ProfileDeleteModal({
         withCredentials: true,
       });
 
-      await logout();
-
       await fetch("/api/auth/clear-cookies", {
         method: "DELETE",
       });

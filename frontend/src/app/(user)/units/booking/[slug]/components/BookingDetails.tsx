@@ -91,7 +91,12 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
         <h1 className="flex-1/3 text-nowrap text-center lg:text-2xl lg:font-semibold xl:text-3xl xl:font-semibold">
           Booking Summary
         </h1>
-        <span className="flex-1/3" />
+        <span
+          className="font-bold flex-1/3 text-right text-xs lg:text-sm"
+          style={statusColor ? { color: statusColor } : undefined}
+        >
+          {statusDisplayName ?? bookingTextAlternate}
+        </span>
       </div>
 
       {booking.status === "cancelled" && (

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
@@ -15,6 +16,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { resetUser } from "@/lib/features/users/usersSlice";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
+import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
 
 interface AdminDesktopSidebarProps {
   isOpen: boolean;
@@ -29,8 +31,13 @@ export default function AdminDesktopSidebar({
   const router = useRouter();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.users.data);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const handleLogout = async () => {
+    if (loggingOut) return;
+
+    setLoggingOut(true);
+
     try {
       await logout();
 
@@ -42,6 +49,8 @@ export default function AdminDesktopSidebar({
       router.replace("/sign-in");
     } catch (err) {
       CustomToast.show(errorHandler(err).message, { indicator: "error" });
+    } finally {
+      setLoggingOut(false);
     }
   };
 
@@ -156,18 +165,21 @@ export default function AdminDesktopSidebar({
       </nav>
 
       <div className="border-t border-secondary-normal/10 p-2">
-        <button
-          type="button"
-          onClick={handleLogout}
-          aria-label="Log out"
-          title={!isOpen ? "Log Out" : undefined}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-reject-normal p-3 text-xs font-semibold text-white transition-colors hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-reject-normal/60"
-        >
-          <LuLogOut className="text-lg" />
-          <span className={`${isOpen ? "inline text-sm" : "sr-only"}`}>
-            Log Out
-          </span>
-        </button>
+        <LoadingOverlay loading={loggingOut}>
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={loggingOut}
+            aria-label="Log out"
+            title={!isOpen ? "Log Out" : undefined}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-reject-normal p-3 text-xs font-semibold text-white transition-colors hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-reject-normal/60 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            <LuLogOut className="text-lg" />
+            <span className={`${isOpen ? "inline text-sm" : "sr-only"}`}>
+              Log Out
+            </span>
+          </button>
+        </LoadingOverlay>
       </div>
     </aside>
   );
