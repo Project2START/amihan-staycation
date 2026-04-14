@@ -15,7 +15,7 @@ export default function FooterAuth() {
           </Link>
         </p>
         <p className="mt-[1rem]">
-          All rights reserved. Copyright (2025-2026) - AStaycation.com™
+          All rights reserved. Copyright (2025-2026) - AmihanStaycation.com™
         </p>
       </div>
     </footer>

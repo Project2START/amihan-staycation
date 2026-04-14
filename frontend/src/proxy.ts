@@ -24,13 +24,7 @@ const USER_PATHS = ["/bookings", "/my-bookings-history", "/units/booking"];
 
 const AUTHENTICATED_PATHS = ["/profile"];
 
-const GUEST_PATHS = [
-  "/auth",
-  "/sign-in",
-  "/sign-up",
-  "/forgot-password",
-  "/reset-password",
-];
+const GUEST_PATHS = ["/auth", "/sign-in", "/sign-up", "/forgot-password"];
 
 export async function proxy(req: NextRequest) {
   const currentPath = req.nextUrl.pathname;

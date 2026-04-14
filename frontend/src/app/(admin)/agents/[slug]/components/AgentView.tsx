@@ -37,8 +37,7 @@ export default function AgentView({ agentId }: { agentId: string }) {
           return;
         }
 
-        const parsed: { message: string; agent: IAgent } =
-          await result.json();
+        const parsed: { message: string; agent: IAgent } = await result.json();
 
         if (mounted) {
           setAgent(parsed.agent);
@@ -63,12 +62,17 @@ export default function AgentView({ agentId }: { agentId: string }) {
         <div className="mb-6 mt-3 md:mb-8 md:mt-4 lg:mb-10 flex items-center justify-between">
           <Skeleton variant="text" width={70} height={30} />
           <Skeleton variant="text" width={140} height={34} />
-          <Skeleton variant="text" width={70} height={30} />
+          <Skeleton
+            variant="text"
+            width={70}
+            height={30}
+            sx={{ visibility: "hidden" }}
+          />
         </div>
 
         <div className="bg-white rounded-xl border-2 border-secondary-normal/30 p-5 md:p-7 lg:p-9">
           <div className="md:grid md:grid-cols-[minmax(0,260px)_1fr] md:gap-8 lg:gap-10">
-            <div className="md:border-r md:border-secondary-normal/15 md:pr-6 lg:pr-8">
+            <div className="flex flex-col items-center md:block md:border-r md:border-secondary-normal/15 md:pr-6 lg:pr-8">
               <Skeleton variant="circular" width={112} height={112} />
               <div className="mt-4 md:mt-6 grid gap-y-2 md:gap-y-3">
                 <Skeleton variant="text" width={180} height={30} />

@@ -8,6 +8,7 @@ import ProductItem, {
 import { HOST } from "@/app/shared/constants/config";
 import { Skeleton } from "@mui/material";
 import ErrorClient from "@/app/shared/components/ErrorClient";
+import { CiCircleRemove } from "react-icons/ci";
 
 const getFirstValue = (value: string | null) => {
   return value ?? undefined;
@@ -139,9 +140,16 @@ export default function ProductList() {
   return (
     <div className="grid gap-y-8 mt-[2rem] md:w-[55%]">
       {hasActiveSearch ? (
-        <p className="text-sm font-semibold text-gray-600">
-          Search Result: {totalProducts} unit{totalProducts === 1 ? "" : "s"}{" "}
-          found
+        <p className="w-max border-2 border-gray-300 rounded-full px-[1rem] py-[0.5rem] text-sm font-semibold text-gray-600 flex items-center gap-x-1">
+          <span>
+            Search Result: {totalProducts} unit
+            {totalProducts === 1 ? "" : "s"} found
+          </span>
+          <button onClick={() => router.push("/units")}>
+            <span className="text-xl text-red-900">
+              <CiCircleRemove />
+            </span>
+          </button>
         </p>
       ) : null}
 
