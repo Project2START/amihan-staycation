@@ -29,6 +29,10 @@ jest.mock("../../../../app", () => ({
 describe("BookingService", () => {
   beforeEach(() => jest.clearAllMocks());
 
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it("throws NotFoundError when product does not exist", async () => {
     (productService.get as jest.Mock).mockResolvedValue(null);
 
@@ -113,5 +117,56 @@ describe("BookingService", () => {
     const result = await bookingService.getAllByAdmin("a1");
 
     expect(result.map((booking) => booking.id)).toEqual(["b2", "b3", "b1"]);
+  });
+
+  it("uses Asia/Manila check-in cutoff for automated transitions", async () => {
+    const booking = {
+      id: "b-confirmed",
+      status: "confirmed",
+      check_period: { check_in: "2026-04-15", check_out: "2026-04-16" },
+      createdAt: new Date("2026-04-14T00:00:00.000Z"),
+      userId: "u1",
+      adminId: "a1",
+    };
+
+    (bookingRepository.findForStatusAutomation as jest.Mock).mockResolvedValue([
+      booking,
+    ]);
+    (bookingRepository.update as jest.Mock).mockResolvedValue(booking);
+    (notificationRepository.create as jest.Mock).mockResolvedValue(undefined);
+
+    // 13:59:59 in Asia/Manila for 2026-04-15
+    await bookingService.runAutomatedStatusTransitions(
+      new Date("2026-04-15T05:59:59.000Z"),
+    );
+
+    expect(bookingRepository.update).not.toHaveBeenCalled();
+
+    // 14:00:00 in Asia/Manila for 2026-04-15
+    await bookingService.runAutomatedStatusTransitions(
+      new Date("2026-04-15T06:00:00.000Z"),
+    );
+
+    expect(bookingRepository.update).toHaveBeenCalledWith("b-confirmed", {
+      status: "checked_in",
+    });
+  });
+
+  it("adds today using Asia/Manila check-in threshold", async () => {
+    jest.useFakeTimers();
+    // 14:30:00 in Asia/Manila
+    jest.setSystemTime(new Date("2026-04-15T06:30:00.000Z"));
+
+    (bookingRepository.findActiveByProductId as jest.Mock).mockResolvedValue([
+      {
+        check_period: { check_in: "2026-04-10", check_out: "2026-04-12" },
+      },
+    ]);
+
+    const dates = await bookingService.getBookedDatesByProduct("p1");
+
+    expect(dates).toEqual(
+      expect.arrayContaining(["2026-04-10", "2026-04-11", "2026-04-15"]),
+    );
   });
 });

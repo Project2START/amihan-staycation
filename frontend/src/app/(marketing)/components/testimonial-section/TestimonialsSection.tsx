@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { HOST } from "@/app/shared/constants/config";
 import {
   FaBookOpen,
   FaChevronLeft,
@@ -15,31 +14,6 @@ import {
   FaStar,
 } from "react-icons/fa6";
 
-type ProductPreview = {
-  id: string;
-};
-
-type ProductListResponse = {
-  products: ProductPreview[];
-};
-
-type ProductReviewsResponse = {
-  unit: {
-    id: string;
-    name: string;
-  } | null;
-  reviews: Array<{
-    id: string;
-    rating: number;
-    comment: string | null;
-    isImported: boolean;
-    source: string | null;
-    createdAt: string;
-    reviewerName: string;
-    reviewerAvatarUrl: string | null;
-  }>;
-};
-
 type TestimonialItem = {
   id: string;
   quote: string;
@@ -52,10 +26,7 @@ type TestimonialItem = {
   unitName: string;
 };
 
-const MAX_TESTIMONIALS = 10;
-const MIN_POSITIVE_RATING = 4;
 const COMMENT_PREVIEW_LENGTH = 180;
-const PRODUCT_FETCH_LIMIT = 20;
 
 const getItemsPerView = (width: number) => {
   if (width <= 767) return 2;
@@ -98,12 +69,86 @@ const getVisibleItems = (
   return items.slice(start, start + itemsPerView);
 };
 
+const testimonials: TestimonialItem[] = [
+  {
+    id: "agatha-moto-2025",
+    quote:
+      "Staycation in Azure Urban Residences with Boracay vibes. Looking for a peaceful and relaxing place in Parañaque? This is highly recommended.",
+    name: "Agatha Moto",
+    avatarUrl: "/images/testimonials-profile/testimonial-1.jpg",
+    rating: 5,
+    isImported: true,
+    source: "FACEBOOK",
+    createdAt: "2025-09-27T00:00:00.000Z",
+    unitName: "Amihan Staycation",
+  },
+
+  {
+    id: "carlmatthew-2025",
+    quote:
+      "Very clean and mabango ang room, and super bait ng owner. Cozy and relaxing place, and we will definitely come back.",
+    name: "CarlMatthew",
+    avatarUrl: "/images/testimonials-profile/testimonial-3.jpg",
+    rating: 5,
+    isImported: true,
+    source: "FACEBOOK",
+    createdAt: "2025-09-14T00:00:00.000Z",
+    unitName: "Amihan Staycation",
+  },
+  {
+    id: "dan-posas-2026",
+    quote:
+      "Great staycation experience with a clean and comfortable place that is perfect for relaxation and quality rest during your stay.",
+    name: "Dan Posas",
+    avatarUrl: "/images/testimonials-profile/testimonial-4.jpg",
+    rating: 0,
+    isImported: true,
+    source: "FACEBOOK",
+    createdAt: "2026-01-26T00:00:00.000Z",
+    unitName: "Amihan Staycation",
+  },
+
+  {
+    id: "boss-jay",
+    quote:
+      "Affordable and beautiful staycation option that is budget-friendly and conveniently located within Metro Manila for easy access.",
+    name: "Boss Jay",
+    avatarUrl: "/images/testimonials-profile/testimonial-5.jpg",
+    rating: 5,
+    isImported: true,
+    source: "FACEBOOK",
+    createdAt: "",
+    unitName: "Amihan Staycation",
+  },
+  {
+    id: "patrick-enriquez-2025",
+    quote: "Thank you so much for the wonderful stay and warm accommodation.",
+    name: "Patrick Enriquez",
+    avatarUrl: "/images/testimonials-profile/testimonial-6.jpg",
+    rating: 5,
+    isImported: true,
+    source: "FACEBOOK",
+    createdAt: "2025-12-10T00:00:00.000Z",
+    unitName: "Amihan Staycation",
+  },
+  {
+    id: "christine-2025",
+    quote:
+      "Thank you for accommodating us. Great location, and we appreciate the curtains and glass door that help reduce outside noise.",
+    name: "Christine",
+    avatarUrl: "/images/testimonials-profile/testimonial-2.jpg",
+    rating: 5,
+    isImported: true,
+    source: "FACEBOOK",
+    createdAt: "2025-12-30T00:00:00.000Z",
+    unitName: "Amihan Staycation",
+  },
+];
+
 export default function TestimonialsSection() {
-  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
   const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(1);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const updateItemsPerView = () => {
@@ -115,92 +160,6 @@ export default function TestimonialsSection() {
 
     return () => {
       window.removeEventListener("resize", updateItemsPerView);
-    };
-  }, []);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchTestimonials = async () => {
-      try {
-        setLoading(true);
-
-        const productsResult = await fetch(`${HOST}/api/products`, {
-          cache: "no-cache",
-        });
-
-        if (!productsResult.ok) {
-          if (mounted) setTestimonials([]);
-          return;
-        }
-
-        const productData: ProductListResponse = await productsResult.json();
-        const productIds = (productData.products ?? [])
-          .slice(0, PRODUCT_FETCH_LIMIT)
-          .map((product) => product.id)
-          .filter(Boolean);
-
-        const reviewResults = await Promise.allSettled(
-          productIds.map((productId) =>
-            fetch(`${HOST}/api/reviews/product/${productId}`, {
-              cache: "no-cache",
-            }),
-          ),
-        );
-
-        const normalized: TestimonialItem[] = [];
-
-        for (const result of reviewResults) {
-          if (result.status !== "fulfilled") continue;
-          if (!result.value.ok) continue;
-
-          const data: ProductReviewsResponse = await result.value.json();
-          const unitName = data.unit?.name ?? "Amihan Staycation";
-
-          for (const review of data.reviews ?? []) {
-            if (review.rating < MIN_POSITIVE_RATING) continue;
-            const reviewComment = review.comment?.trim();
-            // Only include reviews with a non-empty comment
-            if (!reviewComment) continue;
-
-            normalized.push({
-              id: review.id,
-              quote: reviewComment,
-              name: review.reviewerName || "Anonymous",
-              avatarUrl: review.reviewerAvatarUrl,
-              rating: review.rating,
-              isImported: review.isImported,
-              source: review.source,
-              createdAt: review.createdAt,
-              unitName,
-            });
-          }
-        }
-
-        const uniqueById = Array.from(
-          new Map(normalized.map((item) => [item.id, item])).values(),
-        )
-          .sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-          )
-          .slice(0, MAX_TESTIMONIALS);
-
-        if (mounted) {
-          setTestimonials(uniqueById);
-          setCurrentPage(0);
-        }
-      } catch {
-        if (mounted) setTestimonials([]);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    void fetchTestimonials();
-
-    return () => {
-      mounted = false;
     };
   }, []);
 
@@ -264,14 +223,7 @@ export default function TestimonialsSection() {
           <FaChevronLeft className="text-[1.25rem] sm:text-[1.4rem] md:text-[1.5rem] lg:text-[1.65rem]" />
         </button>
 
-        {loading && (
-          <div>
-            <div className="rounded-xl border border-secondary-normal/10 bg-white px-4 py-8 text-center text-sm text-gray-500 md:py-21">
-              Loading testimonials...
-            </div>
-          </div>
-        )}
-        {visibleItems.length === 0 && !loading ? (
+        {visibleItems.length === 0 ? (
           <div className="opacity-50 font-bold rounded-xl border border-secondary-normal/10 bg-white px-4 py-8 text-center text-sm text-gray-500 lg:py-24">
             No reviews available yet.
           </div>
@@ -301,13 +253,13 @@ export default function TestimonialsSection() {
                   className="rounded-xl bg-[#dedede] px-4 py-4 text-secondary-normal shadow-[0_4px_0_rgba(18,40,55,0.06)] md:px-5 md:py-5 xl:px-6"
                 >
                   <div className="flex flex-col gap-3">
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-3 md:h-[9rem]">
                       <FaQuoteLeft
                         className="mt-0.5 shrink-0 text-[#2db4d6]"
                         size={26}
                       />
                       <div className="min-w-0 flex-1 max-h-[11.5rem] overflow-y-auto pr-1">
-                        <p className="text-sm leading-7 md:text-[0.95rem] lg:text-base xl:text-lg 2xl:text-xl">
+                        <p className="text-sm leading-7 md:text-[0.95rem] lg:text-base 2xl:text-lg">
                           {preview}
                           {isLong && (
                             <button

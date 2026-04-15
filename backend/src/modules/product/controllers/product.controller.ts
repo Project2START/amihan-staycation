@@ -46,6 +46,10 @@ class ProductController {
       typeof req.query.children === "string"
         ? Number(req.query.children)
         : undefined;
+    const totalGuests =
+      typeof req.query.totalGuests === "string"
+        ? Number(req.query.totalGuests)
+        : undefined;
 
     const products = await productService.getAll(
       user?.user_role,
@@ -55,6 +59,7 @@ class ProductController {
         checkOut,
         adults: Number.isFinite(adults) ? adults : undefined,
         children: Number.isFinite(children) ? children : undefined,
+        totalGuests: Number.isFinite(totalGuests) ? totalGuests : undefined,
       },
     );
 

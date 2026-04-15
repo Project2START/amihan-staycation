@@ -26,6 +26,7 @@ export default function MyBookingSummary({ bookingId }: { bookingId: string }) {
     GET_BOOKING,
     {
       variables: { id: bookingId },
+      fetchPolicy: "network-only",
     },
   );
 

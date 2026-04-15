@@ -57,11 +57,13 @@ const getSearchFromParams = (
 
 const buildSearchParams = (search: ISearchUnitState) => {
   const params = new URLSearchParams();
+  const totalGuests = search.adults + search.children;
 
   if (search.checkIn) params.set("checkIn", search.checkIn);
   if (search.checkOut) params.set("checkOut", search.checkOut);
   if (search.adults > 0) params.set("adults", String(search.adults));
   if (search.children > 0) params.set("children", String(search.children));
+  if (totalGuests > 0) params.set("totalGuests", String(totalGuests));
 
   return params;
 };
