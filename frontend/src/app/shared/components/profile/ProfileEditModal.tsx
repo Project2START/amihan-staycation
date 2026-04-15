@@ -247,40 +247,6 @@ export default function ProfileEditModal({
 
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">
-              First Name
-            </label>
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-normal/50"
-            />
-            {errors.first_name && (
-              <span className="text-xs text-reject-normal mt-1 block">
-                {errors.first_name}
-              </span>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
-              Last Name
-            </label>
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-normal/50"
-            />
-            {errors.last_name && (
-              <span className="text-xs text-reject-normal mt-1 block">
-                {errors.last_name}
-              </span>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
               Nationality
             </label>
             <div className="relative border border-gray-300 rounded-lg text-primary-secondary">
@@ -350,6 +316,39 @@ export default function ProfileEditModal({
             {errors.nationality && (
               <span className="text-xs text-reject-normal mt-1 block">
                 {errors.nationality}
+              </span>
+            )}
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              First Name
+            </label>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-normal/50"
+            />
+            {errors.first_name && (
+              <span className="text-xs text-reject-normal mt-1 block">
+                {errors.first_name}
+              </span>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              Last Name
+            </label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-normal/50"
+            />
+            {errors.last_name && (
+              <span className="text-xs text-reject-normal mt-1 block">
+                {errors.last_name}
               </span>
             )}
           </div>

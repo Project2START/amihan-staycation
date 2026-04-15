@@ -25,6 +25,11 @@ type BookingCheckPeriod = {
   check_out?: string;
 };
 
+type TimezoneDateTimeParts = {
+  dayKey: string;
+  secondsOfDay: number;
+};
+
 type SortableBooking = {
   status?: string | null;
   createdAt?: Date | string | null;
@@ -39,6 +44,98 @@ const STATUS_PRIORITY: Record<string, number> = {
   checked_out: 4,
   expired: 5,
   cancelled: 5,
+};
+
+const MANILA_TIMEZONE = "Asia/Manila";
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+const MANILA_DATE_TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  timeZone: MANILA_TIMEZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: false,
+});
+
+const parseDateOnlyToUtcTimestamp = (value?: string | null) => {
+  if (!value || !DATE_ONLY_PATTERN.test(value)) {
+    return 0;
+  }
+
+  const [yearRaw, monthRaw, dayRaw] = value.split("-");
+  const year = Number(yearRaw);
+  const month = Number(monthRaw);
+  const day = Number(dayRaw);
+
+  if (!year || !month || !day) {
+    return 0;
+  }
+
+  return Date.UTC(year, month - 1, day);
+};
+
+const parseTimeToSeconds = (value: string) => {
+  const [hoursRaw = "0", minutesRaw = "0", secondsRaw = "0"] = value.split(":");
+
+  const hours = Number(hoursRaw) || 0;
+  const minutes = Number(minutesRaw) || 0;
+  const seconds = Number(secondsRaw) || 0;
+
+  return hours * 60 * 60 + minutes * 60 + seconds;
+};
+
+const getDateTimePartsInTimezone = (value: Date): TimezoneDateTimeParts => {
+  const parts = MANILA_DATE_TIME_FORMATTER.formatToParts(value);
+
+  const year = parts.find((part) => part.type === "year")?.value ?? "0000";
+  const month = parts.find((part) => part.type === "month")?.value ?? "00";
+  const day = parts.find((part) => part.type === "day")?.value ?? "00";
+  const hour = Number(parts.find((part) => part.type === "hour")?.value ?? "0");
+  const minute = Number(
+    parts.find((part) => part.type === "minute")?.value ?? "0",
+  );
+  const second = Number(
+    parts.find((part) => part.type === "second")?.value ?? "0",
+  );
+
+  return {
+    dayKey: `${year}-${month}-${day}`,
+    secondsOfDay: hour * 60 * 60 + minute * 60 + second,
+  };
+};
+
+const hasDateTimePassedInManila = (date: string, time: string, now: Date) => {
+  if (!DATE_ONLY_PATTERN.test(date)) {
+    return false;
+  }
+
+  const nowParts = getDateTimePartsInTimezone(now);
+  const targetSeconds = parseTimeToSeconds(time);
+
+  if (nowParts.dayKey > date) {
+    return true;
+  }
+
+  if (nowParts.dayKey < date) {
+    return false;
+  }
+
+  return nowParts.secondsOfDay >= targetSeconds;
+};
+
+const addDaysToDateOnly = (date: string, days: number) => {
+  const baseTimestamp = parseDateOnlyToUtcTimestamp(date);
+
+  if (baseTimestamp === 0) {
+    return date;
+  }
+
+  const dateValue = new Date(baseTimestamp);
+  dateValue.setUTCDate(dateValue.getUTCDate() + days);
+  return dateValue.toISOString().slice(0, 10);
 };
 
 const parseDateValue = (value?: Date | string | null) => {
@@ -57,7 +154,7 @@ const getCheckInTimestamp = (booking: SortableBooking) => {
   }
 
   const checkIn = (checkPeriod as BookingCheckPeriod).check_in;
-  return checkIn ? parseDateValue(checkIn) : 0;
+  return parseDateOnlyToUtcTimestamp(checkIn);
 };
 
 const compareAsc = (a: number, b: number) => a - b;
@@ -129,29 +226,8 @@ const sortBookingsForRoleView = <T extends SortableBooking>(bookings: T[]) => {
   });
 };
 
-const buildDateTime = (date: string, time: string): Date => {
-  return new Date(`${date}T${time}`);
-};
-
-const toDayKey = (value: Date) => {
-  const yyyy = value.getFullYear();
-  const mm = String(value.getMonth() + 1).padStart(2, "0");
-  const dd = String(value.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-};
-
-const getSecondsOfDay = (value: Date) =>
-  value.getHours() * 60 * 60 + value.getMinutes() * 60 + value.getSeconds();
-
 const getConfiguredCheckInSeconds = () => {
-  const [hoursRaw = "0", minutesRaw = "0", secondsRaw = "0"] =
-    BOOKING_CHECK_IN_TIME.split(":");
-
-  const hours = Number(hoursRaw) || 0;
-  const minutes = Number(minutesRaw) || 0;
-  const seconds = Number(secondsRaw) || 0;
-
-  return hours * 60 * 60 + minutes * 60 + seconds;
+  return parseTimeToSeconds(BOOKING_CHECK_IN_TIME);
 };
 
 class BookingService {
@@ -164,12 +240,20 @@ class BookingService {
 
     for (const booking of bookings) {
       const checkPeriod = booking.check_period as BookingCheckPeriod;
-      const checkInDateTime = checkPeriod?.check_in
-        ? buildDateTime(checkPeriod.check_in, BOOKING_CHECK_IN_TIME)
-        : null;
-      const checkOutDateTime = checkPeriod?.check_out
-        ? buildDateTime(checkPeriod.check_out, BOOKING_CHECK_OUT_TIME)
-        : null;
+      const hasCheckInPassed = checkPeriod?.check_in
+        ? hasDateTimePassedInManila(
+            checkPeriod.check_in,
+            BOOKING_CHECK_IN_TIME,
+            now,
+          )
+        : false;
+      const hasCheckOutPassed = checkPeriod?.check_out
+        ? hasDateTimePassedInManila(
+            checkPeriod.check_out,
+            BOOKING_CHECK_OUT_TIME,
+            now,
+          )
+        : false;
 
       if (
         booking.status === "pending" ||
@@ -178,10 +262,6 @@ class BookingService {
         const isOlderThanExpiry =
           now.getTime() - booking.createdAt.getTime() >=
           BOOKING_EXPIRY_HOURS * 60 * 60 * 1000;
-
-        const hasCheckInPassed = checkInDateTime
-          ? now >= checkInDateTime
-          : false;
 
         if (isOlderThanExpiry || hasCheckInPassed) {
           const updatedBooking = await bookingRepository.update(booking.id, {
@@ -207,7 +287,7 @@ class BookingService {
       }
 
       if (booking.status === "confirmed") {
-        if (checkInDateTime && now >= checkInDateTime) {
+        if (hasCheckInPassed) {
           const updatedBooking = await bookingRepository.update(booking.id, {
             status: "checked_in",
           });
@@ -230,7 +310,7 @@ class BookingService {
       }
 
       if (booking.status === "checked_in") {
-        if (checkOutDateTime && now >= checkOutDateTime) {
+        if (hasCheckOutPassed) {
           const updatedBooking = await bookingRepository.update(booking.id, {
             status: "checked_out",
             checkedOutAt: now,
@@ -573,22 +653,22 @@ class BookingService {
         check_out: string;
       };
       if (!checkPeriod?.check_in || !checkPeriod?.check_out) continue;
+      if (!DATE_ONLY_PATTERN.test(checkPeriod.check_in)) continue;
+      if (!DATE_ONLY_PATTERN.test(checkPeriod.check_out)) continue;
 
-      let current = new Date(checkPeriod.check_in);
-      const end = new Date(checkPeriod.check_out);
+      let current = checkPeriod.check_in;
+      const end = checkPeriod.check_out;
 
       while (current < end) {
-        const yyyy = current.getFullYear();
-        const mm = String(current.getMonth() + 1).padStart(2, "0");
-        const dd = String(current.getDate()).padStart(2, "0");
-        dates.add(`${yyyy}-${mm}-${dd}`);
-        current.setDate(current.getDate() + 1);
+        dates.add(current);
+        current = addDaysToDateOnly(current, 1);
       }
     }
 
     const now = new Date();
-    if (getSecondsOfDay(now) >= getConfiguredCheckInSeconds()) {
-      dates.add(toDayKey(now));
+    const nowInManila = getDateTimePartsInTimezone(now);
+    if (nowInManila.secondsOfDay >= getConfiguredCheckInSeconds()) {
+      dates.add(nowInManila.dayKey);
     }
 
     return Array.from(dates);

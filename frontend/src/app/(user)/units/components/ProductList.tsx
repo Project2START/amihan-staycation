@@ -28,6 +28,7 @@ export default function ProductList() {
   const checkOut = getFirstValue(searchParams.get("checkOut"));
   const adults = getFirstValue(searchParams.get("adults"));
   const children = getFirstValue(searchParams.get("children"));
+  const totalGuests = getFirstValue(searchParams.get("totalGuests"));
   const searched = getFirstValue(searchParams.get("searched"));
 
   const hasActiveSearch =
@@ -35,7 +36,8 @@ export default function ProductList() {
     Boolean(checkIn) ||
     Boolean(checkOut) ||
     Boolean(adults) ||
-    Boolean(children);
+    Boolean(children) ||
+    Boolean(totalGuests);
 
   useEffect(() => {
     let mounted = true;
@@ -50,6 +52,7 @@ export default function ProductList() {
         if (checkOut) query.set("checkOut", checkOut);
         if (adults) query.set("adults", adults);
         if (children) query.set("children", children);
+        if (totalGuests) query.set("totalGuests", totalGuests);
 
         const fetchUrl = query.toString()
           ? `${HOST}/api/products?${query.toString()}`
@@ -80,7 +83,8 @@ export default function ProductList() {
           Boolean(checkIn) ||
           Boolean(checkOut) ||
           Boolean(adults) ||
-          Boolean(children);
+          Boolean(children) ||
+          Boolean(totalGuests);
 
         if (isActiveSearch && totalProducts === 0) {
           try {
@@ -115,7 +119,7 @@ export default function ProductList() {
     return () => {
       mounted = false;
     };
-  }, [checkIn, checkOut, adults, children, searched]);
+  }, [checkIn, checkOut, adults, children, totalGuests, searched]);
 
   if (loading) {
     return (

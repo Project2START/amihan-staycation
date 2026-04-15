@@ -56,8 +56,8 @@ export default function ProductItem({
     <article className="min-w-0 overflow-hidden rounded-lg border-2 border-[#0B5173]/30 bg-white text-secondary-normal lg:grid lg:grid-cols-[20rem_1fr] xl:grid-cols-[22rem_1fr]">
       <div className="relative">
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between p-3 lg:p-4">
-          <div className="rounded-full bg-black/45 px-2.5 py-1 backdrop-blur-sm">
-            {typeof rating === "number" && rating > 0 ? (
+          {typeof rating === "number" && rating > 0 ? (
+            <div className="rounded-full bg-black/45 px-2.5 py-1 backdrop-blur-sm">
               <div className="flex items-center gap-1.5">
                 <Rating
                   value={Number(rating.toFixed(1))}
@@ -69,12 +69,10 @@ export default function ProductItem({
                   </span>
                 ) : null}
               </div>
-            ) : (
-              <span className="text-[11px] font-semibold text-[#efefef]">
-                No reviews yet
-              </span>
-            )}
-          </div>
+            </div>
+          ) : (
+            <span></span>
+          )}
 
           {visibleAttributes.length !== 0 && (
             <div className="rounded-full bg-black/35 px-2.5 py-1.5 text-white backdrop-blur-sm">

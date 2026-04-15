@@ -65,4 +65,40 @@ describe("ProductService", () => {
       },
     ]);
   });
+
+  it("getAll filters products by adults + children total guests", async () => {
+    (productRepository.findAll as jest.Mock).mockResolvedValue([
+      {
+        id: "small",
+        name: "Small Unit",
+        maxPersons: 2,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: "large",
+        name: "Large Unit",
+        maxPersons: 4,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]);
+    (
+      productRepository.findSuccessfulBookingCountsByProductIds as jest.Mock
+    ).mockResolvedValue({});
+    (
+      productRepository.findAvailabilityBlockingByProductIds as jest.Mock
+    ).mockResolvedValue([]);
+    (
+      reviewRepository.findRatingRowsByProductIds as jest.Mock
+    ).mockResolvedValue([]);
+
+    const res = await productService.getAll(undefined, undefined, {
+      adults: 2,
+      children: 1,
+    });
+
+    expect(res).toHaveLength(1);
+    expect(res[0].id).toBe("large");
+  });
 });

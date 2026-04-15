@@ -1,5 +1,4 @@
 import FacebookIcon from "./icons/FacebookIcon";
-import TiktokIcon from "./icons/TiktokIcon";
 import ImageMainLogo from "./ImageMainLogo";
 import { MdEmail } from "react-icons/md";
 import { BsFillTelephoneFill } from "react-icons/bs";
@@ -33,9 +32,6 @@ export default function FooterMain() {
                 <div className="mt-[0.65rem] flex items-center gap-x-3 md:gap-x-4">
                   <div className="rounded-md p-1.5 transition-colors hover:bg-white/10 cursor-pointer">
                     <FacebookIcon />
-                  </div>
-                  <div className="rounded-md p-1.5 transition-colors hover:bg-white/10 cursor-pointer">
-                    <TiktokIcon />
                   </div>
                 </div>
               </div>
