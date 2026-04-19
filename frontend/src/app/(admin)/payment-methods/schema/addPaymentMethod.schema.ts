@@ -9,7 +9,13 @@ export const PAYMENT_METHOD_MAX = 50;
 
 const IMAGE_FILE_MIN_SIZE_BYTE = 1;
 const IMAGE_FILE_MAX_SIZE_MB = 5;
-const IMAGE_FILE_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif"];
+const IMAGE_FILE_ALLOWED_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "image/avif",
+];
 export const URL_MIN_LENGTH = 5;
 export const URL_MAX_LENGTH = 2048;
 
@@ -19,7 +25,7 @@ const qrCodePhotoSchema = z.object({
     .min(IMAGE_FILE_MIN_SIZE_BYTE, "File must not be empty.")
     .max(IMAGE_FILE_MAX_SIZE_MB * 1024 * 1024, "File size must not exceed 5MB.")
     .mime(IMAGE_FILE_ALLOWED_TYPES, {
-      error: "Only JPG, PNG, or GIF files are allowed.",
+      error: "Only JPG, PNG, GIF, WEBP, or AVIF files are allowed.",
     })
     .optional(),
   url: z

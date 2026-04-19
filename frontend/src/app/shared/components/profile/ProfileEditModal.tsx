@@ -80,11 +80,11 @@ export default function ProfileEditModal({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowed = ["image/jpeg", "image/png"];
+    const allowed = ["image/jpeg", "image/png", "image/webp", "image/avif"];
     if (!allowed.includes(file.type)) {
       setErrors((prev) => ({
         ...prev,
-        avatar: "Only JPEG and PNG images are allowed",
+        avatar: "Only JPEG, PNG, WEBP, or AVIF images are allowed",
       }));
       return;
     }
@@ -231,7 +231,7 @@ export default function ProfileEditModal({
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/jpeg,image/png"
+              accept="image/jpeg, image/png, image/webp, image/avif"
               onChange={handleAvatarChange}
               className="hidden"
             />
