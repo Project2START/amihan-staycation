@@ -142,7 +142,7 @@ export default function ProductList() {
   const totalProducts = products.length;
 
   return (
-    <div className="grid gap-y-8 mt-[2rem] md:w-[55%]">
+    <div className="relative grid gap-y-8 mt-[2rem] md:w-[55%]">
       {hasActiveSearch ? (
         <p className="w-max border-2 border-gray-300 rounded-full px-[1rem] py-[0.5rem] text-sm font-semibold text-gray-600 flex items-center gap-x-1">
           <span>
@@ -231,7 +231,7 @@ export default function ProductList() {
           ) : null}
         </div>
       ) : (
-        <p className="opacity-30 font-bold horver_center text-nowrap mt-[2rem]">
+        <p className="opacity-30 font-bold horver_center text-nowrap">
           Staycations are not currently available.
         </p>
       )}
