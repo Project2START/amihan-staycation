@@ -16,7 +16,13 @@ export const CONTACT_NUMBER_CODE_MAX_LENGTH = 5;
 
 const IMAGE_FILE_MIN_SIZE_BYTE = 1;
 const IMAGE_FILE_MAX_SIZE_MB = 5;
-const IMAGE_FILE_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif"];
+const IMAGE_FILE_ALLOWED_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "image/avif",
+];
 
 const POOL_ACCESS_MAX_DAYS = 183;
 
@@ -39,7 +45,7 @@ const photoFileSchema = z.object({
     .min(IMAGE_FILE_MIN_SIZE_BYTE, "File must not be empty.")
     .max(IMAGE_FILE_MAX_SIZE_MB * 1024 * 1024, "File size must not exceed 5MB.")
     .mime(IMAGE_FILE_ALLOWED_TYPES, {
-      error: "Only JPG, PNG, or GIF files are allowed.",
+      error: "Only JPG, PNG, GIF, WEBP, or AVIF files are allowed.",
     })
     .optional(),
   url: z

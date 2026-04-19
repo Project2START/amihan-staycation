@@ -107,7 +107,7 @@ export default function UploadFilePhoto({
             ref={fileInputRef}
             type="file"
             hidden
-            accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+            accept="image/png, image/jpeg, image/jpg, image/gif, image/webp, image/avif"
             onChange={(e) => {
               if (!e.target.files || e.target.files.length === 0) return;
 
