@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import dayjs from "dayjs";
 import Link from "next/link";
 import Image from "next/image";
@@ -75,9 +75,8 @@ export default function CreateImportedReviewForm({
     const run = async () => {
       try {
         setLoadingUnit(true);
-        const result = await axios.get<{ product: UnitPreview }>(
+        const result = await axiosWithAuth.get<{ product: UnitPreview }>(
           `${HOST}/api/products/${productId}`,
-          { withCredentials: true },
         );
         setUnit(result.data.product);
       } catch (error) {
@@ -124,18 +123,14 @@ export default function CreateImportedReviewForm({
     try {
       setSubmitLoading(true);
 
-      await axios.post(
-        `${HOST}/api/reviews/imported`,
-        {
-          productId,
-          reviewerName: reviewerName.trim(),
-          source,
-          originalDate: new Date(originalDate).toISOString(),
-          rating,
-          comment,
-        },
-        { withCredentials: true },
-      );
+      await axiosWithAuth.post(`${HOST}/api/reviews/imported`, {
+        productId,
+        reviewerName: reviewerName.trim(),
+        source,
+        originalDate: new Date(originalDate).toISOString(),
+        rating,
+        comment,
+      });
 
       CustomToast.show("Imported review submitted successfully", {
         indicator: "success",

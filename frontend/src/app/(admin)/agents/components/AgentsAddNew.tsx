@@ -10,7 +10,7 @@ import { CustomToast } from "@/app/shared/ui/CustomToast";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import { CircularProgress } from "@mui/material";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { useState } from "react";
 import { IoIosAdd } from "react-icons/io";
 import z from "zod";
@@ -58,11 +58,9 @@ export default function AgentsAddNew() {
     setLoadingOverlay(true);
 
     try {
-      const agentResult = await axios.post(
-        `${HOST}/api/agents/`,
-        { email },
-        { withCredentials: true },
-      );
+      const agentResult = await axiosWithAuth.post(`${HOST}/api/agents/`, {
+        email,
+      });
 
       CustomToast.show(agentResult.data.message, { indicator: "success" });
       handleCloseDialog();

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../shared/helpers/jwt";
 import { userRepository } from "../modules/user/repositories/user.repository";
+import { getAuthTokenFromRequest } from "../shared/helpers/getAuthTokenFromRequest";
 
 export async function checkAuth(
   req: Request,
@@ -8,7 +9,7 @@ export async function checkAuth(
   next: NextFunction,
 ) {
   try {
-    const token = req.cookies?.auth_token;
+    const token = getAuthTokenFromRequest(req);
 
     if (!token) {
       return res.status(401).json({ message: "No token provided" });

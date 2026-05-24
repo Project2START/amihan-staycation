@@ -11,7 +11,6 @@ export const requestPasswordReset = async ({
   const response = await axios.post(
     `${HOST}/api/users/password-reset/request`,
     { email, source },
-    { withCredentials: true },
   );
 
   return response.data;
@@ -21,7 +20,6 @@ export const validatePasswordResetToken = async (token: string) => {
   const response = await axios.post(
     `${HOST}/api/users/password-reset/validate-token`,
     { token },
-    { withCredentials: true },
   );
 
   return response.data;
@@ -41,7 +39,6 @@ export const completePasswordReset = async ({
   const response = await axios.post(
     `${HOST}/api/users/password-reset/complete`,
     { token, password, confirmPassword, source },
-    { withCredentials: true },
   );
 
   return response.data;

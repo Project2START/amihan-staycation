@@ -4,7 +4,7 @@ import { IBookingHistory } from "../page";
 import { useState } from "react";
 import dayjs from "dayjs";
 import Image from "next/image";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import { useRouter } from "next/navigation";
@@ -126,9 +126,10 @@ export default function History({ history, bookingStatus }: HistoryProps) {
           }
         }
 
-        await axios.post(`${HOST}/api/bookings/history/respond`, formData, {
-          withCredentials: true,
-        });
+        await axiosWithAuth.post(
+          `${HOST}/api/bookings/history/respond`,
+          formData,
+        );
       }
 
       CustomToast.show("Response submitted successfully", {

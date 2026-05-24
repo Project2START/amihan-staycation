@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import NotificationItem, { INotificationItem } from "./NotificationItem";
 import { useAppSelector } from "@/lib/hooks";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 
@@ -29,12 +29,11 @@ export default function NotificationList({
       setHasError(false);
 
       try {
-        const result = await axios.get<{
+        const result = await axiosWithAuth.get<{
           message: string;
           notifications: INotificationItem[];
         }>(
           `${HOST}/api/notifications?userDestinationId=${user?.id}&skip=${skip}&take=${10}`,
-          { withCredentials: true },
         );
 
         if (result.data.notifications.length === 0) {
@@ -52,14 +51,10 @@ export default function NotificationList({
           return Array.from(uniqueById.values());
         });
 
-        await axios.patch(
-          `${HOST}/api/notifications`,
-          {
-            identifier: { userDestinationId: user?.id },
-            data: { hasRead: true },
-          },
-          { withCredentials: true },
-        );
+        await axiosWithAuth.patch(`${HOST}/api/notifications`, {
+          identifier: { userDestinationId: user?.id },
+          data: { hasRead: true },
+        });
       } catch (err) {
         console.error(err);
         setHasError(true);

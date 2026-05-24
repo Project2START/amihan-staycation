@@ -5,7 +5,7 @@ import { errorHandler } from "@/app/shared/lib/errorHandler";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 import { CircularProgress } from "@mui/material";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IoPersonRemove } from "react-icons/io5";
@@ -29,9 +29,7 @@ export default function AgentRemove({ agentId }: { agentId: string }) {
     setSubmitError("");
 
     try {
-      await axios.delete(`${HOST}/api/agents/${agentId}`, {
-        withCredentials: true,
-      });
+      await axiosWithAuth.delete(`${HOST}/api/agents/${agentId}`);
 
       CustomToast.show("Agent successfully removed", { indicator: "success" });
 

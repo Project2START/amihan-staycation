@@ -17,7 +17,7 @@ import { motion } from "motion/react";
 import BackPrevPage from "./BackPrevPage";
 import ConfirmBooking from "./ConfirmBooking";
 import { useProduct } from "../guard/BookingsGuard";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
@@ -146,9 +146,7 @@ export default function BookingsForm() {
     });
 
     try {
-      await axios.post(`${HOST}/api/bookings/`, formData, {
-        withCredentials: true,
-      });
+      await axiosWithAuth.post(`${HOST}/api/bookings/`, formData);
       setConfirmationDialog(true);
     } catch (error) {
       CustomToast.show(errorHandler(error).message, { indicator: "error" });

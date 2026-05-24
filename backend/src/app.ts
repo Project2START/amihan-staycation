@@ -29,7 +29,13 @@ const app = express();
 
 app.set("trust proxy", trustProxyValue);
 
-app.use(cors({ origin: process.env.FRONTEND_HOST, credentials: true }));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_HOST,
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
 app.use(express.json());
 
@@ -73,6 +79,10 @@ io.on("connection", (socket: Socket) => {
     const user = getVerifiedUserFromSocket(socket);
 
     if (data.type === "notifications") {
+      if (!user?.user_id) {
+        socket.emit("notification:unread-count", { count: 0 });
+        return;
+      }
       socket.join(`notifications:${user.user_id}`);
 
       const unreadNotifCount =

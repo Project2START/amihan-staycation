@@ -11,7 +11,7 @@ import UploadQrCode from "../../components/UploadQrCode";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
 import { useState } from "react";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import revalidatePaymentMethods from "../../_actions/revalidatePaymentMethods";
@@ -63,9 +63,7 @@ export default function EditForm({ id, defaultValues }: EditFormProps) {
     });
 
     try {
-      await axios.put(`${HOST}/api/paymentMethods/${id}`, formData, {
-        withCredentials: true,
-      });
+      await axiosWithAuth.put(`${HOST}/api/paymentMethods/${id}`, formData);
 
       CustomToast.show("Payment method successfully updated", {
         indicator: "success",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@mui/material";
@@ -52,9 +52,8 @@ export default function SharedReviewsContent({
 
       try {
         setLoading(true);
-        const result = await axios.get<ReviewsApiResult>(
+        const result = await axiosWithAuth.get<ReviewsApiResult>(
           `${HOST}/api/reviews/product/${productId}`,
-          { withCredentials: true },
         );
 
         setReviewsData({
@@ -77,10 +76,9 @@ export default function SharedReviewsContent({
 
       try {
         setEligibilityLoading(true);
-        const result = await axios.get<{ eligibility: EligibilityData }>(
-          `${HOST}/api/reviews/in-app-eligibility/${productId}`,
-          { withCredentials: true },
-        );
+        const result = await axiosWithAuth.get<{
+          eligibility: EligibilityData;
+        }>(`${HOST}/api/reviews/in-app-eligibility/${productId}`);
         setEligibility(result.data.eligibility);
       } catch (error) {
         setEligibility(null);
@@ -97,11 +95,9 @@ export default function SharedReviewsContent({
 
     try {
       setUpdatingReviewId(reviewId);
-      await axios.patch(
-        `${HOST}/api/reviews/${reviewId}/visibility`,
-        { isHidden: nextHidden },
-        { withCredentials: true },
-      );
+      await axiosWithAuth.patch(`${HOST}/api/reviews/${reviewId}/visibility`, {
+        isHidden: nextHidden,
+      });
 
       setReviewsData((prev) => ({
         ...prev,

@@ -6,7 +6,7 @@ import { IoClose } from "react-icons/io5";
 import { IoMdArrowDropdown, IoMdPerson } from "react-icons/io";
 import { MdCameraAlt } from "react-icons/md";
 import Image from "next/image";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { useAppDispatch } from "@/lib/hooks";
 import { fetchUser } from "@/lib/features/users/usersThunks";
@@ -150,22 +150,19 @@ export default function ProfileEditModal({
         const formData = new FormData();
         formData.append("avatar", avatarFile);
 
-        await axios.patch(`${HOST}/api/users/${user.id}/avatar`, formData, {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await axiosWithAuth.patch(
+          `${HOST}/api/users/${user.id}/avatar`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } },
+        );
       }
 
       // Update profile fields
-      await axios.patch(
-        `${HOST}/api/users/${user.id}`,
-        {
-          first_name: firstName.trim(),
-          last_name: lastName.trim(),
-          nationality: nationality.trim(),
-        },
-        { withCredentials: true },
-      );
+      await axiosWithAuth.patch(`${HOST}/api/users/${user.id}`, {
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        nationality: nationality.trim(),
+      });
 
       // Refresh user data in Redux
       dispatch(fetchUser(user.id));
