@@ -9,6 +9,7 @@ import { HOST } from "@/app/shared/constants/config";
 import { Skeleton } from "@mui/material";
 import ErrorClient from "@/app/shared/components/ErrorClient";
 import { CiCircleRemove } from "react-icons/ci";
+import { getAuthHeader } from "@/app/shared/lib/getAuthToken";
 
 const getFirstValue = (value: string | null) => {
   return value ?? undefined;
@@ -58,9 +59,10 @@ export default function ProductList() {
           ? `${HOST}/api/products?${query.toString()}`
           : `${HOST}/api/products`;
 
+        const authHeader = await getAuthHeader();
         const result = await fetch(fetchUrl, {
           cache: "no-cache",
-          credentials: "include",
+          headers: authHeader,
         });
 
         if (!result.ok) {
@@ -88,9 +90,10 @@ export default function ProductList() {
 
         if (isActiveSearch && totalProducts === 0) {
           try {
+            const suggestionsAuthHeader = await getAuthHeader();
             const suggestionsResult = await fetch(`${HOST}/api/products`, {
               cache: "no-cache",
-              credentials: "include",
+              headers: suggestionsAuthHeader,
             });
 
             if (suggestionsResult.ok) {

@@ -1,4 +1,5 @@
 import { HOST } from "@/app/shared/constants/config";
+import { getAuthHeader } from "./getAuthToken";
 
 type FetchWithAuthClientOptions = RequestInit;
 
@@ -8,9 +9,15 @@ export async function fetchWithAuthClient(
 ) {
   const url = `${HOST}${path.startsWith("/") ? "" : "/"}${path}`;
 
+  const authHeader = await getAuthHeader();
+  const mergedHeaders = new Headers(options.headers || {});
+  Object.entries(authHeader).forEach(([key, value]) => {
+    mergedHeaders.set(key, value);
+  });
+
   const res = await fetch(url, {
     ...options,
-    credentials: "include",
+    headers: mergedHeaders,
   });
 
   return res;

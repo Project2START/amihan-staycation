@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import type { BookingSchema } from "../schema/bookings.schema";
+import { getAuthHeader } from "@/app/shared/lib/getAuthToken";
 
 interface IPaymentMethods {
   account_name: string;
@@ -20,7 +21,8 @@ interface IPaymentMethods {
 }
 
 export const fetcher = async (url: string) => {
-  const res = await fetch(url, { credentials: "include" });
+  const authHeader = await getAuthHeader();
+  const res = await fetch(url, { headers: authHeader });
 
   let data: any = null;
 

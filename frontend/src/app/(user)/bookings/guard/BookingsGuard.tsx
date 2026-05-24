@@ -6,8 +6,9 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import useSWR from "swr";
 import { Skeleton } from "@mantine/core";
 import { Product } from "../../units/[slug]/components/Product";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { useAppSelector } from "@/lib/hooks";
+import { getAuthHeader } from "@/app/shared/lib/getAuthToken";
 
 const ProductContext = createContext<Product | undefined>(undefined);
 
@@ -16,7 +17,8 @@ export function useProduct() {
 }
 
 export const fetcher = async (url: string) => {
-  const res = await fetch(url);
+  const authHeader = await getAuthHeader();
+  const res = await fetch(url, { headers: authHeader });
 
   let data: any = null;
 
@@ -175,9 +177,8 @@ export default function BookingsGuard({
       }
 
       try {
-        const result = await axios.get(`${HOST}/api/bookings/me`, {
+        const result = await axiosWithAuth.get(`${HOST}/api/bookings/me`, {
           params: { service: "existingBooking" },
-          withCredentials: true,
         });
 
         if (!mounted) return;

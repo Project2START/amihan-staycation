@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import dayjs from "dayjs";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { useEffect } from "react";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
@@ -44,10 +44,9 @@ export default function CreateReviewForm({ productId }: { productId: string }) {
     const run = async () => {
       try {
         setEligibilityLoading(true);
-        const result = await axios.get<{ eligibility: EligibilityData }>(
-          `${HOST}/api/reviews/in-app-eligibility/${productId}`,
-          { withCredentials: true },
-        );
+        const result = await axiosWithAuth.get<{
+          eligibility: EligibilityData;
+        }>(`${HOST}/api/reviews/in-app-eligibility/${productId}`);
 
         setEligibility(result.data.eligibility);
       } catch (error) {
@@ -74,15 +73,11 @@ export default function CreateReviewForm({ productId }: { productId: string }) {
 
     try {
       setSubmitLoading(true);
-      await axios.post(
-        `${HOST}/api/reviews/in-app`,
-        {
-          productId,
-          rating,
-          comment,
-        },
-        { withCredentials: true },
-      );
+      await axiosWithAuth.post(`${HOST}/api/reviews/in-app`, {
+        productId,
+        rating,
+        comment,
+      });
 
       CustomToast.show("Review submitted successfully", {
         indicator: "success",

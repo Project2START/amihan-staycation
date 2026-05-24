@@ -7,7 +7,7 @@ import classes from "@/app/shared/cssModules/Select.module.css";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import { ABOUT_MAX } from "@/app/shared/constants/productFormValidation";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 
@@ -55,13 +55,10 @@ export default function UpdateBookingStatus({
     setError("");
 
     try {
-      await axios.patch(
-        `${HOST}/api/bookings/${bookingId}`,
-        { ...booking, status_message: booking.message },
-        {
-          withCredentials: true,
-        },
-      );
+      await axiosWithAuth.patch(`${HOST}/api/bookings/${bookingId}`, {
+        ...booking,
+        status_message: booking.message,
+      });
       CustomToast.show("Booking status successfully updated", {
         indicator: "success",
       });

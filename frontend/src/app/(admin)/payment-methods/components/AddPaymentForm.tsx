@@ -11,7 +11,7 @@ import UploadQrCode from "./UploadQrCode";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
 import { useState } from "react";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import revalidatePaymentMethods from "../_actions/revalidatePaymentMethods";
@@ -67,9 +67,7 @@ export default function AddPaymentForm({
       formData.append(key, JSON.stringify(value));
     });
     try {
-      await axios.post(`${HOST}/api/paymentMethods`, formData, {
-        withCredentials: true,
-      });
+      await axiosWithAuth.post(`${HOST}/api/paymentMethods`, formData);
 
       CustomToast.show("Payment method successfully created", {
         indicator: "success",

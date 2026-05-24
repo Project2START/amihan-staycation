@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { IoClose } from "react-icons/io5";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { useAppDispatch } from "@/lib/hooks";
 import { resetUser } from "@/lib/features/users/usersSlice";
@@ -34,9 +34,7 @@ export default function ProfileDeleteModal({
     setLoading(true);
 
     try {
-      await axios.delete(`${HOST}/api/users/${userId}`, {
-        withCredentials: true,
-      });
+      await axiosWithAuth.delete(`${HOST}/api/users/${userId}`);
 
       await fetch("/api/auth/clear-cookies", {
         method: "DELETE",

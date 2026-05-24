@@ -4,7 +4,7 @@ import { HOST } from "@/app/shared/constants/config";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import { useAppSelector } from "@/lib/hooks";
 import { Skeleton } from "@mui/material";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -35,11 +35,8 @@ export default function ProductBooking({ productId }: { productId: string }) {
       }));
 
       try {
-        const result = await axios.get(
+        const result = await axiosWithAuth.get(
           `${HOST}/api/bookings/me?service=existingBooking`,
-          {
-            withCredentials: true,
-          },
         );
 
         setExistingBooking((existingBooking) => ({
