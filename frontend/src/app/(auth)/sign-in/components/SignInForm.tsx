@@ -47,14 +47,7 @@ export default function SignInForm() {
     setLoading(true);
 
     try {
-      const result = await signIn(data);
-
-      const user = result.user;
-
-      await fetch("/api/auth/register-cookies", {
-        method: "POST",
-        body: JSON.stringify({ id: user.id, role: user.role }),
-      });
+      await signIn(data);
 
       setError("");
 

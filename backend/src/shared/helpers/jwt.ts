@@ -13,7 +13,7 @@ import jwt from "jsonwebtoken";
  */
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
-type EXPIRES_IN = "24h";
+type EXPIRES_IN = "24h" | "10m";
 
 export function signToken(payload: object, expiration: EXPIRES_IN) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: expiration });

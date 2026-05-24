@@ -283,12 +283,39 @@ export default function InsightsPage() {
     });
 
     try {
-      const dataUrl = await toPng(pdfTargetRef.current, {
-        cacheBust: true,
-        backgroundColor: "#ffffff",
-        pixelRatio: 2,
-        skipFonts: false,
-      });
+      const isFirefox = /firefox/i.test(navigator.userAgent);
+
+      const node = pdfTargetRef.current;
+      const nodeWidth = node.scrollWidth;
+      const nodeHeight = node.scrollHeight;
+
+      const getCaptureOptions = (safeMode: boolean) => {
+        const maxDimension = safeMode ? 8192 : 16384;
+        const maxSide = Math.max(nodeWidth, nodeHeight, 1);
+        const scale = Math.min(1, maxDimension / maxSide);
+
+        return {
+          cacheBust: true,
+          backgroundColor: "#ffffff",
+          pixelRatio: safeMode ? 1 : isFirefox ? 1.25 : 2,
+          // Firefox is stricter with stylesheet/font rule access during embedding.
+          skipFonts: safeMode || isFirefox,
+          canvasWidth: Math.max(1, Math.floor(nodeWidth * scale)),
+          canvasHeight: Math.max(1, Math.floor(nodeHeight * scale)),
+        };
+      };
+
+      let dataUrl: string;
+
+      try {
+        dataUrl = await toPng(node, getCaptureOptions(false));
+      } catch (captureError) {
+        console.warn(
+          "Primary PDF image capture failed. Retrying in compatibility mode.",
+          captureError,
+        );
+        dataUrl = await toPng(node, getCaptureOptions(true));
+      }
 
       const formatReportMoney = (amount: number) =>
         `PHP ${formatMoney(amount, { decimals: 2 })}`;
