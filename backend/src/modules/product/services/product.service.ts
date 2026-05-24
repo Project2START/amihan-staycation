@@ -18,6 +18,7 @@ interface ProductSearchFilters {
   checkOut?: string;
   adults?: number;
   children?: number;
+  totalGuests?: number;
 }
 
 type BookingCheckPeriod = {
@@ -194,7 +195,15 @@ class ProductService {
         ? Math.floor(filters.children)
         : 0;
 
-    const minGuests = minAdults + minChildren;
+    const totalGuestsFromFilters =
+      typeof filters?.totalGuests === "number" && filters.totalGuests > 0
+        ? Math.floor(filters.totalGuests)
+        : 0;
+
+    const minGuests =
+      totalGuestsFromFilters > 0
+        ? totalGuestsFromFilters
+        : minAdults + minChildren;
 
     const shouldFilterByDate = Boolean(filters?.checkIn && filters?.checkOut);
 

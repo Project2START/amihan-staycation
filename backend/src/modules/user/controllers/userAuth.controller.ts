@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { signToken } from "../../../shared/helpers/jwt";
-import { cookieOptions } from "../../../shared/helpers/cookieOptions";
 import { userAuthService } from "../services/userAuth.service";
 import { generateSecureRandom } from "../../../shared/helpers/generators/generateSecureRandom";
 import { BadRequestError } from "../../../shared/helpers/appErrors";
@@ -18,30 +17,18 @@ class UserAuthController {
   async signUp(req: Request, res: Response) {
     const user = await userAuthService.signUp(req.body);
 
-    const payload = {
-      user_id: user.id,
-      user_role: user.role,
-      auth_version: user.auth_version,
-    };
-    const jwt_token = signToken(payload, "24h");
-
-    res.cookie("auth_token", jwt_token, cookieOptions(24 * 60 * 60 * 1000));
-
-    res.status(201).json({ message: "Account successfully created" });
+    res.status(201).json({
+      message: "Account successfully created",
+      user: { id: user.id, role: user.role, auth_version: user.auth_version },
+    });
   }
   async signIn(req: Request, res: Response) {
     const user = await userAuthService.signIn(req.body);
 
-    const payload = {
-      user_id: user.id,
-      user_role: user.role,
-      auth_version: user.auth_version,
-    };
-    const jwt_token = signToken(payload, "24h");
-
-    res.cookie("auth_token", jwt_token, cookieOptions(24 * 60 * 60 * 1000));
-
-    res.status(201).json({ message: "Account successfully signed it" });
+    res.status(201).json({
+      message: "Account successfully signed it",
+      user: { id: user.id, role: user.role, auth_version: user.auth_version },
+    });
   }
   async googleAuth(req: Request, res: Response) {
     const state = generateSecureRandom();
@@ -84,15 +71,24 @@ class UserAuthController {
       auth_version: user.auth_version,
     };
 
-    const jwt_token = signToken(payload, "24h");
-
-    res.cookie("auth_token", jwt_token, cookieOptions(24 * 60 * 60 * 1000));
+    const oauth_token = signToken(payload, "10m");
 
     req.session.redirectPath = undefined;
 
-    return res.redirect(`${process.env.FRONTEND_HOST}${redirectPath}`);
+    const frontendRedirect = `${process.env.FRONTEND_HOST}/sign-in/google-callback?redirect=${encodeURIComponent(redirectPath)}&token=${encodeURIComponent(oauth_token)}`;
 
-    // throw new ForbiddenError("You do not have permission to sign in");
+    return res.redirect(frontendRedirect);
+  }
+  async me(req: Request, res: Response) {
+    const requester = (req as any).user;
+
+    res.status(200).json({
+      message: "User session successfully fetched",
+      user: {
+        id: requester.user_id,
+        role: requester.user_role,
+      },
+    });
   }
   async logout(_: Request, res: Response) {
     const cookieOptions = {

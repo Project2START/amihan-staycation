@@ -90,7 +90,7 @@ export default function ResetPasswordForm() {
       setError("");
       setSuccess(
         source === "profile"
-          ? "Password updated successfully. Your current session remains active."
+          ? "Password updated successfully. You may now return to your account."
           : "Password updated successfully. Redirecting to sign in...",
       );
 
@@ -122,41 +122,45 @@ export default function ResetPasswordForm() {
 
       {!validating && tokenError.length === 0 && (
         <>
-          <div>
-            <label className="block text-xs lg:text-sm text-secondary-normal mb-1 font-semibold">
-              New password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="input-base"
-              placeholder="Enter new password"
-            />
-            {passwordError.length !== 0 && (
-              <p className="text-xs text-reject-normal font-bold mt-1">
-                {passwordError}
-              </p>
-            )}
-          </div>
+          {success.length === 0 && (
+            <div>
+              <label className="block text-xs lg:text-sm text-secondary-normal mb-1 font-semibold">
+                New password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input-base"
+                placeholder="Enter new password"
+              />
+              {passwordError.length !== 0 && (
+                <p className="text-xs text-reject-normal font-bold mt-1">
+                  {passwordError}
+                </p>
+              )}
+            </div>
+          )}
 
-          <div>
-            <label className="block text-xs lg:text-sm text-secondary-normal mb-1 font-semibold">
-              Confirm password
-            </label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="input-base"
-              placeholder="Confirm new password"
-            />
-            {confirmError.length !== 0 && (
-              <p className="text-xs text-reject-normal font-bold mt-1">
-                {confirmError}
-              </p>
-            )}
-          </div>
+          {success.length === 0 && (
+            <div>
+              <label className="block text-xs lg:text-sm text-secondary-normal mb-1 font-semibold">
+                Confirm password
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="input-base"
+                placeholder="Confirm new password"
+              />
+              {confirmError.length !== 0 && (
+                <p className="text-xs text-reject-normal font-bold mt-1">
+                  {confirmError}
+                </p>
+              )}
+            </div>
+          )}
 
           {error.length !== 0 && (
             <p className="text-xs text-reject-normal font-bold lg:text-sm">
@@ -165,28 +169,20 @@ export default function ResetPasswordForm() {
           )}
 
           {success.length !== 0 && (
-            <p className="text-xs text-success-normal font-bold lg:text-sm">
+            <p className="text-xs text-center text-success-normal font-bold lg:text-sm">
               {success}
             </p>
           )}
 
-          {source === "profile" && success.length !== 0 && (
-            <button
-              type="button"
-              onClick={() => router.push("/profile")}
-              className="w-full py-[0.75rem] border border-secondary-normal/30 rounded-xl text-secondary-normal font-bold"
-            >
-              Back to Profile
-            </button>
+          {success.length === 0 && (
+            <ButtonLoadingStopper loading={loading}>
+              <PrimaryButton type="submit" disabled={!canSubmit}>
+                <span className="font-bold lg:text-base lg:py-[0.5rem]">
+                  Update Password
+                </span>
+              </PrimaryButton>
+            </ButtonLoadingStopper>
           )}
-
-          <ButtonLoadingStopper loading={loading}>
-            <PrimaryButton type="submit" disabled={!canSubmit}>
-              <span className="font-bold lg:text-base lg:py-[0.5rem]">
-                Update Password
-              </span>
-            </PrimaryButton>
-          </ButtonLoadingStopper>
         </>
       )}
     </form>

@@ -1,17 +1,23 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { IoClose } from "react-icons/io5";
-import { IoMdPerson } from "react-icons/io";
+import { IoMdArrowDropdown, IoMdPerson } from "react-icons/io";
 import { MdCameraAlt } from "react-icons/md";
 import Image from "next/image";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { useAppDispatch } from "@/lib/hooks";
 import { fetchUser } from "@/lib/features/users/usersThunks";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
+import ClickOutside from "@/app/shared/ui/ClickOutside";
+import { getNames, registerLocale } from "i18n-nationality";
+
+registerLocale(require("i18n-nationality/langs/en.json"));
+
+const nationalities = getNames("en");
 
 const NAME_REGEX = /^[A-Za-z]+(?: [A-Za-z]+){0,2}$/;
 const NAME_MIN = 2;
@@ -45,6 +51,7 @@ export default function ProfileEditModal({
   const [firstName, setFirstName] = useState(user.first_name);
   const [lastName, setLastName] = useState(user.last_name);
   const [nationality, setNationality] = useState(user.nationality);
+  const [selectNationality, setSelectNationality] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(
     user.avatar_url || null,
@@ -52,15 +59,32 @@ export default function ProfileEditModal({
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
 
+  const handleOpenSelection = () => {
+    setSelectNationality(true);
+  };
+
+  const handleCloseSelection = () => {
+    setSelectNationality(false);
+  };
+
+  const handleSelectNationality = (n: string) => {
+    setNationality(n);
+    setErrors((prev) => {
+      const { nationality: _nationality, ...rest } = prev;
+      return rest;
+    });
+    handleCloseSelection();
+  };
+
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowed = ["image/jpeg", "image/png"];
+    const allowed = ["image/jpeg", "image/png", "image/webp", "image/avif"];
     if (!allowed.includes(file.type)) {
       setErrors((prev) => ({
         ...prev,
-        avatar: "Only JPEG and PNG images are allowed",
+        avatar: "Only JPEG, PNG, WEBP, or AVIF images are allowed",
       }));
       return;
     }
@@ -126,22 +150,19 @@ export default function ProfileEditModal({
         const formData = new FormData();
         formData.append("avatar", avatarFile);
 
-        await axios.patch(`${HOST}/api/users/${user.id}/avatar`, formData, {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await axiosWithAuth.patch(
+          `${HOST}/api/users/${user.id}/avatar`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } },
+        );
       }
 
       // Update profile fields
-      await axios.patch(
-        `${HOST}/api/users/${user.id}`,
-        {
-          first_name: firstName.trim(),
-          last_name: lastName.trim(),
-          nationality: nationality.trim(),
-        },
-        { withCredentials: true },
-      );
+      await axiosWithAuth.patch(`${HOST}/api/users/${user.id}`, {
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        nationality: nationality.trim(),
+      });
 
       // Refresh user data in Redux
       dispatch(fetchUser(user.id));
@@ -207,7 +228,7 @@ export default function ProfileEditModal({
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/jpeg,image/png"
+              accept="image/jpeg, image/png, image/webp, image/avif"
               onChange={handleAvatarChange}
               className="hidden"
             />
@@ -221,6 +242,80 @@ export default function ProfileEditModal({
             )}
           </div>
 
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              Nationality
+            </label>
+            <div className="relative border border-gray-300 rounded-lg text-primary-secondary">
+              <button
+                type="button"
+                onClick={handleOpenSelection}
+                className="w-full flex justify-between items-center px-3 py-2 overflow-hidden"
+              >
+                <span className="text-left text-base">{nationality}</span>
+                <span className="text-lg">
+                  <IoMdArrowDropdown />
+                </span>
+              </button>
+
+              <AnimatePresence>
+                {selectNationality ? (
+                  <motion.div
+                    initial={{ opacity: 0, translateY: "-5%" }}
+                    animate={{ opacity: 1, translateY: "0%" }}
+                    exit={{ opacity: 0, translateY: "-5%" }}
+                    key="profile-select-nationalities"
+                    data-testid="profile-select-nationalities"
+                    className="absolute w-full top-full mt-2 z-20"
+                  >
+                    <ClickOutside onClickOutside={handleCloseSelection}>
+                      <div className="h-[12.5rem] bg-white shadow-lg rounded-lg overflow-y-auto overflow-x-hidden">
+                        <ul>
+                          {Object.keys(nationalities)
+                            .map((n) => {
+                              return nationalities[n];
+                            })
+                            .sort()
+                            .map((n) => {
+                              if (n === nationality) {
+                                return (
+                                  <li key={n}>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleSelectNationality(n)}
+                                      className="p-[0.5rem] text-left w-full bg-secondary-normal text-white"
+                                    >
+                                      <span className="font-bold">{n}</span>
+                                    </button>
+                                  </li>
+                                );
+                              }
+
+                              return (
+                                <li key={n}>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSelectNationality(n)}
+                                    className="p-[0.5rem] text-left w-full"
+                                  >
+                                    <span>{n}</span>
+                                  </button>
+                                </li>
+                              );
+                            })}
+                        </ul>
+                      </div>
+                    </ClickOutside>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </div>
+            {errors.nationality && (
+              <span className="text-xs text-reject-normal mt-1 block">
+                {errors.nationality}
+              </span>
+            )}
+          </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">
               First Name
@@ -251,23 +346,6 @@ export default function ProfileEditModal({
             {errors.last_name && (
               <span className="text-xs text-reject-normal mt-1 block">
                 {errors.last_name}
-              </span>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">
-              Nationality
-            </label>
-            <input
-              type="text"
-              value={nationality}
-              onChange={(e) => setNationality(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-normal/50"
-            />
-            {errors.nationality && (
-              <span className="text-xs text-reject-normal mt-1 block">
-                {errors.nationality}
               </span>
             )}
           </div>

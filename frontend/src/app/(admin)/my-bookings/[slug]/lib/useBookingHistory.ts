@@ -1,9 +1,8 @@
 import { HOST } from "@/app/shared/constants/config";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import useSWR from "swr";
 
-const fetcher = (url: string) =>
-  axios.get(url, { withCredentials: true }).then((res) => res.data);
+const fetcher = (url: string) => axiosWithAuth.get(url).then((res) => res.data);
 
 export function useBookingHistory(id: string) {
   const { data, error, isLoading } = useSWR(

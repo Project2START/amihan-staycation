@@ -135,7 +135,7 @@ export default function PhotoViewActions({
         ref={replaceInputRef}
         type="file"
         hidden
-        accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+        accept="image/png, image/jpeg, image/jpg, image/gif, image/webp, image/avif"
         onChange={(e) => {
           const file = e.target.files?.[0];
 

@@ -56,8 +56,8 @@ export default function ProductItem({
     <article className="min-w-0 overflow-hidden rounded-lg border-2 border-[#0B5173]/30 bg-white text-secondary-normal lg:grid lg:grid-cols-[20rem_1fr] xl:grid-cols-[22rem_1fr]">
       <div className="relative">
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between p-3 lg:p-4">
-          <div className="rounded-full bg-black/45 px-2.5 py-1 backdrop-blur-sm">
-            {typeof rating === "number" && rating > 0 ? (
+          {typeof rating === "number" && rating > 0 ? (
+            <div className="rounded-full bg-black/45 px-2.5 py-1 backdrop-blur-sm">
               <div className="flex items-center gap-1.5">
                 <Rating
                   value={Number(rating.toFixed(1))}
@@ -69,28 +69,31 @@ export default function ProductItem({
                   </span>
                 ) : null}
               </div>
-            ) : (
-              <span className="text-[11px] font-semibold text-[#efefef]">
-                No reviews yet
-              </span>
-            )}
-          </div>
+            </div>
+          ) : (
+            <span></span>
+          )}
 
-          <div className="rounded-full bg-black/35 px-2.5 py-1.5 text-white backdrop-blur-sm">
-            <ul className="flex items-center gap-x-2">
-              {visibleAttributes.map((attribute, index) => (
-                <li key={`${attribute.iconId}-${index}`} className="shadow-lg">
-                  <RenderIcon iconId={attribute.iconId} />
-                  <span className="block w-max translate-x-[50%] translate-y-[-40%] rounded-full bg-white text-xs text-success-normal">
-                    <FaCircleCheck />
-                  </span>
-                </li>
-              ))}
-              {iconExcessCount !== 0 ? (
-                <li className="text-xs">+{iconExcessCount}</li>
-              ) : null}
-            </ul>
-          </div>
+          {visibleAttributes.length !== 0 && (
+            <div className="rounded-full bg-black/35 px-2.5 py-1.5 text-white backdrop-blur-sm">
+              <ul className="flex items-center gap-x-2">
+                {visibleAttributes.map((attribute, index) => (
+                  <li
+                    key={`${attribute.iconId}-${index}`}
+                    className="shadow-lg"
+                  >
+                    <RenderIcon iconId={attribute.iconId} />
+                    <span className="block w-max translate-x-[50%] translate-y-[-40%] rounded-full bg-white text-xs text-success-normal">
+                      <FaCircleCheck />
+                    </span>
+                  </li>
+                ))}
+                {iconExcessCount !== 0 ? (
+                  <li className="text-xs">+{iconExcessCount}</li>
+                ) : null}
+              </ul>
+            </div>
+          )}
         </div>
 
         {photos[0] ? (
@@ -116,7 +119,7 @@ export default function ProductItem({
         </div>
       </div>
 
-      <div className="flex h-full flex-col p-4 sm:p-5 lg:p-6">
+      <div className="bg-[#efefef] flex h-full flex-col p-4 sm:p-5 lg:p-6">
         <div className="flex items-start justify-between gap-3 font-bold">
           <h3 className="min-w-0 flex-1 truncate text-lg sm:text-xl lg:text-2xl">
             {name}
@@ -131,10 +134,9 @@ export default function ProductItem({
           </div>
         </div>
 
-        <p className="mt-3 text-sm leading-6 text-secondary-normal/80 sm:text-[0.95rem] lg:text-base">
-          {about?.trim()
-            ? `${about.trim().slice(0, 190)}${about.trim().length > 190 ? "..." : ""}`
-            : "A relaxing stay with complete essentials and carefully prepared comforts for every guest."}
+        <p className="mt-3 line-clamp-3 text-xs leading-6 text-gray-500 text-justify sm:text-[0.95rem] lg:line-clamp-4 lg:text-base">
+          {about?.trim() ||
+            "A relaxing stay with complete essentials and carefully prepared comforts for every guest."}
         </p>
 
         <div className="mt-5 lg:mt-auto">

@@ -10,7 +10,7 @@ import { FiPlusCircle } from "react-icons/fi";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 import AddUnitPhotos from "./AddUnitPhotos";
 import UnitAttributes from "./UnitAttributes";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
@@ -118,9 +118,7 @@ export default function EditUnitForm({
     });
 
     try {
-      await axios.put(`${HOST}/api/products`, formData, {
-        withCredentials: true,
-      });
+      await axiosWithAuth.put(`${HOST}/api/products`, formData);
 
       CustomToast.show("Unit successfully edited", {
         indicator: "success",

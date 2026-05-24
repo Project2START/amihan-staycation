@@ -14,6 +14,7 @@ import { errorHandler } from "@/app/shared/lib/errorHandler";
 import { LuLogOut } from "react-icons/lu";
 import Link from "next/link";
 import { IoMdPerson } from "react-icons/io";
+import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
 
 import { MdPayment } from "react-icons/md";
 import type { IconType } from "react-icons";
@@ -34,18 +35,30 @@ const navItems: NavItem[] = [
 
 export default function HeaderSideBar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const router = useRouter();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.users.data);
 
   const handleLogout = async () => {
+    if (loggingOut) return;
+
+    setLoggingOut(true);
+
     try {
       await logout();
+
+      await fetch("/api/auth/clear-cookies", {
+        method: "DELETE",
+      });
+
       dispatch(resetUser());
       router.replace("/sign-in");
     } catch (err) {
       CustomToast.show(errorHandler(err).message, { indicator: "error" });
+    } finally {
+      setLoggingOut(false);
     }
   };
 
@@ -157,15 +170,18 @@ export default function HeaderSideBar() {
 
               {/* Logout button */}
               <div className="p-4">
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center justify-center gap-x-3 font-bold w-full py-3 bg-reject-normal text-white rounded-lg cursor-pointer"
-                >
-                  <span className="text-lg">
-                    <LuLogOut />
-                  </span>
-                  <span className="font-bold">Log Out</span>
-                </button>
+                <LoadingOverlay loading={loggingOut}>
+                  <button
+                    onClick={handleLogout}
+                    disabled={loggingOut}
+                    className="flex items-center justify-center gap-x-3 font-bold w-full py-3 bg-reject-normal text-white rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    <span className="text-lg">
+                      <LuLogOut />
+                    </span>
+                    <span className="font-bold">Log Out</span>
+                  </button>
+                </LoadingOverlay>
               </div>
             </motion.div>
           </motion.div>

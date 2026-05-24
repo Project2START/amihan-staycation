@@ -4,7 +4,7 @@ import { IBookingHistory } from "../page";
 import { useState } from "react";
 import dayjs from "dayjs";
 import Image from "next/image";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import { useRouter } from "next/navigation";
@@ -21,7 +21,6 @@ import {
   Status,
 } from "@/app/(admin)/my-bookings/lib/getStatusInfo";
 import { MdAccessTime } from "react-icons/md";
-// import { useBookingStatus } from "@/app/(user)/components/BookingStatusContext";
 
 interface HistoryProps {
   history: IBookingHistory[];
@@ -29,8 +28,6 @@ interface HistoryProps {
 }
 
 export default function History({ history, bookingStatus }: HistoryProps) {
-  // const { refetch } = useBookingStatus();
-
   const router = useRouter();
 
   const isActionRequired = bookingStatus === "action_required";
@@ -129,16 +126,17 @@ export default function History({ history, bookingStatus }: HistoryProps) {
           }
         }
 
-        await axios.post(`${HOST}/api/bookings/history/respond`, formData, {
-          withCredentials: true,
-        });
+        await axiosWithAuth.post(
+          `${HOST}/api/bookings/history/respond`,
+          formData,
+        );
       }
 
       CustomToast.show("Response submitted successfully", {
         indicator: "success",
       });
-      // refetch();
-      router.refresh();
+
+      router.back();
     } catch (error) {
       setFormError(errorHandler(error).message);
     } finally {

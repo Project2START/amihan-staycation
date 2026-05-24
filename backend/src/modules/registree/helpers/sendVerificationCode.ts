@@ -5,11 +5,11 @@ import { presentVerificationText } from "./presenters/presentVerificationText";
 
 export async function sendVerificationCode(
   verificationCode: string,
-  email: string
+  email: string,
 ) {
   const templatePath = path.resolve(
     process.cwd(),
-    "src/templates/emailVerification.html"
+    "src/templates/emailVerification.html",
   );
 
   const html = loadTemplate(templatePath, {
@@ -27,7 +27,7 @@ export async function sendVerificationCode(
         filename: "Amihan Staycation Logo",
         path: path.resolve(
           process.cwd(),
-          "public/amihan-staycation-mainLogo.png"
+          "public/amihan-staycation-mainLogo.png",
         ),
         cid: "logo",
       },

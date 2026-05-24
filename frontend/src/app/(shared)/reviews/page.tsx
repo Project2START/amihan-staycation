@@ -1,11 +1,11 @@
 import SharedReviewsContent from "./components/SharedReviewsContent";
 
-export default function SharedReviewsPage({
-  searchParams,
-}: {
-  searchParams: { productId?: string };
-}) {
-  const productId = searchParams?.productId ?? null;
+type PageProps = {
+  searchParams: Promise<{ productId?: string }>;
+};
+
+export default async function SharedReviewsPage({ searchParams }: PageProps) {
+  const { productId } = await searchParams;
 
   return <SharedReviewsContent productId={productId} />;
 }

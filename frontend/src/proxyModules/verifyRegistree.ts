@@ -15,14 +15,22 @@ import { NextRequest, NextResponse } from "next/server";
 
 export default async function verifyRegistree(req: NextRequest) {
   const registree_id = req.cookies.get("registree_id")?.value;
+  console.log(registree_id);
   try {
     await axios.post(`${HOST}/api/registrees/verify`, {
       id: registree_id,
     });
 
-    return NextResponse.next();
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-registree-id", registree_id ?? "");
+
+    return NextResponse.next({
+      request: { headers: requestHeaders },
+    });
   } catch (err) {
+    console.log(err);
     const notForYouPage = new URL("/not-found", req.url);
+
     return NextResponse.rewrite(notForYouPage);
   }
 }

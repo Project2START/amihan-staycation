@@ -27,9 +27,6 @@ export default function BackPrevPage() {
       >
         <div className="p-5 text-sm lg:p-7">
           <p className="text-center flex items-center justify-center lg:text-base">
-            {/* <span className="text-reject-normal text-2xl">
-                  <IoIosAlert />
-                </span> */}
             <span>
               Do you want to{" "}
               <strong className="text-reject-normal">exit</strong> this form?{" "}

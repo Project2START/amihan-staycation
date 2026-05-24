@@ -7,9 +7,10 @@ import NotFoundClient from "@/app/shared/components/NotFoundClient";
 import getPaymentOptions from "@/app/shared/lib/getPaymentOptions";
 import PhotoFullViewDialog from "@/app/shared/components/PhotoFullViewDialog";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import type { BookingSchema } from "../schema/bookings.schema";
+import { getAuthHeader } from "@/app/shared/lib/getAuthToken";
 
 interface IPaymentMethods {
   account_name: string;
@@ -20,7 +21,8 @@ interface IPaymentMethods {
 }
 
 export const fetcher = async (url: string) => {
-  const res = await fetch(url, { credentials: "include" });
+  const authHeader = await getAuthHeader();
+  const res = await fetch(url, { headers: authHeader });
 
   let data: any = null;
 
@@ -73,8 +75,7 @@ function getPaymentLogo(paymentMethod: string): string {
 export default function PaymentMethods() {
   const searchParams = useSearchParams();
   const productId = searchParams.get("id");
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const { setValue } = useFormContext<BookingSchema>();
+  const { setValue, getValues } = useFormContext<BookingSchema>();
 
   const { data, error, isLoading } = useSWR<{
     message: string;
@@ -84,12 +85,17 @@ export default function PaymentMethods() {
     fetcher,
   );
 
-  const items = data?.payment_methods ?? [];
-  const selected = items[selectedIndex] ?? items[0] ?? null;
+  const currentPaymentMethod = getValues("payment_method_id");
 
+  const items = data?.payment_methods ?? [];
+
+  const selected =
+    items.find((item) => item.id === currentPaymentMethod) ?? items[0] ?? null;
+
+  console.log(currentPaymentMethod);
   useEffect(() => {
     if (selected) {
-      setValue("payment_type", selected.payment_method, {
+      setValue("payment_method_id", selected.id, {
         shouldValidate: true,
       });
     }
@@ -100,7 +106,9 @@ export default function PaymentMethods() {
   if (items.length === 0) return null;
 
   const handleSelect = (index: number) => {
-    setSelectedIndex(index);
+    setValue("payment_method_id", items[index].id, {
+      shouldValidate: true,
+    });
     setValue("payment_type", items[index].payment_method, {
       shouldValidate: true,
     });
@@ -139,7 +147,7 @@ export default function PaymentMethods() {
               type="button"
               onClick={() => handleSelect(index)}
               className={`relative h-[2.5rem] w-[2.5rem] flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors hover-animation lg:hover:opacity-50 ${
-                index === selectedIndex
+                method.id === currentPaymentMethod
                   ? "border-primary-normal"
                   : "border-secondary-normal/30"
               }`}

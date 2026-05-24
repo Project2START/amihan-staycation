@@ -7,6 +7,7 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import { io, Socket } from "socket.io-client";
 import NotificationContent from "./NotificationContent";
 import ClickOutside from "@/app/shared/ui/ClickOutside";
+import { getAuthToken } from "@/app/shared/lib/getAuthToken";
 export default function Notification() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [openNotif, setOpenNotif] = useState(false);
@@ -19,16 +20,26 @@ export default function Notification() {
   };
 
   useEffect(() => {
-    const socket: Socket = io(`${HOST}`, { withCredentials: true });
+    let socket: Socket | null = null;
 
-    socket.emit("subscribe", { type: "notifications" });
+    const connect = async () => {
+      const token = await getAuthToken();
 
-    socket.on("notification:unread-count", (data) => {
-      setUnreadCount(data.count);
-    });
+      socket = io(`${HOST}`, {
+        auth: token ? { token: `Bearer ${token}` } : undefined,
+      });
+
+      socket.emit("subscribe", { type: "notifications" });
+
+      socket.on("notification:unread-count", (data) => {
+        setUnreadCount(data.count);
+      });
+    };
+
+    void connect();
 
     return () => {
-      socket.disconnect();
+      socket?.disconnect();
     };
   }, []);
 

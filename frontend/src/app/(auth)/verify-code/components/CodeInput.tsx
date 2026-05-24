@@ -2,7 +2,6 @@
 
 import ButtonLoadingStopper from "@/app/shared/components/ButtonLoadingStopper";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
-import { HOST } from "@/app/shared/constants/config";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -30,16 +29,19 @@ export default function CodeInput({ id }: { id?: string }) {
 
     setLoading(true);
     try {
-      await axios.post(
-        `${HOST}/api/users/sign-up`,
-        {
-          id,
-          verificationCode: otp,
-        },
-        { withCredentials: true },
-      );
+      await axios.post("/api/auth/sign-up", {
+        id,
+        verificationCode: otp,
+      });
+
       setErrorLabel("");
+
       localStorage.removeItem("registree_client_resendCountdown");
+
+      await fetch("/api/auth/registree/clear-cookies", {
+        method: "DELETE",
+      });
+
       router.push(redirectPath ?? "/auth");
     } catch (error) {
       const errorResult = errorHandler(error);

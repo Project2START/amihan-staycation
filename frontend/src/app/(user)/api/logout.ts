@@ -1,6 +1,6 @@
-import axios from "axios";
-import { HOST } from "../../shared/constants/config";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
+import { HOST } from "@/app/shared/constants/config";
 
 export async function logout() {
-  await axios.post(`${HOST}/api/users/logout`, {}, { withCredentials: true });
+  await axiosWithAuth.post(`${HOST}/api/users/logout`, {});
 }

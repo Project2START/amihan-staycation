@@ -7,7 +7,13 @@ interface UploadOptions {
 }
 
 const DEFAULT_OPTIONS: Required<UploadOptions> = {
-  allowedTypes: ["image/jpeg", "image/png"],
+  allowedTypes: [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+    "image/avif",
+  ],
   maxFileSize: 5 * 1024 * 1024, // 5MB
   maxFiles: 10,
 };

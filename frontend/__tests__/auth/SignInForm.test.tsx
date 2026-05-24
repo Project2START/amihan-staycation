@@ -12,7 +12,7 @@ jest.mock("../../src/app/(auth)/sign-in/api/signIn");
 
 const pushMock = jest.fn();
 jest.mock("next/navigation", () => ({
-  useRouter: () => ({ push: pushMock }),
+  useRouter: () => ({ replace: pushMock }),
   useSearchParams: () => new URLSearchParams(),
 }));
 
@@ -22,10 +22,19 @@ describe("SignInForm Component", () => {
   let submitButton: HTMLInputElement;
 
   beforeEach(() => {
+    (global.fetch as jest.Mock) = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true }),
+    });
+
     render(<SignInForm />);
     emailInput = screen.getByPlaceholderText(/email/i);
     passwordInput = screen.getByPlaceholderText(/password/i);
     submitButton = screen.getByRole("button", { name: /sign in/i });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe("Form Validation", () => {
@@ -113,7 +122,9 @@ describe("SignInForm Component", () => {
 
   describe("Sign In Flow", () => {
     it("redirects to auth when sign in is successful", async () => {
-      (signIn as jest.Mock).mockResolvedValue({ success: true });
+      (signIn as jest.Mock).mockResolvedValue({
+        user: { id: "u1", role: "user" },
+      });
 
       await userEvent.type(emailInput, "test@example.com");
       await userEvent.type(passwordInput, "password123");

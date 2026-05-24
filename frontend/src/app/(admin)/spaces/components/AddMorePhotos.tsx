@@ -35,7 +35,7 @@ export default function AddMorePhotos() {
         type="file"
         multiple
         hidden
-        accept="image/png, image/jpeg, image/jpg, image/gif, image/webp"
+        accept="image/png, image/jpeg, image/jpg, image/gif, image/webp, image/avif"
         onChange={(e) => {
           if (!e.target.files) return;
 

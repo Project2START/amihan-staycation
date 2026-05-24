@@ -1,95 +1,167 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import ProductItem, {
   IProductItemProps,
 } from "@/app/shared/components/ProductItem";
 import { HOST } from "@/app/shared/constants/config";
-import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+import { Skeleton } from "@mui/material";
+import ErrorClient from "@/app/shared/components/ErrorClient";
+import { CiCircleRemove } from "react-icons/ci";
+import { getAuthHeader } from "@/app/shared/lib/getAuthToken";
 
-interface ProductListProps {
-  searchParams?: Record<string, string | string[] | undefined>;
-}
-
-const getFirstValue = (value: string | string[] | undefined) => {
-  if (Array.isArray(value)) {
-    return value[0];
-  }
-
-  return value;
+const getFirstValue = (value: string | null) => {
+  return value ?? undefined;
 };
 
-export default async function ProductList({ searchParams }: ProductListProps) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth_token")?.value;
+export default function ProductList() {
+  const searchParams = useSearchParams();
+  const [products, setProducts] = useState<IProductItemProps[]>([]);
+  const [suggestedProducts, setSuggestedProducts] = useState<
+    IProductItemProps[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  const query = new URLSearchParams();
-
-  const checkIn = getFirstValue(searchParams?.checkIn);
-  const checkOut = getFirstValue(searchParams?.checkOut);
-  const adults = getFirstValue(searchParams?.adults);
-  const children = getFirstValue(searchParams?.children);
-  const searched = getFirstValue(searchParams?.searched);
+  const router = useRouter();
+  const checkIn = getFirstValue(searchParams.get("checkIn"));
+  const checkOut = getFirstValue(searchParams.get("checkOut"));
+  const adults = getFirstValue(searchParams.get("adults"));
+  const children = getFirstValue(searchParams.get("children"));
+  const totalGuests = getFirstValue(searchParams.get("totalGuests"));
+  const searched = getFirstValue(searchParams.get("searched"));
 
   const hasActiveSearch =
     searched === "1" ||
     Boolean(checkIn) ||
     Boolean(checkOut) ||
     Boolean(adults) ||
-    Boolean(children);
+    Boolean(children) ||
+    Boolean(totalGuests);
 
-  if (checkIn) query.set("checkIn", checkIn);
-  if (checkOut) query.set("checkOut", checkOut);
-  if (adults) query.set("adults", adults);
-  if (children) query.set("children", children);
+  useEffect(() => {
+    let mounted = true;
 
-  const fetchUrl = query.toString()
-    ? `${HOST}/api/products?${query.toString()}`
-    : `${HOST}/api/products`;
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(false);
 
-  const result = await fetch(fetchUrl, {
-    cache: "no-cache",
-    headers: token ? { Cookie: `auth_token=${token}` } : {},
-  });
+      try {
+        const query = new URLSearchParams();
+        if (checkIn) query.set("checkIn", checkIn);
+        if (checkOut) query.set("checkOut", checkOut);
+        if (adults) query.set("adults", adults);
+        if (children) query.set("children", children);
+        if (totalGuests) query.set("totalGuests", totalGuests);
 
-  if (!result.ok) {
-    return notFound();
-  }
+        const fetchUrl = query.toString()
+          ? `${HOST}/api/products?${query.toString()}`
+          : `${HOST}/api/products`;
 
-  const parsedProducts: { message: string; products: IProductItemProps[] } =
-    await result.json();
+        const authHeader = await getAuthHeader();
+        const result = await fetch(fetchUrl, {
+          cache: "no-cache",
+          headers: authHeader,
+        });
 
-  const totalProducts = parsedProducts.products?.length ?? 0;
+        if (!result.ok) {
+          if (mounted) setError(true);
+          return;
+        }
 
-  let suggestedProducts: IProductItemProps[] = [];
-
-  if (hasActiveSearch && totalProducts === 0) {
-    try {
-      const suggestionsResult = await fetch(`${HOST}/api/products`, {
-        cache: "no-cache",
-        headers: token ? { Cookie: `auth_token=${token}` } : {},
-      });
-
-      if (suggestionsResult.ok) {
-        const suggestionsParsed: {
+        const parsedProducts: {
           message: string;
           products: IProductItemProps[];
-        } = await suggestionsResult.json();
+        } = await result.json();
 
-        suggestedProducts = (suggestionsParsed.products ?? []).slice(0, 3);
+        if (mounted) {
+          setProducts(parsedProducts.products ?? []);
+        }
+
+        const totalProducts = parsedProducts.products?.length ?? 0;
+        const isActiveSearch =
+          searched === "1" ||
+          Boolean(checkIn) ||
+          Boolean(checkOut) ||
+          Boolean(adults) ||
+          Boolean(children) ||
+          Boolean(totalGuests);
+
+        if (isActiveSearch && totalProducts === 0) {
+          try {
+            const suggestionsAuthHeader = await getAuthHeader();
+            const suggestionsResult = await fetch(`${HOST}/api/products`, {
+              cache: "no-cache",
+              headers: suggestionsAuthHeader,
+            });
+
+            if (suggestionsResult.ok) {
+              const suggestionsParsed: {
+                message: string;
+                products: IProductItemProps[];
+              } = await suggestionsResult.json();
+
+              if (mounted) {
+                setSuggestedProducts(
+                  (suggestionsParsed.products ?? []).slice(0, 3),
+                );
+              }
+            }
+          } catch {}
+        }
+      } catch {
+        if (mounted) setError(true);
+      } finally {
+        if (mounted) setLoading(false);
       }
-    } catch {}
+    };
+
+    fetchProducts();
+
+    return () => {
+      mounted = false;
+    };
+  }, [checkIn, checkOut, adults, children, totalGuests, searched]);
+
+  if (loading) {
+    return (
+      <div className="my-[1rem] grid w-full gap-y-8 md:mt-[2rem] md:w-[55%]">
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div className="grid gap-y-5" key={i}>
+            <Skeleton variant="rounded" animation="wave" height={200} />
+            <Skeleton variant="rounded" animation="wave" height={30} />
+            <Skeleton variant="rounded" animation="wave" height={60} />
+          </div>
+        ))}
+      </div>
+    );
   }
 
+  if (error) {
+    return <ErrorClient onRetry={() => router.refresh()} />;
+  }
+
+  const totalProducts = products.length;
+
   return (
-    <div className="grid gap-y-8 mt-[2rem] md:w-[55%]">
+    <div className="relative grid gap-y-8 mt-[2rem] md:w-[55%]">
       {hasActiveSearch ? (
-        <p className="text-sm font-semibold text-gray-600">
-          Search Result: {totalProducts} unit{totalProducts === 1 ? "" : "s"}{" "}
-          found
+        <p className="w-max border-2 border-gray-300 rounded-full px-[1rem] py-[0.5rem] text-sm font-semibold text-gray-600 flex items-center gap-x-1">
+          <span>
+            Search Result: {totalProducts} unit
+            {totalProducts === 1 ? "" : "s"} found
+          </span>
+          <button onClick={() => router.push("/units")}>
+            <span className="text-xl text-red-900">
+              <CiCircleRemove />
+            </span>
+          </button>
         </p>
       ) : null}
 
-      {parsedProducts.products && parsedProducts.products.length !== 0 ? (
-        parsedProducts.products.map((product) => {
+      {products && products.length !== 0 ? (
+        products.map((product) => {
           const {
             id,
             name,
@@ -162,7 +234,7 @@ export default async function ProductList({ searchParams }: ProductListProps) {
           ) : null}
         </div>
       ) : (
-        <p className="opacity-30 font-bold horver_center text-nowrap mt-[2rem]">
+        <p className="opacity-30 font-bold horver_center text-nowrap">
           Staycations are not currently available.
         </p>
       )}

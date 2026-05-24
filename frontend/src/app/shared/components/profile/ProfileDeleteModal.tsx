@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { IoClose } from "react-icons/io5";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { HOST } from "@/app/shared/constants/config";
 import { useAppDispatch } from "@/lib/hooks";
 import { resetUser } from "@/lib/features/users/usersSlice";
 import { useRouter } from "next/navigation";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
+import { logout } from "@/app/(user)/api/logout";
 
 interface ProfileDeleteModalProps {
   userId: string;
@@ -33,14 +34,18 @@ export default function ProfileDeleteModal({
     setLoading(true);
 
     try {
-      await axios.delete(`${HOST}/api/users/${userId}`, {
-        withCredentials: true,
+      await axiosWithAuth.delete(`${HOST}/api/users/${userId}`);
+
+      await fetch("/api/auth/clear-cookies", {
+        method: "DELETE",
       });
 
       dispatch(resetUser());
+
       CustomToast.show("Account deleted successfully", {
         indicator: "success",
       });
+
       router.replace("/sign-in");
     } catch (err) {
       CustomToast.show(errorHandler(err).message, { indicator: "error" });

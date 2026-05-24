@@ -1,47 +1,79 @@
-import { HOST } from "@/app/shared/constants/config";
-import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+"use client";
 
+import { useEffect, useState } from "react";
+import fetchWithAuthClient from "@/app/shared/lib/fetchWithAuthClient";
+import NotFoundClient from "@/app/shared/components/NotFoundClient";
 import EditForm from "./EditForm";
+import EditFormSkeleton from "./EditFormSkeleton";
 import { AddPaymentMethodSchema } from "../../schema/addPaymentMethod.schema";
 
-export default async function EditFormFiller({ slug }: { slug: string }) {
-  if (!slug) {
-    return notFound();
+export default function EditFormFiller({ slug }: { slug: string }) {
+  const [defaultValues, setDefaultValues] =
+    useState<AddPaymentMethodSchema | null>(null);
+  const [paymentMethodId, setPaymentMethodId] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (!slug) {
+      setError(true);
+      setLoading(false);
+      return;
+    }
+
+    let mounted = true;
+
+    const fetchPaymentMethod = async () => {
+      try {
+        const result = await fetchWithAuthClient(
+          `api/paymentMethods/${slug}`,
+          {
+            cache: "no-cache",
+            method: "GET",
+          },
+        );
+
+        if (!result.ok) {
+          if (mounted) setError(true);
+          return;
+        }
+
+        const parsed: { message: string; payment_method: any } =
+          await result.json();
+
+        if (mounted) {
+          setPaymentMethodId(parsed.payment_method.id);
+          setDefaultValues({
+            payment_method: parsed.payment_method.payment_method || "",
+            account_name: parsed.payment_method.account_name || "",
+            account_number: parsed.payment_method.account_number || "",
+            qr_code: parsed.payment_method.qr_code || {
+              url: parsed.payment_method.image_url || "",
+              id: parsed.payment_method.id || "",
+            },
+          });
+        }
+      } catch {
+        if (mounted) setError(true);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchPaymentMethod();
+
+    return () => {
+      mounted = false;
+    };
+  }, [slug]);
+
+  if (loading) {
+    return <EditFormSkeleton />;
   }
 
-  const cookieStore = await cookies();
-  const authToken = cookieStore.get("auth_token")?.value;
-
-  if (!authToken) {
-    return notFound();
+  if (error || !defaultValues) {
+    return <NotFoundClient />;
   }
 
-  const result = await fetch(`${HOST}/api/paymentMethods/${slug}`, {
-    cache: "no-cache",
-    method: "GET",
-    headers: {
-      cookie: `auth_token=${authToken}`,
-    },
-  });
-
-  if (!result.ok) {
-    return notFound();
-  }
-
-  const parsed: { message: string; payment_method: any } = await result.json();
-
-  const defaultValues: AddPaymentMethodSchema = {
-    payment_method: parsed.payment_method.payment_method || "",
-    account_name: parsed.payment_method.account_name || "",
-    account_number: parsed.payment_method.account_number || "",
-    qr_code: parsed.payment_method.qr_code || {
-      url: parsed.payment_method.image_url || "",
-      id: parsed.payment_method.id || "",
-    },
-  };
-
-  return (
-    <EditForm id={parsed.payment_method.id} defaultValues={defaultValues} />
-  );
+  return <EditForm id={paymentMethodId} defaultValues={defaultValues} />;
 }

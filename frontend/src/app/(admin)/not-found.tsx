@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import HeaderAuth from "../shared/components/HeaderAuth";
 
 export default function NotFound() {
   const router = useRouter();

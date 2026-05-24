@@ -1,5 +1,4 @@
 import FacebookIcon from "./icons/FacebookIcon";
-import TiktokIcon from "./icons/TiktokIcon";
 import ImageMainLogo from "./ImageMainLogo";
 import { MdEmail } from "react-icons/md";
 import { BsFillTelephoneFill } from "react-icons/bs";
@@ -19,7 +18,7 @@ export default function FooterMain() {
                 <div>
                   <p className="text-[0.7rem] leading-relaxed md:text-sm lg:text-[0.95rem] text-white/90">
                     Azure Urban Residences, KM 16, W Service Rd, Parañaque,
-                    1700, Taguig, 1630 Metro Manila, Taguig, Philippines
+                    Metro Manila, Philippines
                   </p>
                 </div>
               </div>
@@ -33,9 +32,6 @@ export default function FooterMain() {
                 <div className="mt-[0.65rem] flex items-center gap-x-3 md:gap-x-4">
                   <div className="rounded-md p-1.5 transition-colors hover:bg-white/10 cursor-pointer">
                     <FacebookIcon />
-                  </div>
-                  <div className="rounded-md p-1.5 transition-colors hover:bg-white/10 cursor-pointer">
-                    <TiktokIcon />
                   </div>
                 </div>
               </div>
@@ -74,7 +70,7 @@ export default function FooterMain() {
 
           <div className="mt-8 md:mt-9 pt-5 md:pt-6 border-t border-white/20 flex flex-col gap-y-3 md:flex-row md:items-center md:justify-between">
             <p className="text-[0.65rem] text-center md:text-left md:text-xs lg:text-sm text-white/90">
-              All rights reserved. Copyright (2025-2026) - AStaycation.com™
+              All rights reserved. Copyright (2025-2026) - AmihanStaycation.com™
             </p>
 
             <div className="flex justify-center md:justify-end items-center">

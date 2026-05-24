@@ -10,11 +10,12 @@ import { CustomToast } from "@/app/shared/ui/CustomToast";
 import DialogBaseContent from "@/app/shared/ui/DialogBaseContent";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
 import { CircularProgress } from "@mui/material";
-import axios from "axios";
+import axiosWithAuth from "@/app/shared/lib/axiosWithAuth";
 import { useState } from "react";
 import { IoIosAdd } from "react-icons/io";
 import z from "zod";
 import { revalidatePathAgents } from "../api/revalidatePathAgents";
+import { useRouter } from "next/navigation";
 
 const emailSchema = z.object({
   email: z
@@ -35,6 +36,7 @@ export default function AgentsAddNew() {
   const [inputError, setInputError] = useState("");
   const [formError, setFormError] = useState("");
   const [loadingOverlay, setLoadingOverlay] = useState(false);
+  const router = useRouter();
 
   const handleOpenDialog = () => {
     setDialog(true);
@@ -56,15 +58,17 @@ export default function AgentsAddNew() {
     setLoadingOverlay(true);
 
     try {
-      const agentResult = await axios.post(
-        `${HOST}/api/agents/`,
-        { email },
-        { withCredentials: true },
-      );
+      const agentResult = await axiosWithAuth.post(`${HOST}/api/agents/`, {
+        email,
+      });
 
       CustomToast.show(agentResult.data.message, { indicator: "success" });
       handleCloseDialog();
-      revalidatePathAgents();
+      await revalidatePathAgents();
+
+      window.dispatchEvent(new Event("agents:updated"));
+
+      router.refresh();
       setEmail("");
     } catch (error) {
       setFormError(errorHandler(error).message);

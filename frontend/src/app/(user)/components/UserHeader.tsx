@@ -15,9 +15,11 @@ import { CustomToast } from "@/app/shared/ui/CustomToast";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import { IoMdPerson } from "react-icons/io";
 import { LuLogOut } from "react-icons/lu";
+import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
 
 export default function UserHeader() {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
 
   const pathname = usePathname();
@@ -42,12 +44,23 @@ export default function UserHeader() {
   }, []);
 
   const handleLogout = async () => {
+    if (loggingOut) return;
+
+    setLoggingOut(true);
+
     try {
       await logout();
+
+      await fetch("/api/auth/clear-cookies", {
+        method: "DELETE",
+      });
+
       dispatch(resetUser());
       router.replace("/sign-in");
     } catch (err) {
       CustomToast.show(errorHandler(err).message, { indicator: "error" });
+    } finally {
+      setLoggingOut(false);
     }
   };
 
@@ -139,14 +152,17 @@ export default function UserHeader() {
                   View profile
                 </Link>
 
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-md bg-reject-normal py-2 font-bold text-white hover-animation lg:hover:opacity-80"
-                >
-                  <LuLogOut className="text-base" />
-                  <span className="text-sm">Log Out</span>
-                </button>
+                <LoadingOverlay loading={loggingOut}>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    disabled={loggingOut}
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-md bg-reject-normal py-2 font-bold text-white hover-animation lg:hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    <LuLogOut className="text-base" />
+                    <span className="text-sm">Log Out</span>
+                  </button>
+                </LoadingOverlay>
               </div>
             ) : null}
           </div>
