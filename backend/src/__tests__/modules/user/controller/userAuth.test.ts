@@ -1,14 +1,12 @@
 import { Request, Response } from "express";
 import { userAuthService } from "../../../../modules/user/services/userAuth.service";
 import { signToken } from "../../../../shared/helpers/jwt";
-import { cookieOptions } from "../../../../shared/helpers/cookieOptions";
 import { userAuthController } from "../../../../modules/user/controllers/userAuth.controller";
 import { generateSecureRandom } from "../../../../shared/helpers/generators/generateSecureRandom";
 import { BadRequestError } from "../../../../shared/helpers/appErrors";
 
 jest.mock("../../../../modules/user/services/userAuth.service");
 jest.mock("../../../../shared/helpers/jwt");
-jest.mock("../../../../shared/helpers/cookieOptions");
 jest.mock("../../../../shared/helpers/generators/generateSecureRandom");
 
 describe("UserAuthController", () => {
@@ -30,34 +28,23 @@ describe("UserAuthController", () => {
   // signUp
   // ------------------------
   describe("signUp", () => {
-    it("should sign up a user, set cookie, and return 201", async () => {
+    it("should sign up a user and return 201", async () => {
       const mockUser = { id: "u1", role: "user", auth_version: 1 };
       (userAuthService.signUp as jest.Mock).mockResolvedValue(mockUser);
-      (signToken as jest.Mock).mockReturnValue("jwt-token");
-      (cookieOptions as jest.Mock).mockReturnValue({ httpOnly: true });
 
       req.body = { email: "test@example.com", password: "pass123" };
 
       await userAuthController.signUp(req as any, res as any);
 
       expect(userAuthService.signUp).toHaveBeenCalledWith(req.body);
-      expect(signToken).toHaveBeenCalledWith(
-        {
-          user_id: mockUser.id,
-          user_role: mockUser.role,
-          auth_version: mockUser.auth_version,
-        },
-        "24h",
-      );
-      expect(res.cookie).toHaveBeenCalledWith("auth_token", "jwt-token", {
-        httpOnly: true,
-      });
+      expect(signToken).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
         message: "Account successfully created",
         user: {
           id: mockUser.id,
           role: mockUser.role,
+          auth_version: mockUser.auth_version,
         },
       });
     });
@@ -67,34 +54,22 @@ describe("UserAuthController", () => {
   // signIn
   // ------------------------
   describe("signIn", () => {
-    it("should sign in a user, set cookie, and return 201", async () => {
+    it("should sign in a user and return 201", async () => {
       const mockUser = { id: "u1", role: "user", auth_version: 1 };
       (userAuthService.signIn as jest.Mock).mockResolvedValue(mockUser);
-      (signToken as jest.Mock).mockReturnValue("jwt-token");
-      (cookieOptions as jest.Mock).mockReturnValue({ httpOnly: true });
 
       req.body = { email: "test@example.com", password: "pass123" };
 
       await userAuthController.signIn(req as any, res as any);
 
       expect(userAuthService.signIn).toHaveBeenCalledWith(req.body);
-      expect(signToken).toHaveBeenCalledWith(
-        {
-          user_id: mockUser.id,
-          user_role: mockUser.role,
-          auth_version: mockUser.auth_version,
-        },
-        "24h",
-      );
-      expect(res.cookie).toHaveBeenCalledWith("auth_token", "jwt-token", {
-        httpOnly: true,
-      });
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
         message: "Account successfully signed it",
         user: {
           id: mockUser.id,
           role: mockUser.role,
+          auth_version: mockUser.auth_version,
         },
       });
     });
@@ -164,13 +139,12 @@ describe("UserAuthController", () => {
       );
     });
 
-    it("should set cookie and redirect to dashboard on success", async () => {
+    it("should redirect to frontend callback on success", async () => {
       const mockUser = { id: "u1", role: "user", auth_version: 1 };
       (userAuthService.googleAuthCallback as jest.Mock).mockResolvedValue(
         mockUser,
       );
       (signToken as jest.Mock).mockReturnValue("jwt-token");
-      (cookieOptions as jest.Mock).mockReturnValue({ httpOnly: true });
 
       (req as any).session = { state: "abc" };
       req.query = { state: "abc", code: "code123" };
@@ -180,11 +154,16 @@ describe("UserAuthController", () => {
       expect(userAuthService.googleAuthCallback).toHaveBeenCalledWith(
         "code123",
       );
-      expect(res.cookie).toHaveBeenCalledWith("auth_token", "jwt-token", {
-        httpOnly: true,
-      });
+      expect(signToken).toHaveBeenCalledWith(
+        {
+          user_id: mockUser.id,
+          user_role: mockUser.role,
+          auth_version: mockUser.auth_version,
+        },
+        "10m",
+      );
       expect(res.redirect).toHaveBeenCalledWith(
-        `${FRONTEND_HOST}/sign-in/google-callback?redirect=%2Fauth`,
+        `${FRONTEND_HOST}/sign-in/google-callback?redirect=%2Fauth&token=jwt-token`,
       );
     });
   });

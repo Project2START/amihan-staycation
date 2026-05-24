@@ -1,6 +1,5 @@
 "use client";
 
-import { HOST } from "@/app/shared/constants/config";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, Suspense } from "react";
 
@@ -15,34 +14,26 @@ function GoogleCallbackInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectPath = getSafeRedirectPath(searchParams.get("redirect"));
+  const oauthToken = searchParams.get("token");
 
   useEffect(() => {
     const syncCookiesAndRedirect = async () => {
       try {
-        const meResponse = await fetch(`${HOST}/api/users/me`, {
-          method: "GET",
-          credentials: "include",
-          cache: "no-store",
-        });
-
-        if (!meResponse.ok) {
-          throw new Error("Unable to fetch authenticated user session");
+        if (!oauthToken) {
+          throw new Error("Missing OAuth token");
         }
 
-        const payload = await meResponse.json();
-        const user = payload?.user;
-
-        if (!user?.id || !user?.role) {
-          throw new Error("Missing user id or role");
-        }
-
-        await fetch("/api/auth/register-cookies", {
+        const response = await fetch("/api/auth/google-callback", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ id: user.id, role: user.role }),
+          body: JSON.stringify({ token: oauthToken }),
         });
+
+        if (!response.ok) {
+          throw new Error("Unable to finalize Google sign-in");
+        }
 
         router.replace(redirectPath);
       } catch {
@@ -51,7 +42,7 @@ function GoogleCallbackInner() {
     };
 
     void syncCookiesAndRedirect();
-  }, [redirectPath, router]);
+  }, [oauthToken, redirectPath, router]);
 
   return (
     <div className="px-[2rem] py-[6rem] text-center text-secondary-normal">

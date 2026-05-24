@@ -2,7 +2,6 @@
 
 import ButtonLoadingStopper from "@/app/shared/components/ButtonLoadingStopper";
 import PrimaryButton from "@/app/shared/ui/PrimaryButton";
-import { HOST } from "@/app/shared/constants/config";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -30,23 +29,9 @@ export default function CodeInput({ id }: { id?: string }) {
 
     setLoading(true);
     try {
-      const result = await axios.post(
-        `${HOST}/api/users/sign-up`,
-        {
-          id,
-          verificationCode: otp,
-        },
-        { withCredentials: true },
-      );
-
-      const user = result.data.user;
-
-      await fetch("/api/auth/register-cookies", {
-        method: "POST",
-        body: JSON.stringify({
-          role: user.role,
-          id: user.id,
-        }),
+      await axios.post("/api/auth/sign-up", {
+        id,
+        verificationCode: otp,
       });
 
       setErrorLabel("");
