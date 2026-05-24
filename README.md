@@ -1,10 +1,6 @@
 # Amihan Staycation
 
-![Next.js](https://img.shields.io/badge/Next.js-000000.png?logo=nextdotjs&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?logo=react)
-![Express](https://img.shields.io/badge/Express-black?logo=express)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-blue?logo=postgresql&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-000000.png?logo=nextdotjs&logoColor=white) ![React](https://img.shields.io/badge/React-20232A?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-339933.png?logo=nodedotjs&logoColor=white) ![Express](https://img.shields.io/badge/Express-black?logo=express) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-blue?logo=postgresql&logoColor=white)
 
 ## Team Members
 
