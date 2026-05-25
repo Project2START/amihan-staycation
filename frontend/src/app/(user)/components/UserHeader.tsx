@@ -16,6 +16,7 @@ import { errorHandler } from "@/app/shared/lib/errorHandler";
 import { IoMdPerson } from "react-icons/io";
 import { LuLogOut } from "react-icons/lu";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
+import { resetAuthTokenCache } from "@/app/shared/lib/getAuthToken";
 
 export default function UserHeader() {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -55,6 +56,7 @@ export default function UserHeader() {
         method: "DELETE",
       });
 
+      resetAuthTokenCache();
       dispatch(resetUser());
       router.replace("/sign-in");
     } catch (err) {

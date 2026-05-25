@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 export default function FooterAuth() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer>
       <div className="bg-secondary-normal text-white text-[0.65rem] px-[1.5rem] py-[2rem] text-center lg:text-sm lg:py-[3.5rem]">
@@ -15,7 +17,7 @@ export default function FooterAuth() {
           </Link>
         </p>
         <p className="mt-[1rem]">
-          All rights reserved. Copyright (2025-2026) - AmihanStaycation.com™
+          © {currentYear} AmihanStaycation | All rights reserved.
         </p>
       </div>
     </footer>

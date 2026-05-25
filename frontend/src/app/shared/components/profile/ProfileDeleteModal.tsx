@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import { logout } from "@/app/(user)/api/logout";
+import { resetAuthTokenCache } from "@/app/shared/lib/getAuthToken";
 
 interface ProfileDeleteModalProps {
   userId: string;
@@ -40,6 +41,7 @@ export default function ProfileDeleteModal({
         method: "DELETE",
       });
 
+      resetAuthTokenCache();
       dispatch(resetUser());
 
       CustomToast.show("Account deleted successfully", {

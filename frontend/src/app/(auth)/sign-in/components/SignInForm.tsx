@@ -15,6 +15,7 @@ import { errorHandler } from "@/app/shared/lib/errorHandler";
 import GoogleSignOption from "../../../shared/components/GoogleSignOption";
 import { signInSchema, SignInSchema } from "../lib/signInSchema";
 import { signIn } from "../api/signIn";
+import { resetAuthTokenCache } from "@/app/shared/lib/getAuthToken";
 
 const getSafeRedirectPath = (path: string | null) => {
   if (!path) return null;
@@ -48,6 +49,8 @@ export default function SignInForm() {
 
     try {
       await signIn(data);
+
+      resetAuthTokenCache();
 
       setError("");
 
