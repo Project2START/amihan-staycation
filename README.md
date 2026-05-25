@@ -2,7 +2,7 @@
 
 ![Next.js](https://img.shields.io/badge/Next.js-000000.png?logo=nextdotjs&logoColor=white) ![React](https://img.shields.io/badge/React-20232A?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-339933.png?logo=nodedotjs&logoColor=white) ![Express](https://img.shields.io/badge/Express-black?logo=express) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-blue?logo=postgresql&logoColor=white)
 
-## Team Members
+## Team
 
 **Project Lead**
 
@@ -31,7 +31,21 @@
 
 ## Project Overview
 
-A full-stack web application with a Next.js frontend and an Express backend. The system provides authenticated user flows, booking and payment management, notifications, and reviews in a scalable full-stack architecture.
+Amihan Staycation is a web app for booking staycations. Guests can sign up, browse listings, make bookings, and leave reviews. Admins and agents can manage users, bookings, and notifications via dedicated interfaces.
+
+#### 🌐 Live Demo
+
+- Website: https://amihanstaycation.vercel.app
+
+#### 🎥 Demo Preview
+
+<p align="center">
+  <img src="./docs/screenshots/amihan-staycation-quick-preview.gif" width="85%" />
+</p>
+
+<p align="center">
+  <em>UI preview of the system.</em>
+</p>
 
 ## Features
 
