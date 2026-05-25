@@ -98,7 +98,7 @@ export default function SelectPaymentMethod() {
                               alt={option.paymentName}
                               fill
                               className="object-contain"
-                              sizes="1rem"
+                              sizes="24px"
                             />
                           </div>
                           <span className={isSelected ? "font-bold" : ""}>

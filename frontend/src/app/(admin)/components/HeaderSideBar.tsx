@@ -15,6 +15,7 @@ import { LuLogOut } from "react-icons/lu";
 import Link from "next/link";
 import { IoMdPerson } from "react-icons/io";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
+import { resetAuthTokenCache } from "@/app/shared/lib/getAuthToken";
 
 import { MdPayment } from "react-icons/md";
 import type { IconType } from "react-icons";
@@ -53,6 +54,7 @@ export default function HeaderSideBar() {
         method: "DELETE",
       });
 
+      resetAuthTokenCache();
       dispatch(resetUser());
       router.replace("/sign-in");
     } catch (err) {
@@ -107,6 +109,7 @@ export default function HeaderSideBar() {
                     fill
                     priority
                     className="object-cover"
+                    sizes="32px"
                   />
                 </div>
               </div>
@@ -122,6 +125,7 @@ export default function HeaderSideBar() {
                           alt="Profile"
                           fill
                           className="object-cover"
+                          sizes="48px"
                         />
                       </div>
                     ) : (

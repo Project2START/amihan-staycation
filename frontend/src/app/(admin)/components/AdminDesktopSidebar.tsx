@@ -17,6 +17,7 @@ import { resetUser } from "@/lib/features/users/usersSlice";
 import { CustomToast } from "@/app/shared/ui/CustomToast";
 import { errorHandler } from "@/app/shared/lib/errorHandler";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
+import { resetAuthTokenCache } from "@/app/shared/lib/getAuthToken";
 
 interface AdminDesktopSidebarProps {
   isOpen: boolean;
@@ -45,6 +46,7 @@ export default function AdminDesktopSidebar({
         method: "DELETE",
       });
 
+      resetAuthTokenCache();
       dispatch(resetUser());
       router.replace("/sign-in");
     } catch (err) {
@@ -105,6 +107,7 @@ export default function AdminDesktopSidebar({
                 alt="Profile"
                 fill
                 className="object-cover"
+                sizes="36px"
               />
             </div>
           ) : (

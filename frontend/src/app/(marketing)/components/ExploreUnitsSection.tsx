@@ -46,6 +46,7 @@ export default async function ExploreUnitsSection() {
                       src={product.photos[0].image_url}
                       alt={product.photos[0].alt || product.name}
                       style="w-full h-[10.5rem] sm:h-[11rem] md:h-[12rem] lg:h-[12.5rem] xl:h-[13rem]"
+                      sizes="(min-width: 1920px) 20rem, (min-width: 1536px) 18rem, (min-width: 1280px) 18rem, (min-width: 1024px) 16rem, (min-width: 640px) 45vw, 92vw"
                     />
                   ) : (
                     <div className="flex h-[10.5rem] w-full items-center justify-center rounded-lg bg-gray-100 text-xs text-gray-400 sm:h-[11rem] md:h-[12rem] lg:h-[12.5rem] xl:h-[13rem]">
