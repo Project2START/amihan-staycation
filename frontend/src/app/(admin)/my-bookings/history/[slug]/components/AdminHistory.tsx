@@ -221,7 +221,7 @@ export default function AdminHistory({
                                             fill
                                             className="object-contain object-center"
                                             alt="Valid ID submission"
-                                            sizes="100%"
+                                            sizes="(min-width: 1024px) 40vw, 80vw"
                                           />
                                         </div>
                                       </div>
@@ -244,7 +244,7 @@ export default function AdminHistory({
                                             fill
                                             className="object-contain object-center"
                                             alt="Security deposit submission"
-                                            sizes="100%"
+                                            sizes="(min-width: 1024px) 40vw, 80vw"
                                           />
                                         </div>
                                       </div>

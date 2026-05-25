@@ -56,7 +56,7 @@ export default function SecurityDeposit({
                     fill
                     className="object-contain object-center"
                     alt="Amihan Staycaion file upload image for booking"
-                    sizes="100%"
+                    sizes="(min-width: 1024px) 33vw, 100vw"
                   />
                 </div>
               </div>
@@ -77,7 +77,7 @@ export default function SecurityDeposit({
                   fill
                   className="object-contain object-center"
                   alt="Amihan Staycaion file upload image for booking"
-                  sizes="100%"
+                  sizes="(min-width: 1024px) 33vw, 100vw"
                 />
               </div>
             </PhotoFullViewDialog>
@@ -93,6 +93,7 @@ export default function SecurityDeposit({
                 fill
                 alt={payment_method}
                 className="object-contain object-center p-1"
+                sizes="40px"
               />
             </div>
           </div>

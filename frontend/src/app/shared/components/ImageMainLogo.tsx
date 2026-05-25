@@ -17,6 +17,7 @@ export default function ImageMainLogo({
           priority
           fill
           className="object-cover"
+          sizes="(min-width: 1024px) 56px, 48px"
         />
       </div>
     </Link>

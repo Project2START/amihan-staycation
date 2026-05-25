@@ -16,6 +16,7 @@ import { IoMdPerson } from "react-icons/io";
 import { MdHistory } from "react-icons/md";
 import type { IconType } from "react-icons";
 import LoadingOverlay from "@/app/shared/ui/LoadingOverlay";
+import { resetAuthTokenCache } from "@/app/shared/lib/getAuthToken";
 
 interface NavItem {
   label: string;
@@ -51,6 +52,7 @@ export default function UserSideBar() {
         method: "DELETE",
       });
 
+      resetAuthTokenCache();
       dispatch(resetUser());
       router.replace("/sign-in");
     } catch (err) {
@@ -77,6 +79,7 @@ export default function UserSideBar() {
               alt="Profile"
               fill
               className="object-cover"
+              sizes="36px"
             />
           </div>
         ) : (
@@ -118,6 +121,7 @@ export default function UserSideBar() {
                     fill
                     priority
                     className="object-cover"
+                    sizes="32px"
                   />
                 </div>
               </div>
@@ -133,6 +137,7 @@ export default function UserSideBar() {
                           alt="Profile"
                           fill
                           className="object-cover"
+                          sizes="48px"
                         />
                       </div>
                     ) : (

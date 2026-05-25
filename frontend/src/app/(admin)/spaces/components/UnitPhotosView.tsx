@@ -39,6 +39,7 @@ export default function UnitPhotosView() {
               fill
               alt="Amihan Staycation Active View Unit Image"
               className="object-cover object-center rounded-lg"
+              sizes="(min-width: 1280px) 720px, (min-width: 1024px) 600px, (min-width: 768px) 90vw, 100vw"
             />
           </>
         )}

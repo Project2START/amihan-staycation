@@ -101,6 +101,7 @@ export default function ProductItem({
             src={photos[0].image_url}
             alt={photos[0].alt}
             style="h-[12rem] w-full sm:h-[13.5rem] lg:h-full lg:min-h-[16rem]"
+            sizes="(min-width: 1536px) 22rem, (min-width: 1280px) 20rem, (min-width: 1024px) 18rem, (min-width: 640px) 48vw, 92vw"
           />
         ) : (
           <ImageBroken

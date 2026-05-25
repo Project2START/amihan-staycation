@@ -119,7 +119,7 @@ export default function UnitImagesDraggable({
                 : "hover-animation lg:hover:opacity-80"
             }
           >
-            <UnitImage src={item.src} style="w-[7rem] h-[4rem]" />
+            <UnitImage src={item.src} style="w-[7rem] h-[4rem]" sizes="112px" />
           </button>
         </SortableItem>
       ) : (
@@ -133,7 +133,7 @@ export default function UnitImagesDraggable({
               : "hover-animation lg:hover:opacity-80"
           }
         >
-          <UnitImage src={item.src} style="w-[7rem] h-[4rem]" />
+          <UnitImage src={item.src} style="w-[7rem] h-[4rem]" sizes="112px" />
         </button>
       );
     });

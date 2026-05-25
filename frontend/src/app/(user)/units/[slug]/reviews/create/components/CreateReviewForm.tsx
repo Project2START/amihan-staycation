@@ -142,6 +142,7 @@ export default function CreateReviewForm({ productId }: { productId: string }) {
                   alt={eligibility.unit.thumbnailAlt || eligibility.unit.name}
                   fill
                   className="object-cover"
+                  sizes="(min-width: 768px) 104px, 80px"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-400 text-center p-2">

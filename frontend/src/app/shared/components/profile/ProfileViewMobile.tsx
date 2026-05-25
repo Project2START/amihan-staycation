@@ -49,6 +49,7 @@ export default function ProfileViewMobile({
                 alt="Profile"
                 fill
                 className="object-cover"
+                sizes="96px"
               />
             </div>
           ) : (

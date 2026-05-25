@@ -51,7 +51,7 @@ export default function UploadFilePhoto({
                   fill
                   className="object-cover object-center"
                   alt="Amihan Staycaion file upload image for booking"
-                  sizes="100%"
+                  sizes="(min-width: 1024px) 320px, 40vw"
                 />
               </button>
               <button
