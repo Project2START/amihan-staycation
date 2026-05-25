@@ -312,7 +312,7 @@ export default function TestimonialsSection() {
                               src={item.avatarUrl}
                               alt={`${item.name} profile`}
                               fill
-                              sizes="36px"
+                              sizes="(min-width: 1536px) 44px, (min-width: 1280px) 40px, 36px"
                               className="object-cover"
                             />
                           ) : (

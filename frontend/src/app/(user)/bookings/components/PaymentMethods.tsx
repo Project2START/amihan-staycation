@@ -125,6 +125,7 @@ export default function PaymentMethods() {
               fill
               alt={`${selected.payment_method} QR Code`}
               className="object-contain object-center"
+              sizes="224px"
             />
           </div>
         </div>
@@ -157,6 +158,7 @@ export default function PaymentMethods() {
                 fill
                 alt={method.payment_method}
                 className="object-contain object-center p-1"
+                sizes="40px"
               />
             </button>
           ))}

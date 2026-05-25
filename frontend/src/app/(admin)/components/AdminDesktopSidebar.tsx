@@ -107,6 +107,7 @@ export default function AdminDesktopSidebar({
                 alt="Profile"
                 fill
                 className="object-cover"
+                sizes="36px"
               />
             </div>
           ) : (

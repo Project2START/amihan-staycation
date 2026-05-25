@@ -282,7 +282,7 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
                         fill
                         className="object-contain object-center"
                         alt="Amihan Staycaion file upload image for booking"
-                        sizes="100%"
+                        sizes="(min-width: 1024px) 33vw, 100vw"
                       />
                     </div>
                   </div>
@@ -399,7 +399,7 @@ export default function BookingDetails({ bookingId }: { bookingId: string }) {
                                         fill
                                         className="object-contain object-center"
                                         alt="Amihan Staycaion file upload image for booking"
-                                        sizes="100%"
+                                        sizes="(min-width: 1024px) 33vw, 100vw"
                                       />
                                     </div>
                                   </div>

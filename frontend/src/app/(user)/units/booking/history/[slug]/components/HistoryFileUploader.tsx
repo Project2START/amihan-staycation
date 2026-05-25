@@ -40,7 +40,7 @@ export default function HistoryFileUploader({
                   fill
                   className="object-cover object-center"
                   alt="Upload preview"
-                  sizes="100%"
+                  sizes="(min-width: 1024px) 320px, 40vw"
                 />
               </PhotoFullViewDialog>
               {!disabled && (

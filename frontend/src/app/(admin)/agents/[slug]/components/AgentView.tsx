@@ -139,6 +139,7 @@ export default function AgentView({ agentId }: { agentId: string }) {
                     alt="Profile"
                     fill
                     className="object-cover"
+                    sizes="(min-width: 768px) 112px, 96px"
                   />
                 </div>
               ) : (

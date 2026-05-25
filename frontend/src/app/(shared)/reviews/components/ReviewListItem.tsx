@@ -61,6 +61,7 @@ export default function ReviewListItem({
                 alt={`${review.reviewerName} profile`}
                 fill
                 className="object-cover"
+                sizes="(min-width: 768px) 40px, 36px"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400">
