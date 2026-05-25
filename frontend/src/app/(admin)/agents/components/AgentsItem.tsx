@@ -18,6 +18,7 @@ export default function AgentsItem({ agent }: { agent: IAgent }) {
               alt="Profile"
               fill
               className="object-cover"
+              sizes="(min-width: 768px) 48px, 40px"
             />
           </div>
         ) : (

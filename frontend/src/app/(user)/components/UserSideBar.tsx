@@ -79,6 +79,7 @@ export default function UserSideBar() {
               alt="Profile"
               fill
               className="object-cover"
+              sizes="36px"
             />
           </div>
         ) : (
@@ -120,6 +121,7 @@ export default function UserSideBar() {
                     fill
                     priority
                     className="object-cover"
+                    sizes="32px"
                   />
                 </div>
               </div>
@@ -135,6 +137,7 @@ export default function UserSideBar() {
                           alt="Profile"
                           fill
                           className="object-cover"
+                          sizes="48px"
                         />
                       </div>
                     ) : (

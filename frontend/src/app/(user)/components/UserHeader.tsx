@@ -135,6 +135,7 @@ export default function UserHeader() {
                     alt="Profile"
                     fill
                     className="object-cover"
+                    sizes="40px"
                   />
                 </div>
               ) : (

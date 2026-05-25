@@ -214,6 +214,7 @@ export default function ProfileEditModal({
                     alt="Avatar preview"
                     fill
                     className="object-cover"
+                    sizes="80px"
                   />
                 </div>
               ) : (

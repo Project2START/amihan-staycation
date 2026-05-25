@@ -52,7 +52,7 @@ export default function UploadQrCode() {
                   fill
                   className="object-cover object-center"
                   alt="QR code image"
-                  sizes="100%"
+                  sizes="(min-width: 1024px) 320px, 40vw"
                 />
               </button>
               <button

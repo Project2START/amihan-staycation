@@ -52,6 +52,7 @@ export default function ProfileViewDesktop({
                     alt="Profile"
                     fill
                     className="object-cover"
+                    sizes="128px"
                   />
                 </div>
               ) : (

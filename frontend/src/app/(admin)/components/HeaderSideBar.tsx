@@ -109,6 +109,7 @@ export default function HeaderSideBar() {
                     fill
                     priority
                     className="object-cover"
+                    sizes="32px"
                   />
                 </div>
               </div>
@@ -124,6 +125,7 @@ export default function HeaderSideBar() {
                           alt="Profile"
                           fill
                           className="object-cover"
+                          sizes="48px"
                         />
                       </div>
                     ) : (
