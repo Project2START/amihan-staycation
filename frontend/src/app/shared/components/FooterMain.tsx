@@ -5,6 +5,8 @@ import { BsFillTelephoneFill } from "react-icons/bs";
 import Link from "next/link";
 
 export default function FooterMain() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer>
       <div className="bg-secondary-normal text-white">
@@ -70,7 +72,7 @@ export default function FooterMain() {
 
           <div className="mt-8 md:mt-9 pt-5 md:pt-6 border-t border-white/20 flex flex-col gap-y-3 md:flex-row md:items-center md:justify-between">
             <p className="text-[0.65rem] text-center md:text-left md:text-xs lg:text-sm text-white/90">
-              All rights reserved. Copyright (2025-2026) - AmihanStaycation.com™
+              © {currentYear} AmihanStaycation | All rights reserved.
             </p>
 
             <div className="flex justify-center md:justify-end items-center">

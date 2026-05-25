@@ -33,6 +33,11 @@ export async function getAuthToken(options?: { force?: boolean }) {
   }
 }
 
+export function resetAuthTokenCache() {
+  cachedToken = null;
+  cachedAt = 0;
+}
+
 export async function getAuthHeader(): Promise<Record<string, string>> {
   const token = await getAuthToken();
   return token ? { Authorization: `Bearer ${token}` } : {};

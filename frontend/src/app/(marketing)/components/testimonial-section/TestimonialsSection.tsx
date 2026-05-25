@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import {
   FaBookOpen,
@@ -305,15 +305,20 @@ export default function TestimonialsSection() {
                         <p className="max-w-[10rem] truncate text-sm font-bold md:max-w-none md:text-[0.95rem] lg:text-base xl:text-lg 2xl:text-xl">
                           {item.name.trim().split(/\s+/)[0] || "Anonymous"}
                         </p>
-                        <div className="flex size-9 items-center justify-center overflow-hidden rounded-full border border-secondary-normal/15 bg-white text-[11px] font-bold text-secondary-normal/80 xl:size-10 2xl:size-11">
+
+                        <div className="relative size-9 overflow-hidden rounded-full border border-secondary-normal/15 bg-white xl:size-10 2xl:size-11">
                           {item.avatarUrl ? (
-                            <img
+                            <Image
                               src={item.avatarUrl}
                               alt={`${item.name} profile`}
-                              className="h-full w-full object-cover"
+                              fill
+                              sizes="36px"
+                              className="object-cover"
                             />
                           ) : (
-                            <FaRegCircleUser size={18} />
+                            <div className="flex h-full w-full items-center justify-center">
+                              <FaRegCircleUser size={18} />
+                            </div>
                           )}
                         </div>
                       </div>

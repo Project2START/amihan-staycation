@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, Suspense } from "react";
+import { resetAuthTokenCache } from "@/app/shared/lib/getAuthToken";
 
 const getSafeRedirectPath = (path: string | null) => {
   if (!path) return "/auth";
@@ -34,6 +35,8 @@ function GoogleCallbackInner() {
         if (!response.ok) {
           throw new Error("Unable to finalize Google sign-in");
         }
+
+        resetAuthTokenCache();
 
         router.replace(redirectPath);
       } catch {

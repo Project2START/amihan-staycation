@@ -1,9 +1,9 @@
 import AlternativeSeparator from "@/app/shared/components/AlternativeSeparator";
-import SearchUnit from "../../../shared/components/search-unit/SearchUnit";
+// import SearchUnit from "../../../shared/components/search-unit/SearchUnit";
 import HeroTag from "./HeroTag";
 import Link from "next/link";
 import Image from "next/image";
-import { Suspense } from "react";
+// import { Suspense } from "react";
 
 export default function HeroSection() {
   return (
@@ -15,6 +15,7 @@ export default function HeroSection() {
           fill
           className="object-cover"
           priority
+          fetchPriority="high"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-secondary-normal/70 via-secondary-normal/75 to-secondary-normal/90" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.18),transparent_42%)]" />
@@ -105,9 +106,9 @@ export default function HeroSection() {
         </div>
       </div>
       <div className="relative z-10 mx-auto w-full max-w-[34rem] -translate-y-[30%] px-4 sm:max-w-[44rem] sm:-translate-y-[25%] sm:px-6 md:max-w-[56rem] md:px-0 lg:max-w-[72rem] xl:max-w-[82rem] 2xl:max-w-[96rem] min-[1921px]:max-w-[110rem]">
-        <Suspense fallback={null}>
+        {/* <Suspense fallback={null}>
           <SearchUnit />
-        </Suspense>
+        </Suspense> */}
         <div className="my-2 flex justify-center md:my-6 lg:my-8">
           <div className="w-full md:w-[62%] lg:w-[52%] xl:w-[46%] 2xl:w-[42%] min-[1921px]:w-[38%]">
             <AlternativeSeparator content="or" />
