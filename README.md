@@ -71,7 +71,7 @@ Amihan Staycation is a web app for booking staycations. Guests can sign up, brow
 
 - Node.js + Express
 - TypeScript
-- Prisma + PostgreSQL (or compatible SQL database)
+- Prisma + PostgreSQL (Supabase)
 - JWT authentication
 - Socket.IO for notifications
 
@@ -87,7 +87,7 @@ Amihan Staycation is a web app for booking staycations. Guests can sign up, brow
 
 - Node.js (>= 18)
 - npm or yarn
-- Database (PostgreSQL or compatible)
+- Database (Supabase - PostgreSQL)
 
 ### Clone
 
