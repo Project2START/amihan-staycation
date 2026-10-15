@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 // Hardcoded admin credentials as requested.
 const ADMIN_EMAIL = "admin@amihanstaycation.com";
-const ADMIN_PASSWORD = "Admin123";
+const ADMIN_PASSWORD = "AmihanStaycation_BSCS3A_Admin";
 const ADMIN_FIRST_NAME = "Admin";
 const ADMIN_LAST_NAME = "Amihan";
 

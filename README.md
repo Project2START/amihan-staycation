@@ -29,6 +29,18 @@
 - Rashed Carnain
 - Aldwin Santos
 
+## Client Collaboration
+
+We worked with a property owner from **Azure Staycation Urban Residence** as our client. We met with them online to gather requirements and review the project.
+
+<p align="center">
+  <img src="./docs/screenshots/client-colab-pic.jpg" width="35%" alt="Online meeting between the Amihan Staycation team and our client from Azure Staycation Urban Residence" />
+</p>
+
+<p align="center">
+  <em>The team in an online meeting with our client from Azure Staycation Urban Residence.</em>
+</p>
+
 ## Project Overview
 
 Amihan Staycation is a web app for booking staycations. Guests can sign up, browse listings, make bookings, and leave reviews. Admins and agents can manage users, bookings, and notifications via dedicated interfaces.
